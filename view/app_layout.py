@@ -117,7 +117,7 @@ class DataPoolNotebook(Notebook):
             self.create_new_empty_tab(tabname)
             tab = self.tabs_[tabname]
             columns = list(dataframe.columns)
-            treeview = Treeview(tab, columns, App.HEIGHT_DATAPOOL)
+            treeview = Treeview(tab, columns, App.HIGHT_DATAPOOL)
             treeview.insert_dataframe(dataframe)
             treeview.adjust_column_width()
 
@@ -126,7 +126,7 @@ class DataPoolNotebook(Notebook):
         tabname = '1'
         self.create_new_empty_tab(tabname)
         tab = self.tabs_[tabname]
-        Treeview(tab, columns=('',), height=App.HEIGHT_DATAPOOL)
+        Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
 
 
 class CsvInfoTreeview(Treeview):
@@ -179,16 +179,19 @@ class EmptyDataPoolError(Error):
     message = 'Please import data first.'
 
 
+NAME = 'CSViewer'
+FAVICON = 'icon\\favicon.ico'
+STATE = 'zoomed'
+ROOT_MINSIZE = {'width': 400, 'height': 400}
+
+
 class App:
     PADS = {
         'padx': 5, 'pady': 5,
         'ipadx': 1, 'ipady': 1,
     }
-    ROOT_MINSIZE = {
-        'width': 400, 'height': 400
-    }
-    HEIGHT_FILENAMES = 5
-    HEIGHT_DATAPOOL = 28
+    HIGHT_FILENAMES = 5
+    HIGHT_DATAPOOL = 28
     WIDTH_COMBOBOX = 12
     WIDTH_ENTRY = 14
 
@@ -222,17 +225,16 @@ class App:
 
     def initialize_main_window(self) -> tk.Tk:
         root = tk.Tk()
-        root.title('CSViewer')
-        logopath = Path(__file__).parent.parent.joinpath('icon', 'favicon.ico')
-        root.iconbitmap(logopath)
+        root.title(NAME)
+        root.iconbitmap(FAVICON)
         root.columnconfigure(0, weight=1)
         root.columnconfigure(1, weight=1)
         root.columnconfigure(2, weight=1)
         root.rowconfigure(0, weight=1)
         root.rowconfigure(1, weight=5)
         root.rowconfigure(2, weight=5)
-        root.state('zoomed')
-        root.minsize(**App.ROOT_MINSIZE)
+        root.state(STATE)
+        root.minsize(**ROOT_MINSIZE)
         root.configure()
         return root
 
@@ -262,7 +264,7 @@ class App:
         subframe = tk.Frame(frame)
         subframe.grid(row=0, column=0, sticky=tk.NSEW)
         columns = ('CSV ID', 'CSV Path')
-        treeview = CsvInfoTreeview(subframe, columns, App.HEIGHT_FILENAMES)
+        treeview = CsvInfoTreeview(subframe, columns, App.HIGHT_FILENAMES)
 
         subframe = tk.Frame(frame)
         subframe.grid(row=0, column=1)
@@ -290,7 +292,7 @@ class App:
         tabname = '1'
         notebook.create_new_empty_tab(tabname=tabname)
         tab = notebook.tabs_[tabname]
-        Treeview(tab, columns=('',), height=App.HEIGHT_DATAPOOL)
+        Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
 
         button = tk.Button(
             frame,
