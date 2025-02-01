@@ -11,8 +11,8 @@ from typing import Dict, Sequence, TypedDict, Union
 
 import pandas as pd
 
-import plotting
-from custom_widgets import *
+import logic.plotting as plotting
+from components.components import *
 
 
 class AxisVisualWidgets(TypedDict):
@@ -222,7 +222,7 @@ class App:
     def initialize_main_window(self) -> tk.Tk:
         root = tk.Tk()
         root.title('CSViewer')
-        logopath = Path(__file__).parent.parent.joinpath('img', 'favicon.ico')
+        logopath = Path(__file__).parent.parent.joinpath('icon', 'favicon.ico')
         root.iconbitmap(logopath)
         root.columnconfigure(0, weight=1)
         root.columnconfigure(1, weight=1)

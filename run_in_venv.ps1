@@ -15,7 +15,7 @@ if (Test-Path .\env\Scripts\Activate.ps1) {
 
 # Run the Python script
 try {
-    python .\src\main_gui.py
+    python .\main.py
 } catch {
     Write-Host "Failed to execute the Python script. Please check for errors." -ForegroundColor Red
     exit 1
