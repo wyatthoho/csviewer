@@ -31,7 +31,7 @@ class AxisConfig(TypedDict):
     lim: Sequence
 
 
-class Config(TypedDict):
+class AppConfig(TypedDict):
     csvs: CsvsConfig
     data: DataConfig
     figure: FigureConfig
@@ -49,8 +49,8 @@ class FigureNumsError(Error):
     message = 'No figure to copy.'
 
 
-def get_initial_configuration():
-    config_ini: Config = {
+def get_initial_configuration() -> AppConfig:
+    config_ini = {
         'csvs': {
             'indices': [],
             'paths': []
@@ -81,14 +81,14 @@ def get_initial_configuration():
     return config_ini
 
 
-def initialize_figure(config: Config) -> Tuple[plt.Figure, plt.Axes]:
+def initialize_figure(config: AppConfig) -> Tuple[plt.Figure, plt.Axes]:
     figsize = config['figure']['size']
     fig = plt.figure(figsize=figsize, tight_layout=True)
     ax = plt.axes()
     return fig, ax
 
 
-def get_plot_function(config: Config, ax: plt.Axes):
+def get_plot_function(config: AppConfig, ax: plt.Axes):
     scale_x = config['axis_x']['scale']
     scale_y = config['axis_y']['scale']
     if scale_x == 'linear' and scale_y == 'linear':
@@ -103,7 +103,7 @@ def get_plot_function(config: Config, ax: plt.Axes):
 
 
 def plot_data(
-        config: Config, data_pool: Sequence[pd.DataFrame],
+        config: AppConfig, data_pool: Sequence[pd.DataFrame],
         plot_function: Callable):
 
     fieldnames = config['data']['fieldnames']
@@ -114,7 +114,7 @@ def plot_data(
         plot_function(values_x, values_y, label=label)
 
 
-def set_axes(config: Config, ax: plt.Axes):
+def set_axes(config: AppConfig, ax: plt.Axes):
     ax.set_title(config['figure'].get('title', ''))
     ax.set_xlabel(config['axis_x'].get('label', ''))
     ax.set_xlim(config['axis_x'].get('lim', ''))
@@ -128,7 +128,7 @@ def set_axes(config: Config, ax: plt.Axes):
         ax.legend()
 
 
-def plot_by_app(config: Config, data_pool: Sequence[pd.DataFrame]):
+def plot_by_app(config: AppConfig, data_pool: Sequence[pd.DataFrame]):
     fig, ax = initialize_figure(config)
     plot_function = get_plot_function(config, ax)
     plot_data(config, data_pool, plot_function)
