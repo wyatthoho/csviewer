@@ -1,9 +1,11 @@
 from io import BytesIO
-from typing import Callable, Dict, Sequence, Tuple, TypedDict
+from typing import Dict, Sequence, TypedDict
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import win32clipboard
+
+import utils.plt_utils as plt_utils
 
 
 class CsvsConfig(TypedDict):
@@ -81,40 +83,14 @@ def get_initial_configuration() -> AppConfig:
     return config_ini
 
 
-def initialize_figure(config: AppConfig) -> Tuple[plt.Figure, plt.Axes]:
-    figsize = config['figure']['size']
-    fig = plt.figure(figsize=figsize, tight_layout=True)
-    ax = plt.axes()
-    return fig, ax
-
-
-def get_plot_function(config: AppConfig, ax: plt.Axes):
-    scale_x = config['axis_x']['scale']
-    scale_y = config['axis_y']['scale']
-    if scale_x == 'linear' and scale_y == 'linear':
-        plot_function = ax.plot
-    elif scale_x == 'log' and scale_y == 'linear':
-        plot_function = ax.semilogx
-    elif scale_x == 'linear' and scale_y == 'log':
-        plot_function = ax.semilogy
-    elif scale_x == 'log' and scale_y == 'log':
-        plot_function = ax.loglog
-    return plot_function
-
-
 DataPool = Sequence[pd.DataFrame]
 
 
-def plot_data(config: AppConfig, data_pool: DataPool, plot_function: Callable):
+def plot_all_csv(config: AppConfig, data_pool: DataPool):
+    scale_x = config['axis_x']['scale']
+    scale_y = config['axis_y']['scale']
     fieldnames = config['data']['fieldnames']
     labels = config['data']['labels']
-    for df, fieldname, label in zip(data_pool, fieldnames, labels):
-        values_x = df[fieldname['x']]
-        values_y = df[fieldname['y']]
-        plot_function(values_x, values_y, label=label)
-
-
-def set_axes(config: AppConfig, ax: plt.Axes):
     title = config['figure'].get('title', '')
     label_x = config['axis_x'].get('label', '')
     label_y = config['axis_y'].get('label', '')
@@ -122,21 +98,17 @@ def set_axes(config: AppConfig, ax: plt.Axes):
     lim_y = config['axis_y'].get('lim', '')
     grid_visible = config['figure'].get('grid_visible', '')
     legend_visible = config['figure']['legend_visible']
-    ax.set_title(title)
-    ax.set_xlabel(label_x)
-    ax.set_ylabel(label_y)
-    ax.set_xlim(lim_x)
-    ax.set_ylim(lim_y)
-    ax.grid(visible=grid_visible, axis='both')
-    if legend_visible:
-        ax.legend()
 
-
-def view_csv(config: AppConfig, data_pool: DataPool):
-    fig, ax = initialize_figure(config)
-    plot_function = get_plot_function(config, ax)
-    plot_data(config, data_pool, plot_function)
-    set_axes(config, ax)
+    fig, ax = plt_utils.initialize_figure(config, scale_x, scale_y)
+    plot_method = plt_utils.get_plot_method(ax)
+    for df, fieldname, label in zip(data_pool, fieldnames, labels):
+        values_x = df[fieldname['x']]
+        values_y = df[fieldname['y']]
+        plt_utils.make_a_plot(plot_method, values_x, values_y, label)
+    plt_utils.set_axes(
+        ax, title, label_x, label_y,
+        lim_x, lim_y, grid_visible, legend_visible
+    )
     plt.show()
 
 

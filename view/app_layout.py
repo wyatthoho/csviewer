@@ -681,7 +681,7 @@ class App:
             self.collect_configurations_data()
             self.collect_configurations_figure()
             self.collect_configurations_axes()
-            app_logic.view_csv(self.config_values, data_send)
+            app_logic.plot_all_csv(self.config_values, data_send)
 
     def copy(self):
         try:
