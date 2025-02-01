@@ -80,7 +80,8 @@ class DataVisualNotebook(Notebook):
         combobox.config(state='readonly')
         widgets['field_y'] = combobox
 
-        label_entry = LabelEntry(tab, 'Label: ', App.WIDTH_ENTRY, tk.StringVar())
+        label_entry = LabelEntry(
+            tab, 'Label: ', App.WIDTH_ENTRY, tk.StringVar())
         label_entry.label.grid(row=3, column=0, sticky=tk.W, **App.PADS)
         label_entry.entry.grid(row=3, column=1, sticky=tk.W, **App.PADS)
         widgets['label'] = label_entry
@@ -342,7 +343,8 @@ class App:
 
         label_entry = LabelEntry(frame, 'Title: ', 28, tk.StringVar())
         label_entry.label.grid(row=0, column=0, sticky=tk.W, **App.PADS)
-        label_entry.entry.grid(row=0, column=1, columnspan=3, sticky=tk.W, **App.PADS)
+        label_entry.entry.grid(
+            row=0, column=1, columnspan=3, sticky=tk.W, **App.PADS)
         widgets['title'] = label_entry
 
         label_entry = LabelEntry(frame, 'Width: ', 8, tk.DoubleVar())
@@ -679,7 +681,7 @@ class App:
             self.collect_configurations_data()
             self.collect_configurations_figure()
             self.collect_configurations_axes()
-            app_logic.plot_by_app(self.config_values, data_send)
+            app_logic.view_csv(self.config_values, data_send)
 
     def copy(self):
         try:

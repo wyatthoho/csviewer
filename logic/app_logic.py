@@ -102,10 +102,10 @@ def get_plot_function(config: AppConfig, ax: plt.Axes):
     return plot_function
 
 
-def plot_data(
-        config: AppConfig, data_pool: Sequence[pd.DataFrame],
-        plot_function: Callable):
+DataPool = Sequence[pd.DataFrame]
 
+
+def plot_data(config: AppConfig, data_pool: DataPool, plot_function: Callable):
     fieldnames = config['data']['fieldnames']
     labels = config['data']['labels']
     for df, fieldname, label in zip(data_pool, fieldnames, labels):
@@ -115,20 +115,24 @@ def plot_data(
 
 
 def set_axes(config: AppConfig, ax: plt.Axes):
-    ax.set_title(config['figure'].get('title', ''))
-    ax.set_xlabel(config['axis_x'].get('label', ''))
-    ax.set_xlim(config['axis_x'].get('lim', ''))
-    ax.set_ylabel(config['axis_y'].get('label', ''))
-    ax.set_ylim(config['axis_y'].get('lim', ''))
-    ax.grid(
-        visible=config['figure'].get('grid_visible', ''),
-        axis='both'
-    )
-    if config['figure']['legend_visible']:
+    title = config['figure'].get('title', '')
+    label_x = config['axis_x'].get('label', '')
+    label_y = config['axis_y'].get('label', '')
+    lim_x = config['axis_x'].get('lim', '')
+    lim_y = config['axis_y'].get('lim', '')
+    grid_visible = config['figure'].get('grid_visible', '')
+    legend_visible = config['figure']['legend_visible']
+    ax.set_title(title)
+    ax.set_xlabel(label_x)
+    ax.set_ylabel(label_y)
+    ax.set_xlim(lim_x)
+    ax.set_ylim(lim_y)
+    ax.grid(visible=grid_visible, axis='both')
+    if legend_visible:
         ax.legend()
 
 
-def plot_by_app(config: AppConfig, data_pool: Sequence[pd.DataFrame]):
+def view_csv(config: AppConfig, data_pool: DataPool):
     fig, ax = initialize_figure(config)
     plot_function = get_plot_function(config, ax)
     plot_data(config, data_pool, plot_function)
