@@ -1,6 +1,4 @@
-import json
 from io import BytesIO
-from pathlib import Path
 from typing import Callable, Dict, Sequence, Tuple, TypedDict
 
 import matplotlib.pyplot as plt
@@ -83,20 +81,6 @@ def get_initial_configuration():
     return config_ini
 
 
-def read_configurations(config_name: str) -> Config:
-    parent = Path(__file__).parent
-    config_path = parent.joinpath(config_name)
-    with open(config_path, 'r') as f:
-        config = json.load(f)
-    return config
-
-
-def get_data_pool(config: Config) -> Sequence[pd.DataFrame]:
-    data_dir = config['data']['directory']
-    csvs = list(Path(data_dir).glob('*.csv'))
-    return [pd.read_csv(path) for path in csvs]
-
-
 def initialize_figure(config: Config) -> Tuple[plt.Figure, plt.Axes]:
     figsize = config['figure']['size']
     fig = plt.figure(figsize=figsize, tight_layout=True)
@@ -144,16 +128,6 @@ def set_axes(config: Config, ax: plt.Axes):
         ax.legend()
 
 
-def main(config_name: str = 'config.json'):
-    config = read_configurations(config_name)
-    data_pool = get_data_pool(config)
-    fig, ax = initialize_figure(config)
-    plot_function = get_plot_function(config, ax)
-    plot_data(config, data_pool, plot_function)
-    set_axes(config, ax)
-    plt.show()
-
-
 def plot_by_app(config: Config, data_pool: Sequence[pd.DataFrame]):
     fig, ax = initialize_figure(config)
     plot_function = get_plot_function(config, ax)
@@ -182,7 +156,3 @@ def copy_to_clipboard():
     win32clipboard.SetClipboardData(clipboard_format, buffer.getvalue())
     win32clipboard.CloseClipboard()
     buffer.close()
-
-
-if __name__ == '__main__':
-    main()

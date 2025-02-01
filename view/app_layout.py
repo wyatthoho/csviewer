@@ -11,7 +11,7 @@ from typing import Dict, Sequence, TypedDict, Union
 
 import pandas as pd
 
-import logic.plotting as plotting
+import logic.app_logic as app_logic
 from components.components import *
 
 
@@ -674,17 +674,17 @@ class App:
             tk.messagebox.showerror(title='Error', message=e.message)
         else:
             data_send = self.collect_data_send()
-            self.config_values = plotting.get_initial_configuration()
+            self.config_values = app_logic.get_initial_configuration()
             self.collect_configurations_csvs()
             self.collect_configurations_data()
             self.collect_configurations_figure()
             self.collect_configurations_axes()
-            plotting.plot_by_app(self.config_values, data_send)
+            app_logic.plot_by_app(self.config_values, data_send)
 
     def copy(self):
         try:
-            plotting.copy_to_clipboard()
-        except plotting.FigureNumsError as e:
+            app_logic.copy_to_clipboard()
+        except app_logic.FigureNumsError as e:
             tk.messagebox.showerror(title='Error', message=e.message)
 
     def new(self):
@@ -775,7 +775,7 @@ class App:
     def save(self): ...
 
     def save_as(self):
-        self.config_values = plotting.get_initial_configuration()
+        self.config_values = app_logic.get_initial_configuration()
         self.collect_configurations_csvs()
         self.collect_configurations_data()
         self.collect_configurations_figure()
