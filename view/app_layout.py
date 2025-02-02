@@ -81,7 +81,6 @@ class App:
     HIGHT_FILENAMES = 5
     HIGHT_DATAPOOL = 28
 
-    # typesetting
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
@@ -140,25 +139,25 @@ class App:
         self.root.configure(menu=menubar)
 
     def create_frame_for_csv_info(self):
-        frame = LabelFrame(self.root, 0, 0, 'Choose CSV files', self.font, colspan=3)
-        frame.rowconfigure(0, weight=1)
-        frame.columnconfigure(0, weight=1)
+        labelframe = LabelFrame(self.root, 0, 0, 'Choose CSV files', self.font, colspan=3)
+        labelframe.rowconfigure(0, weight=1)
+        labelframe.columnconfigure(0, weight=1)
 
-        subframe = Frame(frame, 0, 0, True)
+        frame = Frame(labelframe, 0, 0, True)
         columns = ('CSV ID', 'CSV Path')
-        treeview = CsvInfoTreeview(subframe, columns, App.HIGHT_FILENAMES)
+        treeview = CsvInfoTreeview(frame, columns, App.HIGHT_FILENAMES)
 
-        subframe = Frame(frame, 0, 1, sticky=False)
-        Button(subframe, 0, 0, 'Choose', self.font, lambda: self.open_csvs())
+        frame = Frame(labelframe, 0, 1, sticky=False)
+        Button(frame, 0, 0, 'Choose', self.font, lambda: self.open_csvs())
         self.config_widgets['csv_info'] = treeview
 
     def create_frame_for_data_pool(self):
-        frame = LabelFrame(self.root, 1, 0, 'Review CSV data', self.font, rowspan=3)
-        frame.rowconfigure(0, weight=1)
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=1)
+        labelframe = LabelFrame(self.root, 1, 0, 'Review CSV data', self.font, rowspan=3)
+        labelframe.rowconfigure(0, weight=1)
+        labelframe.columnconfigure(0, weight=1)
+        labelframe.columnconfigure(1, weight=1)
 
-        notebook = DataPoolNotebook(frame)
+        notebook = DataPoolNotebook(labelframe)
         notebook.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW)
 
         tabname = '1'
@@ -166,27 +165,27 @@ class App:
         tab = notebook.tabs_[tabname]
         Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
 
-        Button(frame, 1, 0, 'Import', self.font, lambda: self.import_csv())
-        Button(frame, 1, 1, 'Clear', self.font, lambda: self.clear_data_pool())
+        Button(labelframe, 1, 0, 'Import', self.font, lambda: self.import_csv())
+        Button(labelframe, 1, 1, 'Clear', self.font, lambda: self.clear_data_pool())
         self.config_widgets['data_pool'] = notebook
 
     def create_frame_for_data_visual(self):
-        frame = LabelFrame(self.root, 1, 1, 'Data Visualization', self.font)
-        frame.rowconfigure(1, weight=1)
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=1)
+        labelframe = LabelFrame(self.root, 1, 1, 'Data Visualization', self.font)
+        labelframe.rowconfigure(1, weight=1)
+        labelframe.columnconfigure(0, weight=1)
+        labelframe.columnconfigure(1, weight=1)
 
-        notebook = DataVisualNotebook(frame)
+        notebook = DataVisualNotebook(labelframe)
         notebook.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
 
         tabname = '1'
         notebook.create_new_empty_tab(tabname=tabname)
         notebook.fill_data_visual_widgets(tabname=tabname)
 
-        Label(frame, 0, 0, 'Numbers of datasets', self.font)
+        Label(labelframe, 0, 0, 'Numbers of datasets', self.font)
         intvar = tk.IntVar(value=1)
         Spinbox(
-            frame, row=0, col=1, from_=1, to=20, width=3,
+            labelframe, row=0, col=1, from_=1, to=20, width=3,
             intvar=intvar, command=lambda: self.change_number_of_dataset()
         )
         self.config_widgets['data_visual'] = notebook
@@ -194,105 +193,105 @@ class App:
 
     def create_frame_for_figure_visual(self):
         widgets = self.config_widgets['figure_visual']
-        frame = LabelFrame(self.root, 2, 1, 'Figure Visualization', self.font)
+        labelframe = LabelFrame(self.root, 2, 1, 'Figure Visualization', self.font)
 
         strvar = tk.StringVar()
-        Label(frame, 0, 0, 'Title: ', self.font)
-        Entry(frame, 0, 1, self.font, textvariable=strvar)
+        Label(labelframe, 0, 0, 'Title: ', self.font)
+        Entry(labelframe, 0, 1, self.font, textvariable=strvar)
         widgets['title'] = strvar
 
         doublevar = tk.DoubleVar(value=4.8)
-        Label(frame, 1, 0, 'Width: ', self.font)
-        Entry(frame, 1, 1, self.font, textvariable=doublevar)
+        Label(labelframe, 1, 0, 'Width: ', self.font)
+        Entry(labelframe, 1, 1, self.font, textvariable=doublevar)
         widgets['width'] = doublevar
 
         doublevar = tk.DoubleVar(value=3.0)
-        Label(frame, 1, 2, 'Height: ', self.font)
-        Entry(frame, 1, 3, self.font, textvariable=doublevar)
+        Label(labelframe, 1, 2, 'Height: ', self.font)
+        Entry(labelframe, 1, 3, self.font, textvariable=doublevar)
         widgets['height'] = doublevar
 
         intvar = tk.IntVar()
         intvar.set(True)
         widgets['grid_visible'] = intvar
-        Checkbutton(frame, 2, 0, 'Show grid', self.font, None, intvar)
+        Checkbutton(labelframe, 2, 0, 'Show grid', self.font, None, intvar)
 
         intvar = tk.IntVar()
         intvar.set(True)
         widgets['legend_visible'] = intvar
-        Checkbutton(frame, 3, 0, 'Show legend', self.font, None, intvar)
+        Checkbutton(labelframe, 3, 0, 'Show legend', self.font, None, intvar)
 
     def create_frame_for_axis_visual_x(self):
         widgets = self.config_widgets['axis_x']
-        frame = LabelFrame(self.root, 1, 2, 'X-Axis Visualization', self.font)
+        labelframe = LabelFrame(self.root, 1, 2, 'X-Axis Visualization', self.font)
 
         strvar = tk.StringVar()
-        Label(frame, 0, 0, 'Label: ', self.font)
-        Entry(frame, 0, 1, self.font, textvariable=strvar)
+        Label(labelframe, 0, 0, 'Label: ', self.font)
+        Entry(labelframe, 0, 1, self.font, textvariable=strvar)
         widgets['label'] = strvar
 
-        Label(frame, 1, 0, 'Scale: ', self.font)
+        Label(labelframe, 1, 0, 'Scale: ', self.font)
         values = ['linear', 'log']
-        combobox = Combobox(frame, 1, 1, values=values, font=self.font)
+        combobox = Combobox(labelframe, 1, 1, values=values, font=self.font)
         widgets['scale'] = combobox
 
-        subframe = Frame(frame, 2, 0, columnspan=2)
+        frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
         widgets['assign_range'] = intvar
-        Checkbutton(subframe, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
+        Checkbutton(frame, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
 
         doublevar = tk.DoubleVar()
-        Label(subframe, 1, 0, 'Min: ', self.font)
-        entry = Entry(subframe, 1, 1, self.font, textvariable=doublevar)
+        Label(frame, 1, 0, 'Min: ', self.font)
+        entry = Entry(frame, 1, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
         widgets['min_var'] = doublevar
         widgets['min_entry'] = entry
 
         doublevar = tk.DoubleVar()
-        Label(subframe, 2, 0, 'Max: ', self.font)
-        entry = Entry(subframe, 2, 1, self.font, textvariable=doublevar)
+        Label(frame, 2, 0, 'Max: ', self.font)
+        entry = Entry(frame, 2, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
         widgets['max_var'] = doublevar
         widgets['max_entry'] = entry
 
     def create_frame_for_axis_visual_y(self):
         widgets = self.config_widgets['axis_y']
-        frame = LabelFrame(self.root, 2, 2, 'Y-Axis Visualization', self.font)
+        labelframe = LabelFrame(self.root, 2, 2, 'Y-Axis Visualization', self.font)
 
         strvar = tk.StringVar()
-        Label(frame, 0, 0, 'Label: ', self.font)
-        Entry(frame, 0, 1, self.font, textvariable=strvar)
+        Label(labelframe, 0, 0, 'Label: ', self.font)
+        Entry(labelframe, 0, 1, self.font, textvariable=strvar)
         widgets['label'] = strvar
 
-        Label(frame, 1, 0, 'Scale: ', self.font)
+        Label(labelframe, 1, 0, 'Scale: ', self.font)
         values = ['linear', 'log']
-        combobox = Combobox(frame, 1, 1, values=values, font=self.font)
+        combobox = Combobox(labelframe, 1, 1, values=values, font=self.font)
         widgets['scale'] = combobox
 
-        subframe = Frame(frame, 2, 0, columnspan=2)
+        frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
         widgets['assign_range'] = intvar
-        Checkbutton(subframe, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
+        Checkbutton(frame, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
 
         doublevar = tk.DoubleVar()
-        Label(subframe, 1, 0, 'Min: ', self.font)
-        entry = Entry(subframe, 1, 1, self.font, textvariable=doublevar)
+        Label(frame, 1, 0, 'Min: ', self.font)
+        entry = Entry(frame, 1, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
         widgets['min_var'] = doublevar
         widgets['min_entry'] = entry
 
         doublevar = tk.DoubleVar()
-        Label(subframe, 2, 0, 'Max: ', self.font)
-        entry = Entry(subframe, 2, 1, self.font, textvariable=doublevar)
+        Label(frame, 2, 0, 'Max: ', self.font)
+        entry = Entry(frame, 2, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
         widgets['max_var'] = doublevar
         widgets['max_entry'] = entry
 
     def create_frame_for_plot(self):
-        frame = LabelFrame(self.root, 3, 1, 'Plot Actions', self.font, colspan=2)
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=1)
-        Button(frame, 0, 0, 'Plot', self.font, lambda: self.plot())
-        Button(frame, 0, 1, 'Copy', self.font, lambda: self.copy())
+        labelframe = LabelFrame(self.root, 3, 1, 'Plot Actions', self.font, colspan=2)
+        labelframe.columnconfigure(0, weight=1)
+        labelframe.columnconfigure(1, weight=1)
+        Button(labelframe, 0, 0, 'Plot', self.font, lambda: self.plot())
+        Button(labelframe, 0, 1, 'Copy', self.font, lambda: self.copy())
 
     # actions
     def update_csv_info(self, csv_info: pd.DataFrame):
@@ -578,7 +577,3 @@ class App:
 
     def close(self):
         self.root.destroy()
-
-
-if __name__ == '__main__':
-    App()
