@@ -11,8 +11,6 @@ from typing import Dict, Sequence, TypedDict, Union
 import pandas as pd
 
 import logic.app_logic as app_logic
-from components.components import *
-
 from components.Button import Button
 from components.Checkbutton import Checkbutton
 from components.Combobox import Combobox
@@ -20,7 +18,9 @@ from components.Entry import Entry
 from components.Frame import Frame
 from components.Label import Label
 from components.LabelFrame import LabelFrame
+from components.Notebook import Notebook
 from components.Spinbox import Spinbox
+from components.Treeview import Treeview
 
 
 class AxisVisualWidgets(TypedDict):

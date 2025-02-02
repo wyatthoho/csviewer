@@ -1,30 +1,32 @@
 import tkinter as tk
 from tkinter import ttk
-from typing import Sequence, Union, Dict
+from typing import Sequence, Union
 
 import pandas as pd
 
 
+COLUMN_WIDTH_RATIO = 9
+
+
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
+
+
 class Treeview(ttk.Treeview):
-    COLUMN_WIDTH_RATIO = 9
+    def __init__(self, master: master, columns: Sequence[str], height: int):
 
-    def __init__(
-            self, frame: Union[tk.Frame, ttk.Frame],
-            columns: Sequence[str], height: int):
-
-        scrollbar_ver = tk.Scrollbar(frame)
-        scrollbar_hor = tk.Scrollbar(frame, orient='horizontal')
-        scrollbar_ver.pack(side=tk.RIGHT, fill=tk.Y)
-        scrollbar_hor.pack(side=tk.BOTTOM, fill=tk.X)
+        scrollbar_x = tk.Scrollbar(master, orient=tk.HORIZONTAL)
+        scrollbar_y = tk.Scrollbar(master, orient=tk.VERTICAL)
+        scrollbar_x.pack(side=tk.BOTTOM, fill=tk.X)
+        scrollbar_y.pack(side=tk.RIGHT, fill=tk.Y)
         super().__init__(
-            frame,
-            yscrollcommand=scrollbar_ver.set,
-            xscrollcommand=scrollbar_hor.set,
+            master,
+            xscrollcommand=scrollbar_x.set,
+            yscrollcommand=scrollbar_y.set,
             height=height
         )
         self.pack(fill='both')
-        scrollbar_ver.config(command=self.yview)
-        scrollbar_hor.config(command=self.xview)
+        scrollbar_y.config(command=self.yview)
+        scrollbar_x.config(command=self.xview)
         self['columns'] = columns
         self['show'] = 'headings'
         for column in columns:
@@ -63,30 +65,10 @@ class Treeview(ttk.Treeview):
                 lengths[column].append(len(str(value)))
 
         for column in self['columns']:
-            width = Treeview.COLUMN_WIDTH_RATIO * max(lengths[column])
+            width = COLUMN_WIDTH_RATIO * max(lengths[column])
             self.column(
                 column,
                 anchor=tk.W,
                 width=width,
                 stretch=0,
             )
-
-
-class Notebook(ttk.Notebook):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame]):
-        super().__init__(frame)
-        self.tabs_: Dict[str, ttk.Frame] = {}
-
-    def create_new_empty_tab(self, tabname: str):
-        self.tabs_[tabname] = tab = ttk.Frame(self)
-        self.add(tab, text=tabname)
-
-    def remove_tab(self, tabname: str):
-        tab_idx = list(self.tabs_.keys()).index(tabname)
-        self.forget(tab_idx)
-        self.tabs_.pop(tabname)
-
-    def remove_all_tabs(self):
-        self.tabs_ = {}
-        while self.index('end') > 0:
-            self.forget(0)
