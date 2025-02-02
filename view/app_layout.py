@@ -20,6 +20,7 @@ from components.Entry import Entry
 from components.Frame import Frame
 from components.Label import Label
 from components.LabelFrame import LabelFrame
+from components.Spinbox import Spinbox
 
 
 class AxisVisualWidgets(TypedDict):
@@ -158,7 +159,7 @@ class ConfigWidgets(TypedDict):
     csv_info: CsvInfoTreeview
     data_pool: DataPoolNotebook
     data_visual: DataVisualNotebook
-    dataset_number: Spinbox
+    dataset_number: tk.IntVar
     figure_visual: FigureVisualWidgets
     axis_x: AxisVisualWidgets
     axis_y: AxisVisualWidgets
@@ -300,13 +301,13 @@ class App:
         notebook.fill_data_visual_widgets(tabname=tabname)
 
         Label(frame, 0, 0, 'Numbers of datasets', self.font)
-        spinbox = Spinbox(frame, from_=1, to=20, width=3)
-        spinbox.grid(row=0, column=1, **App.PADS)
-        spinbox.config(
-            command=lambda: self.change_number_of_dataset()
+        intvar = tk.IntVar(value=1)
+        Spinbox(
+            frame, row=0, col=1, from_=1, to=20, width=3,
+            intvar=intvar, command=lambda: self.change_number_of_dataset()
         )
         self.config_widgets['data_visual'] = notebook
-        self.config_widgets['dataset_number'] = spinbox
+        self.config_widgets['dataset_number'] = intvar
 
     def create_frame_for_figure_visual(self):
         widgets = self.config_widgets['figure_visual']
@@ -423,7 +424,7 @@ class App:
         notebook_data_visual.remove_all_tabs()
         notebook_data_visual.create_new_empty_tab('1')
         notebook_data_visual.fill_data_visual_widgets('1')
-        spinbox_dataset.stringvar.set(1)
+        spinbox_dataset.set(1)
 
     def open_csvs(self):
         csv_paths = filedialog.askopenfilenames(
@@ -464,7 +465,7 @@ class App:
             notebook_data_visual.create_new_empty_tab('1')
             notebook_data_visual.fill_data_visual_widgets('1')
             notebook_data_visual.initialize_widgets('1', self.data_pool)
-            spinbox_dataset.stringvar.set(1)
+            spinbox_dataset.set(1)
 
     def clear_data_pool(self):
         self.data_pool: DataPool = {}
@@ -486,10 +487,10 @@ class App:
         try:
             self.check_data_pool()
         except EmptyDataPoolError as e:
-            self.config_widgets['dataset_number'].stringvar.set(1)
+            self.config_widgets['dataset_number'].set(1)
             tk.messagebox.showerror(title='Error', message=e.message)
         else:
-            tgt_num = int(self.config_widgets['dataset_number'].get())
+            tgt_num = self.config_widgets['dataset_number'].get()
             self.modify_data_visual_tabs(tgt_num)
 
     def active_deactive_range(self):
