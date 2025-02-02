@@ -3,7 +3,6 @@ import json
 import os
 import sys
 import tkinter as tk
-from pathlib import Path
 from tkinter import font
 from tkinter import filedialog
 from tkinter import ttk
@@ -13,6 +12,12 @@ import pandas as pd
 
 import logic.app_logic as app_logic
 from components.components import *
+
+from components.Button import Button
+from components.Checkbutton import Checkbutton
+from components.Frame import Frame
+from components.Label import Label
+from components.LabelFrame import LabelFrame
 
 
 class AxisVisualWidgets(TypedDict):
@@ -183,6 +188,8 @@ NAME = 'CSViewer'
 FAVICON = 'icon\\favicon.ico'
 STATE = 'zoomed'
 ROOT_MINSIZE = {'width': 400, 'height': 400}
+FONT_FAMILY = 'Helvetica'
+FONT_SIZE = 10
 
 
 class App:
@@ -198,8 +205,7 @@ class App:
     # typesetting
     def __init__(self):
         self.root = self.initialize_main_window()
-        self.font_label = font.Font(family='Helvetica', size=10)
-        self.font_button = font.Font(family='Helvetica', size=10)
+        self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
         self.config_widgets = self.initialize_configuration_widgets()
         self.create_menubar()
         self.create_frame_for_csv_info()
@@ -255,36 +261,25 @@ class App:
         self.root.configure(menu=menubar)
 
     def create_frame_for_csv_info(self):
-        frame = tk.LabelFrame(self.root, text='Choose CSV files')
-        frame.grid(row=0, column=0, columnspan=3, sticky=tk.NSEW, **App.PADS)
+        frame = LabelFrame(self.root, 0, 0, 'Choose CSV files', self.font, colspan=3)
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
-        frame['font'] = self.font_label
+        frame['font'] = self.font
 
-        subframe = tk.Frame(frame)
-        subframe.grid(row=0, column=0, sticky=tk.NSEW)
+        subframe = Frame(frame, 0, 0, True)
         columns = ('CSV ID', 'CSV Path')
         treeview = CsvInfoTreeview(subframe, columns, App.HIGHT_FILENAMES)
 
-        subframe = tk.Frame(frame)
-        subframe.grid(row=0, column=1)
-        button = tk.Button(
-            subframe,
-            text='Choose',
-            command=lambda: self.open_csvs(),
-            width=6
-        )
-        button.grid(row=0, column=0, **App.PADS)
-        button['font'] = self.font_button
+        subframe = Frame(frame, 0, 1, sticky=False)
+        Button(subframe, 0, 0, 'Choose', self.font, lambda: self.open_csvs())
         self.config_widgets['csv_info'] = treeview
 
     def create_frame_for_data_pool(self):
-        frame = tk.LabelFrame(self.root, text='Review CSV data')
-        frame.grid(row=1, column=0, rowspan=3, sticky=tk.NSEW, **App.PADS)
+        frame = LabelFrame(self.root, 1, 0, 'Review CSV data', self.font, rowspan=3)
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
-        frame['font'] = self.font_label
+        frame['font'] = self.font
 
         notebook = DataPoolNotebook(frame)
         notebook.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW)
@@ -294,28 +289,12 @@ class App:
         tab = notebook.tabs_[tabname]
         Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
 
-        button = tk.Button(
-            frame,
-            text='Import',
-            command=lambda: self.import_csv(),
-            width=6
-        )
-        button.grid(row=1, column=0, **App.PADS)
-        button['font'] = self.font_button
-
-        button = tk.Button(
-            frame,
-            text='Clear',
-            command=lambda: self.clear_data_pool(),
-            width=6
-        )
-        button.grid(row=1, column=1, **App.PADS)
-        button['font'] = self.font_button
+        Button(frame, 1, 0, 'Import', self.font, lambda: self.import_csv())
+        Button(frame, 1, 1, 'Clear', self.font, lambda: self.clear_data_pool())
         self.config_widgets['data_pool'] = notebook
 
     def create_frame_for_data_visual(self):
-        frame = tk.LabelFrame(self.root, text='Data Visualization')
-        frame.grid(row=1, column=1, sticky=tk.NSEW, **App.PADS)
+        frame = LabelFrame(self.root, 1, 1, 'Data Visualization', self.font)
         frame.rowconfigure(1, weight=1)
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
@@ -327,9 +306,7 @@ class App:
         notebook.create_new_empty_tab(tabname=tabname)
         notebook.fill_data_visual_widgets(tabname=tabname)
 
-        label = tk.Label(frame, text='Numbers of datasets')
-        label.grid(row=0, column=0, **App.PADS)
-
+        Label(frame, 0, 0, 'Numbers of datasets', self.font)
         spinbox = Spinbox(frame, from_=1, to=20, width=3)
         spinbox.grid(row=0, column=1, **App.PADS)
         spinbox.config(
@@ -340,8 +317,7 @@ class App:
 
     def create_frame_for_figure_visual(self):
         widgets = self.config_widgets['figure_visual']
-        frame = tk.LabelFrame(self.root, text='Figure Visualization')
-        frame.grid(row=2, column=1, sticky=tk.NSEW, **App.PADS)
+        frame = LabelFrame(self.root, 2, 1, 'Figure Visualization', self.font)
 
         label_entry = LabelEntry(frame, 'Title: ', 28, tk.StringVar())
         label_entry.label.grid(row=0, column=0, sticky=tk.W, **App.PADS)
@@ -362,68 +338,35 @@ class App:
         widgets['height'] = label_entry
 
         intvar = tk.IntVar()
-        checkbutton = tk.Checkbutton(
-            frame,
-            text='Show grid',
-            variable=intvar
-        )
-        checkbutton.grid(
-            row=2, column=0, columnspan=4,
-            sticky=tk.W, **App.PADS
-        )
         intvar.set(True)
         widgets['grid_visible'] = intvar
+        Checkbutton(frame, 2, 0, 'Show grid', self.font, None, intvar)
 
         intvar = tk.IntVar()
-        checkbutton = tk.Checkbutton(
-            frame,
-            text='Show legend',
-            variable=intvar
-        )
-        checkbutton.grid(
-            row=3, column=0, columnspan=4,
-            sticky=tk.W, **App.PADS
-        )
         intvar.set(True)
         widgets['legend_visible'] = intvar
+        Checkbutton(frame, 3, 0, 'Show legend', self.font, None, intvar)
 
     def create_frame_for_axis_visual_x(self):
         widgets = self.config_widgets['axis_x']
-        frame = tk.LabelFrame(self.root, text='X-Axis Visualization')
-        frame.grid(row=1, column=2, sticky=tk.NSEW, **App.PADS)
+        frame = LabelFrame(self.root, 1, 2, 'X-Axis Visualization', self.font)
 
         label_entry = LabelEntry(frame, 'Label: ', 28, tk.StringVar())
         label_entry.label.grid(row=0, column=0, sticky=tk.W, **App.PADS)
         label_entry.entry.grid(row=0, column=1, sticky=tk.W, **App.PADS)
         widgets['label'] = label_entry
 
-        label = tk.Label(frame, text='Scale: ')
+        Label(frame, 1, 0, 'Scale: ', self.font)
         combobox = ttk.Combobox(frame, width=App.WIDTH_COMBOBOX)
-        label.grid(row=1, column=0, sticky=tk.W, **App.PADS)
         combobox.grid(row=1, column=1, sticky=tk.W, **App.PADS)
         combobox.config(values=['linear', 'log'], state='readonly')
         combobox.current(0)
         widgets['scale'] = combobox
 
-        subframe = tk.Frame(frame)
-        subframe.grid(
-            row=2, column=0, columnspan=2,
-            sticky=tk.NSEW, **App.PADS
-        )
-
+        subframe = Frame(frame, 2, 0, columnspan=2)
         intvar = tk.IntVar()
-        checkbutton = tk.Checkbutton(
-            subframe,
-            text='Assign range',
-            variable=intvar,
-            command=self.active_deactive_range
-        )
-        checkbutton.grid(
-            row=0, column=0,
-            columnspan=2,
-            sticky=tk.W, **App.PADS
-        )
         widgets['assign_range'] = intvar
+        Checkbutton(subframe, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
 
         label_entry = LabelEntry(subframe, 'Min: ', 8, tk.DoubleVar())
         label_entry.label.grid(row=1, column=0, sticky=tk.W, **App.PADS)
@@ -439,41 +382,24 @@ class App:
 
     def create_frame_for_axis_visual_y(self):
         widgets = self.config_widgets['axis_y']
-        frame = tk.LabelFrame(self.root, text='Y-Axis Visualization')
-        frame.grid(row=2, column=2, sticky=tk.NSEW, **App.PADS)
+        frame = LabelFrame(self.root, 2, 2, 'Y-Axis Visualization', self.font)
 
         label_entry = LabelEntry(frame, 'Label: ', 28, tk.StringVar())
         label_entry.label.grid(row=0, column=0, sticky=tk.W, **App.PADS)
         label_entry.entry.grid(row=0, column=1, sticky=tk.W, **App.PADS)
         widgets['label'] = label_entry
 
-        label = tk.Label(frame, text='Scale: ')
+        Label(frame, 1, 0, 'Scale: ', self.font)
         combobox = ttk.Combobox(frame, width=App.WIDTH_COMBOBOX)
-        label.grid(row=1, column=0, sticky=tk.W, **App.PADS)
         combobox.grid(row=1, column=1, sticky=tk.W, **App.PADS)
         combobox.config(values=['linear', 'log'], state='readonly')
         combobox.current(0)
         widgets['scale'] = combobox
 
-        subframe = tk.Frame(frame)
-        subframe.grid(
-            row=2, column=0, columnspan=2,
-            sticky=tk.NSEW, **App.PADS
-        )
-
+        subframe = Frame(frame, 2, 0, columnspan=2)
         intvar = tk.IntVar()
-        checkbutton = tk.Checkbutton(
-            subframe,
-            text='Assign range',
-            variable=intvar,
-            command=self.active_deactive_range
-        )
-        checkbutton.grid(
-            row=0, column=0,
-            columnspan=2,
-            sticky=tk.W, **App.PADS
-        )
         widgets['assign_range'] = intvar
+        Checkbutton(subframe, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
 
         label_entry = LabelEntry(subframe, 'Min: ', 8, tk.DoubleVar())
         label_entry.label.grid(row=1, column=0, sticky=tk.W, **App.PADS)
@@ -488,28 +414,11 @@ class App:
         widgets['max'] = label_entry
 
     def create_frame_for_plot(self):
-        frame = tk.LabelFrame(self.root, text='Plot Actions')
-        frame.grid(row=3, column=1, columnspan=2, sticky=tk.NSEW, **App.PADS)
+        frame = LabelFrame(self.root, 3, 1, 'Plot Actions', self.font, colspan=2)
         frame.columnconfigure(0, weight=1)
         frame.columnconfigure(1, weight=1)
-
-        button = tk.Button(
-            frame,
-            text='Plot',
-            command=lambda: self.plot(),
-            width=6
-        )
-        button.grid(row=0, column=0, **App.PADS,)
-        button['font'] = self.font_button
-
-        button = tk.Button(
-            frame,
-            text='Copy',
-            command=lambda: self.copy(),
-            width=6
-        )
-        button.grid(row=0, column=1, **App.PADS)
-        button['font'] = self.font_button
+        Button(frame, 0, 0, 'Plot', self.font, lambda: self.plot())
+        Button(frame, 0, 1, 'Copy', self.font, lambda: self.copy())
 
     # actions
     def update_csv_info(self, csv_info: pd.DataFrame):
