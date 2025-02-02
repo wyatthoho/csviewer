@@ -15,6 +15,7 @@ from components.components import *
 
 from components.Button import Button
 from components.Checkbutton import Checkbutton
+from components.Combobox import Combobox
 from components.Entry import Entry
 from components.Frame import Frame
 from components.Label import Label
@@ -68,21 +69,15 @@ class DataVisualNotebook(Notebook):
         widgets: DataVisualWidgets = {}
 
         Label(tab, 0, 0, 'CSV ID: ', 'TkDefaultFont')
-        combobox = ttk.Combobox(tab, width=App.WIDTH_COMBOBOX)
-        combobox.grid(row=0, column=1, sticky=tk.W, **App.PADS)
-        combobox.config(state='readonly')
+        combobox = Combobox(tab, 0, 1)
         widgets['csv_idx'] = combobox
 
         Label(tab, 1, 0, 'Field X: ', 'TkDefaultFont')
-        combobox = ttk.Combobox(tab, width=App.WIDTH_COMBOBOX)
-        combobox.grid(row=1, column=1, sticky=tk.W, **App.PADS)
-        combobox.config(state='readonly')
+        combobox = Combobox(tab, 1, 1)
         widgets['field_x'] = combobox
 
         Label(tab, 2, 0, 'Field Y: ', 'TkDefaultFont')
-        combobox = ttk.Combobox(tab, width=App.WIDTH_COMBOBOX)
-        combobox.grid(row=2, column=1, sticky=tk.W, **App.PADS)
-        combobox.config(state='readonly')
+        combobox = Combobox(tab, 2, 1)
         widgets['field_y'] = combobox
 
         strvar = tk.StringVar()
@@ -352,10 +347,8 @@ class App:
         widgets['label'] = strvar
 
         Label(frame, 1, 0, 'Scale: ', self.font)
-        combobox = ttk.Combobox(frame, width=App.WIDTH_COMBOBOX)
-        combobox.grid(row=1, column=1, sticky=tk.W, **App.PADS)
-        combobox.config(values=['linear', 'log'], state='readonly')
-        combobox.current(0)
+        values = ['linear', 'log']
+        combobox = Combobox(frame, 1, 1, values=values, font=self.font)
         widgets['scale'] = combobox
 
         subframe = Frame(frame, 2, 0, columnspan=2)
@@ -387,10 +380,8 @@ class App:
         widgets['label'] = strvar
 
         Label(frame, 1, 0, 'Scale: ', self.font)
-        combobox = ttk.Combobox(frame, width=App.WIDTH_COMBOBOX)
-        combobox.grid(row=1, column=1, sticky=tk.W, **App.PADS)
-        combobox.config(values=['linear', 'log'], state='readonly')
-        combobox.current(0)
+        values = ['linear', 'log']
+        combobox = Combobox(frame, 1, 1, values=values, font=self.font)
         widgets['scale'] = combobox
 
         subframe = Frame(frame, 2, 0, columnspan=2)
