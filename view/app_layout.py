@@ -1,4 +1,3 @@
-import csv
 import json
 import os
 import sys
@@ -6,7 +5,7 @@ import tkinter as tk
 from tkinter import font
 from tkinter import filedialog
 from tkinter import ttk
-from typing import Dict, Sequence, TypedDict, Union
+from typing import Dict, Sequence, TypedDict
 
 import pandas as pd
 
@@ -14,11 +13,13 @@ import logic.app_logic as app_logic
 from components.Button import Button
 from components.Checkbutton import Checkbutton
 from components.Combobox import Combobox
+from components.CsvInfoTreeview import CsvInfoTreeview
+from components.DataPoolNotebook import DataPoolNotebook
+from components.DataVisualNotebook import DataVisualNotebook
 from components.Entry import Entry
 from components.Frame import Frame
 from components.Label import Label
 from components.LabelFrame import LabelFrame
-from components.Notebook import Notebook
 from components.Spinbox import Spinbox
 from components.Treeview import Treeview
 
@@ -39,120 +40,6 @@ class FigureVisualWidgets(TypedDict):
     height: tk.DoubleVar
     grid_visible: tk.IntVar
     legend_visible: tk.IntVar
-
-
-class DataVisualWidgets(TypedDict):
-    csv_idx: ttk.Combobox
-    field_x: ttk.Combobox
-    field_y: ttk.Combobox
-    label: tk.StringVar
-
-
-TabName = str
-
-
-class DataVisualTab(ttk.Frame):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.widgets: DataVisualWidgets = {}
-
-
-DataPool = Dict[TabName, pd.DataFrame]
-
-
-class DataVisualNotebook(Notebook):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame]):
-        super().__init__(frame)
-        self.tabs_: Dict[TabName, DataVisualTab] = {}
-
-    def fill_data_visual_widgets(self, tabname: TabName):
-        tab = self.tabs_[tabname]
-        widgets: DataVisualWidgets = {}
-
-        Label(tab, 0, 0, 'CSV ID: ', 'TkDefaultFont')
-        combobox = Combobox(tab, 0, 1)
-        widgets['csv_idx'] = combobox
-
-        Label(tab, 1, 0, 'Field X: ', 'TkDefaultFont')
-        combobox = Combobox(tab, 1, 1)
-        widgets['field_x'] = combobox
-
-        Label(tab, 2, 0, 'Field Y: ', 'TkDefaultFont')
-        combobox = Combobox(tab, 2, 1)
-        widgets['field_y'] = combobox
-
-        strvar = tk.StringVar()
-        Label(tab, 3, 0, 'Label: ', 'TkDefaultFont')
-        Entry(tab, 3, 1, 'TkDefaultFont', textvariable=strvar)
-        widgets['label'] = strvar
-
-        tab.widgets = widgets
-
-    def update_fieldname_options(self, tabname: TabName, data_pool: DataPool):
-        widgets = self.tabs_[tabname].widgets
-        csv_idx = widgets['csv_idx'].get()
-        columns = list(data_pool[csv_idx].columns)
-        widgets['field_x'].config(values=columns)
-        widgets['field_x'].current(0)
-        widgets['field_y'].config(values=columns)
-        widgets['field_y'].current(1)
-
-    def initialize_widgets(self, tabname: TabName, data_pool: DataPool):
-        widgets = self.tabs_[tabname].widgets
-        values_csv_idx = list(data_pool.keys())
-        widgets['csv_idx'].config(values=values_csv_idx)
-        widgets['csv_idx'].current(0)
-        self.update_fieldname_options(tabname, data_pool)
-        widgets['csv_idx'].bind(
-            '<<ComboboxSelected>>',
-            lambda event: self.update_fieldname_options(tabname, data_pool)
-        )
-
-
-class DataPoolNotebook(Notebook):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame]):
-        super().__init__(frame)
-
-    def present_data_pool(self, datapool: DataPool):
-        for tabname, dataframe in datapool.items():
-            self.create_new_empty_tab(tabname)
-            tab = self.tabs_[tabname]
-            columns = list(dataframe.columns)
-            treeview = Treeview(tab, columns, App.HIGHT_DATAPOOL)
-            treeview.insert_dataframe(dataframe)
-            treeview.adjust_column_width()
-
-    def clear_content(self):
-        self.remove_all_tabs()
-        tabname = '1'
-        self.create_new_empty_tab(tabname)
-        tab = self.tabs_[tabname]
-        Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
-
-
-class CsvInfoTreeview(Treeview):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame], columns: Sequence[str], height: int):
-        super().__init__(frame, columns, height)
-
-    def collect_data_pool(self) -> DataPool:
-        data_pool: DataPool = {}
-        csv_info = self.get_dataframe()
-        for row in csv_info.itertuples():
-            csv_idx, csv_path = row[1:]
-            tabname = str(csv_idx)
-            if self.check_header(csv_path):
-                csv_dataframe = pd.read_csv(csv_path)
-            else:
-                csv_dataframe = pd.read_csv(csv_path, header=None)
-                columns = [f'column-{col}' for col in csv_dataframe.columns]
-                csv_dataframe.columns = columns
-            data_pool[tabname] = csv_dataframe
-        return data_pool
-
-    def check_header(self, csv_path: str):
-        with open(csv_path, 'r') as f:
-            has_header = csv.Sniffer().has_header(f.read())
-            return has_header
 
 
 class ConfigWidgets(TypedDict):
@@ -186,17 +73,13 @@ STATE = 'zoomed'
 ROOT_MINSIZE = {'width': 400, 'height': 400}
 FONT_FAMILY = 'Helvetica'
 FONT_SIZE = 10
+TabName = str
+DataPool = Dict[TabName, pd.DataFrame]
 
 
 class App:
-    PADS = {
-        'padx': 5, 'pady': 5,
-        'ipadx': 1, 'ipady': 1,
-    }
     HIGHT_FILENAMES = 5
     HIGHT_DATAPOOL = 28
-    WIDTH_COMBOBOX = 12
-    WIDTH_ENTRY = 14
 
     # typesetting
     def __init__(self):
