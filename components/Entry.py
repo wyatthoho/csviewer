@@ -5,7 +5,7 @@ from typing import Union
 
 PADS = {'padx': 4, 'pady': 4}
 IPADS = {'ipadx': 1, 'ipady': 1}
-ENTRY_WIDTH = 30
+ENTRY_WIDTH = 14
 STICKY = tk.NSEW
 
 type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]

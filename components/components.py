@@ -98,14 +98,3 @@ class Spinbox(tk.Spinbox):
         self.stringvar = tk.StringVar()
         self.stringvar.set(1)
         self.config(textvariable=self.stringvar, state='readonly')
-
-
-class LabelEntry(tk.Entry):
-    def __init__(
-        self, frame: Union[tk.Frame, ttk.Frame],
-        text: str, width: int,
-        variable: Union[tk.DoubleVar, tk.StringVar, tk.IntVar]
-    ):
-        self.variable = variable
-        self.label = tk.Label(frame, text=text)
-        self.entry = tk.Entry(frame, width=width, textvariable=variable)

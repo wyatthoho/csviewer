@@ -87,6 +87,7 @@ DataPool = Sequence[pd.DataFrame]
 
 
 def plot_all_csv(config: AppConfig, data_pool: DataPool):
+    figsize = config['figure']['size']
     scale_x = config['axis_x']['scale']
     scale_y = config['axis_y']['scale']
     fieldnames = config['data']['fieldnames']
@@ -99,8 +100,8 @@ def plot_all_csv(config: AppConfig, data_pool: DataPool):
     grid_visible = config['figure'].get('grid_visible', '')
     legend_visible = config['figure']['legend_visible']
 
-    fig, ax = plt_utils.initialize_figure(config, scale_x, scale_y)
-    plot_method = plt_utils.get_plot_method(ax)
+    fig, ax = plt_utils.initialize_figure(figsize)
+    plot_method = plt_utils.get_plot_method(ax, scale_x, scale_y)
     for df, fieldname, label in zip(data_pool, fieldnames, labels):
         values_x = df[fieldname['x']]
         values_y = df[fieldname['y']]
