@@ -322,6 +322,9 @@ def save_as(config_widgets: ConfigWidgets):
     file.close()
 
 
+def close(root: tk.Tk): root.destroy()
+
+
 def get_initial_configuration() -> AppConfig:
     config_ini = {
         'csvs': {
