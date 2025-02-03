@@ -1,6 +1,4 @@
 import json
-import os
-import sys
 import tkinter as tk
 from tkinter import font
 from tkinter import filedialog
@@ -9,7 +7,7 @@ from typing import Dict, Sequence, TypedDict
 
 import pandas as pd
 
-import logic.app_logic as app_logic
+import logic.app_logic as logic
 from components.Button import Button
 from components.Checkbutton import Checkbutton
 from components.Combobox import Combobox
@@ -294,6 +292,9 @@ class App:
         Button(labelframe, 0, 1, 'Copy', self.font, lambda: self.copy())
 
     # actions
+    def new(self): return logic.new()
+
+
     def update_csv_info(self, csv_info: pd.DataFrame):
         treeview_csv_info = self.config_widgets['csv_info']
         notebook_data_pool = self.config_widgets['data_pool']
@@ -460,21 +461,19 @@ class App:
             tk.messagebox.showerror(title='Error', message=e.message)
         else:
             data_send = self.collect_data_send()
-            self.config_values = app_logic.get_initial_configuration()
+            self.config_values = logic.get_initial_configuration()
             self.collect_configurations_csvs()
             self.collect_configurations_data()
             self.collect_configurations_figure()
             self.collect_configurations_axes()
-            app_logic.plot_all_csv(self.config_values, data_send)
+            logic.plot_all_csv(self.config_values, data_send)
 
     def copy(self):
         try:
-            app_logic.copy_to_clipboard()
-        except app_logic.FigureNumsError as e:
+            logic.copy_to_clipboard()
+        except logic.FigureNumsError as e:
             tk.messagebox.showerror(title='Error', message=e.message)
 
-    def new(self):
-        os.execl(sys.executable, sys.executable, *sys.argv)
 
     def open(self):
         # Read configs
@@ -562,7 +561,7 @@ class App:
     def save(self): ...
 
     def save_as(self):
-        self.config_values = app_logic.get_initial_configuration()
+        self.config_values = logic.get_initial_configuration()
         self.collect_configurations_csvs()
         self.collect_configurations_data()
         self.collect_configurations_figure()

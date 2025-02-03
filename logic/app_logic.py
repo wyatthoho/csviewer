@@ -1,3 +1,5 @@
+import os
+import sys
 from io import BytesIO
 from typing import Dict, Sequence, TypedDict
 
@@ -49,6 +51,10 @@ class Error(Exception):
 class FigureNumsError(Error):
     '''Exception raised when no existing figure to copy.'''
     message = 'No figure to copy.'
+
+
+def new(): os.execl(sys.executable, sys.executable, *sys.argv)
+
 
 
 def get_initial_configuration() -> AppConfig:
