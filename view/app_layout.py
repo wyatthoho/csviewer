@@ -294,6 +294,7 @@ class App:
     # actions
     def new(self): return logic.new()
     def open(self): return logic.open(self.config_widgets)
+    def save(self): return logic.save()
     def save_as(self): return logic.save_as(self.config_widgets)
     def close(self): return logic.close(self.root)
 
@@ -477,5 +478,3 @@ class App:
             logic.copy_to_clipboard()
         except logic.FigureNumsError as e:
             tk.messagebox.showerror(title='Error', message=e.message)
-
-    def save(self): ...

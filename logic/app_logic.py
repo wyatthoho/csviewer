@@ -310,6 +310,9 @@ def open(config_widgets: ConfigWidgets):
         active_deactive_range(config_widgets)
 
 
+def save(): ...
+
+
 def save_as(config_widgets: ConfigWidgets):
     config_values = get_initial_configuration()
     config_values = collect_configurations_csvs(config_widgets, config_values)
