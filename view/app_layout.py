@@ -293,6 +293,7 @@ class App:
 
     # actions
     def new(self): return logic.new()
+    def open(self): return logic.open(self.config_widgets)
 
 
     def update_csv_info(self, csv_info: pd.DataFrame):
@@ -325,11 +326,10 @@ class App:
             raise NoCsvError
 
     def check_data_pool(self):
-        if not hasattr(self, 'data_pool'):
+        treeview_csv_info = self.config_widgets['csv_info']
+        data_pool = treeview_csv_info.collect_data_pool()
+        if data_pool == {}:
             raise EmptyDataPoolError
-        else:
-            if self.data_pool == {}:
-                raise EmptyDataPoolError
 
     def import_csv(self):
         try:
@@ -394,11 +394,13 @@ class App:
             widgets['max_entry'].config(state='disabled')
 
     def collect_data_send(self) -> Sequence[pd.DataFrame]:
+        treeview_csv_info = self.config_widgets['csv_info']
+        data_pool = treeview_csv_info.collect_data_pool()
         data_send = []
         notebook = self.config_widgets['data_visual']
         for tab in notebook.tabs_.values():
             csv_idx = tab.widgets['csv_idx'].get()
-            data_send.append(self.data_pool[csv_idx])
+            data_send.append(data_pool[csv_idx])
         return data_send
 
     def collect_configurations_csvs(self):
@@ -473,90 +475,6 @@ class App:
             logic.copy_to_clipboard()
         except logic.FigureNumsError as e:
             tk.messagebox.showerror(title='Error', message=e.message)
-
-
-    def open(self):
-        # Read configs
-        files = [('JSON File', '*.json'), ]
-        file = filedialog.askopenfile(
-            filetypes=files,
-            defaultextension=files
-        )
-        configs = json.load(file)
-
-        # Update csv info & data pool
-        indices = configs['csvs']['indices']
-        paths = configs['csvs']['paths']
-        csv_info = pd.DataFrame(
-            data=[[idx, path] for idx, path in zip(indices, paths)],
-            columns=['CSV ID', 'CSV Path']
-        )
-        self.update_csv_info(csv_info)
-        self.import_csv()
-
-        # Update data visual
-        dataset_num = len(configs['data']['csv_indices'])
-        notebook = self.config_widgets['data_visual']
-        for idx in range(dataset_num):
-            tgt_num = idx + 1
-            csv_idx = configs['data']['csv_indices'][idx]
-            label = configs['data']['labels'][idx]
-            field_name = configs['data']['fieldnames'][idx]
-            self.modify_data_visual_tabs(tgt_num)
-            tab = notebook.tabs_[str(tgt_num)]
-            tab.widgets['csv_idx'].set(csv_idx)
-            tab.widgets['label'].set(label)
-            tab.widgets['field_x'].set(field_name['x'])
-            tab.widgets['field_y'].set(field_name['y'])
-
-        # Update figure visual
-        title = configs['figure']['title']
-        size = configs['figure']['size']
-        grid_visible = configs['figure']['grid_visible']
-        legend_visible = configs['figure']['legend_visible']
-        widgets = self.config_widgets['figure_visual']
-        widgets['title'].set(title)
-        widgets['width'].set(size[0])
-
-        widgets['height'].set(size[1])
-        widgets['grid_visible'].set(grid_visible)
-        widgets['legend_visible'].set(legend_visible)
-
-        # Update axis visual - x
-        label = configs['axis_x']['label']
-        scale = configs['axis_x']['scale']
-
-        widgets = self.config_widgets['axis_x']
-        widgets['label'].set(label)
-        widgets['scale'].set(scale)
-
-        if configs['axis_x'].get('lim'):
-            lim_min, lim_max = configs['axis_x']['lim']
-            widgets['assign_range'].set(1)
-            self.active_deactive_range()
-            widgets['min_var'].set(lim_min)
-            widgets['max_var'].set(lim_max)
-        else:
-            widgets['assign_range'].set(0)
-            self.active_deactive_range()
-
-        # Update axis visual - y
-        label = configs['axis_y']['label']
-        scale = configs['axis_y']['scale']
-
-        widgets = self.config_widgets['axis_y']
-        widgets['label'].set(label)
-        widgets['scale'].set(scale)
-
-        if configs['axis_y'].get('lim'):
-            lim_min, lim_max = configs['axis_y']['lim']
-            widgets['assign_range'].set(1)
-            self.active_deactive_range()
-            widgets['min_var'].set(lim_min)
-            widgets['max_var'].set(lim_max)
-        else:
-            widgets['assign_range'].set(0)
-            self.active_deactive_range()
 
     def save(self): ...
 
