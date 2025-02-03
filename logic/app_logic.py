@@ -165,6 +165,67 @@ def active_deactive_range(config_widgets: ConfigWidgets):
         widgets['max_entry'].config(state='disabled')
 
 
+def collect_configurations_csvs(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
+    csv_info = config_widgets['csv_info'].get_dataframe()
+    config_values['csvs']['indices'] = csv_info['CSV ID'].to_list()
+    config_values['csvs']['paths'] = csv_info['CSV Path'].to_list()
+    return config_values
+
+
+def collect_configurations_data(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
+    csv_indices = config_values['data']['csv_indices']
+    labels = config_values['data']['labels']
+    fieldnames = config_values['data']['fieldnames']
+    for tab in config_widgets['data_visual'].tabs_.values():
+        csv_indices.append(tab.widgets['csv_idx'].get())
+        labels.append(tab.widgets['label'].get())
+        fieldnames.append({
+            'x': tab.widgets['field_x'].get(),
+            'y': tab.widgets['field_y'].get()
+        })
+    return config_values
+
+
+def collect_configurations_figure(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
+    widgets = config_widgets['figure_visual']
+    values = config_values['figure']
+    values['title'] = widgets['title'].get()
+    values['size'] = [
+        widgets['width'].get(),
+        widgets['height'].get()
+    ]
+    values['grid_visible'] = widgets['grid_visible'].get()
+    values['legend_visible'] = widgets['legend_visible'].get()
+    return config_values
+
+
+def collect_configurations_axes(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
+    widgets = config_widgets['axis_x']
+    values = config_values['axis_x']
+    values['scale'] = widgets['scale'].get()
+    values['label'] = widgets['label'].get()
+    if widgets['assign_range'].get():
+        values['lim'] = [
+            float(widgets['min_var'].get()),
+            float(widgets['max_var'].get())
+        ]
+    else:
+        values['lim'] = None
+
+    widgets = config_widgets['axis_y']
+    values = config_values['axis_y']
+    values['scale'] = widgets['scale'].get()
+    values['label'] = widgets['label'].get()
+    if widgets['assign_range'].get():
+        values['lim'] = [
+            widgets['min_var'].get(),
+            widgets['max_var'].get()
+        ]
+    else:
+        values['lim'] = None
+    return config_values
+
+
 def new(): os.execl(sys.executable, sys.executable, *sys.argv)
 
 
@@ -247,6 +308,18 @@ def open(config_widgets: ConfigWidgets):
     else:
         widgets['assign_range'].set(0)
         active_deactive_range(config_widgets)
+
+
+def save_as(config_widgets: ConfigWidgets):
+    config_values = get_initial_configuration()
+    config_values = collect_configurations_csvs(config_widgets, config_values)
+    config_values = collect_configurations_data(config_widgets, config_values)
+    config_values = collect_configurations_figure(config_widgets, config_values)
+    config_values = collect_configurations_axes(config_widgets, config_values)
+    types = [('JSON File', '*.json'), ]
+    file = filedialog.asksaveasfile(filetypes=types, defaultextension=types)
+    json.dump(config_values, file, indent=4)
+    file.close()
 
 
 def get_initial_configuration() -> AppConfig:

@@ -294,6 +294,7 @@ class App:
     # actions
     def new(self): return logic.new()
     def open(self): return logic.open(self.config_widgets)
+    def save_as(self): return logic.save_as(self.config_widgets)
 
 
     def update_csv_info(self, csv_info: pd.DataFrame):
@@ -478,19 +479,19 @@ class App:
 
     def save(self): ...
 
-    def save_as(self):
-        self.config_values = logic.get_initial_configuration()
-        self.collect_configurations_csvs()
-        self.collect_configurations_data()
-        self.collect_configurations_figure()
-        self.collect_configurations_axes()
-        files = [('JSON File', '*.json'), ]
-        file = filedialog.asksaveasfile(
-            filetypes=files,
-            defaultextension=files
-        )
-        json.dump(self.config_values, file, indent=4)
-        file.close()
+    # def save_as(self):
+    #     self.config_values = logic.get_initial_configuration()
+    #     self.collect_configurations_csvs()
+    #     self.collect_configurations_data()
+    #     self.collect_configurations_figure()
+    #     self.collect_configurations_axes()
+    #     files = [('JSON File', '*.json'), ]
+    #     file = filedialog.asksaveasfile(
+    #         filetypes=files,
+    #         defaultextension=files
+    #     )
+    #     json.dump(self.config_values, file, indent=4)
+    #     file.close()
 
     def close(self):
         self.root.destroy()
