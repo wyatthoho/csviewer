@@ -382,6 +382,39 @@ def open_csvs(config_widgets: ConfigWidgets):
     update_csv_info(config_widgets, csv_info)
 
 
+def collect_data_send(config_widgets: ConfigWidgets) -> Sequence[pd.DataFrame]:
+    treeview_csv_info = config_widgets['csv_info']
+    data_pool = treeview_csv_info.collect_data_pool()
+    data_send = []
+    notebook = config_widgets['data_visual']
+    for tab in notebook.tabs_.values():
+        csv_idx = tab.widgets['csv_idx'].get()
+        data_send.append(data_pool[csv_idx])
+    return data_send
+
+
+def plot(config_widgets: ConfigWidgets):
+    try:
+        check_data_pool(config_widgets)
+    except EmptyDataPoolError as e:
+        tk.messagebox.showerror(title='Error', message=e.message)
+    else:
+        data_send = collect_data_send(config_widgets)
+        config_values = get_initial_configuration()
+        collect_configurations_csvs(config_widgets, config_values)
+        collect_configurations_data(config_widgets, config_values)
+        collect_configurations_figure(config_widgets, config_values)
+        collect_configurations_axes(config_widgets, config_values)
+        plot_all_csv(config_values, data_send)
+
+
+def copy():
+    try:
+        copy_to_clipboard()
+    except FigureNumsError as e:
+        tk.messagebox.showerror(title='Error', message=e.message)
+
+
 def get_initial_configuration() -> AppConfig:
     config_ini = {
         'csvs': {

@@ -1,9 +1,7 @@
-import json
 import tkinter as tk
 from tkinter import font
-from tkinter import filedialog
 from tkinter import ttk
-from typing import Dict, Sequence, TypedDict
+from typing import Dict, TypedDict
 
 import pandas as pd
 
@@ -48,21 +46,6 @@ class ConfigWidgets(TypedDict):
     figure_visual: FigureVisualWidgets
     axis_x: AxisVisualWidgets
     axis_y: AxisVisualWidgets
-
-
-class Error(Exception):
-    '''Base class for exceptions in this module.'''
-    pass
-
-
-class NoCsvError(Error):
-    '''Exception raised when no csv files were chosen.'''
-    message = 'Please choose CSV file first.'
-
-
-class EmptyDataPoolError(Error):
-    '''Exception raised when no csv files were chosen.'''
-    message = 'Please import data first.'
 
 
 NAME = 'CSViewer'
@@ -288,8 +271,8 @@ class App:
         labelframe = LabelFrame(self.root, 3, 1, 'Plot Actions', self.font, colspan=2)
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
-        Button(labelframe, 0, 0, 'Plot', self.font, lambda: self.plot())
-        Button(labelframe, 0, 1, 'Copy', self.font, lambda: self.copy())
+        Button(labelframe, 0, 0, 'Plot', self.font, self.plot)
+        Button(labelframe, 0, 1, 'Copy', self.font, self.copy)
 
     # actions
     def new(self): return logic.new()
@@ -301,103 +284,6 @@ class App:
     def import_csv(self): return logic.import_csv(self.config_widgets)
     def clear_data_pool(self): return logic.clear_data_pool(self.config_widgets)
     def change_number_of_dataset(self): return logic.change_number_of_dataset(self.config_widgets)
-
-    def active_deactive_range(self):
-        widgets = self.config_widgets['axis_x']
-        if widgets['assign_range'].get():
-            widgets['min_entry'].config(state='normal')
-            widgets['max_entry'].config(state='normal')
-        else:
-            widgets['min_entry'].config(state='disabled')
-            widgets['max_entry'].config(state='disabled')
-
-        widgets = self.config_widgets['axis_y']
-        if widgets['assign_range'].get():
-            widgets['min_entry'].config(state='normal')
-            widgets['max_entry'].config(state='normal')
-        else:
-            widgets['min_entry'].config(state='disabled')
-            widgets['max_entry'].config(state='disabled')
-
-    def collect_data_send(self) -> Sequence[pd.DataFrame]:
-        treeview_csv_info = self.config_widgets['csv_info']
-        data_pool = treeview_csv_info.collect_data_pool()
-        data_send = []
-        notebook = self.config_widgets['data_visual']
-        for tab in notebook.tabs_.values():
-            csv_idx = tab.widgets['csv_idx'].get()
-            data_send.append(data_pool[csv_idx])
-        return data_send
-
-    def collect_configurations_csvs(self):
-        csv_info = self.config_widgets['csv_info'].get_dataframe()
-        self.config_values['csvs']['indices'] = csv_info['CSV ID'].to_list()
-        self.config_values['csvs']['paths'] = csv_info['CSV Path'].to_list()
-
-    def collect_configurations_data(self):
-        csv_indices = self.config_values['data']['csv_indices']
-        labels = self.config_values['data']['labels']
-        fieldnames = self.config_values['data']['fieldnames']
-        for tab in self.config_widgets['data_visual'].tabs_.values():
-            csv_indices.append(tab.widgets['csv_idx'].get())
-            labels.append(tab.widgets['label'].get())
-            fieldnames.append({
-                'x': tab.widgets['field_x'].get(),
-                'y': tab.widgets['field_y'].get()
-            })
-
-    def collect_configurations_figure(self):
-        widgets = self.config_widgets['figure_visual']
-        values = self.config_values['figure']
-        values['title'] = widgets['title'].get()
-        values['size'] = [
-            widgets['width'].get(),
-            widgets['height'].get()
-        ]
-        values['grid_visible'] = widgets['grid_visible'].get()
-        values['legend_visible'] = widgets['legend_visible'].get()
-
-    def collect_configurations_axes(self):
-        widgets = self.config_widgets['axis_x']
-        values = self.config_values['axis_x']
-        values['scale'] = widgets['scale'].get()
-        values['label'] = widgets['label'].get()
-        if widgets['assign_range'].get():
-            values['lim'] = [
-                float(widgets['min_var'].get()),
-                float(widgets['max_var'].get())
-            ]
-        else:
-            values['lim'] = None
-
-        widgets = self.config_widgets['axis_y']
-        values = self.config_values['axis_y']
-        values['scale'] = widgets['scale'].get()
-        values['label'] = widgets['label'].get()
-        if widgets['assign_range'].get():
-            values['lim'] = [
-                widgets['min_var'].get(),
-                widgets['max_var'].get()
-            ]
-        else:
-            values['lim'] = None
-
-    def plot(self):
-        try:
-            self.check_data_pool()
-        except EmptyDataPoolError as e:
-            tk.messagebox.showerror(title='Error', message=e.message)
-        else:
-            data_send = self.collect_data_send()
-            self.config_values = logic.get_initial_configuration()
-            self.collect_configurations_csvs()
-            self.collect_configurations_data()
-            self.collect_configurations_figure()
-            self.collect_configurations_axes()
-            logic.plot_all_csv(self.config_values, data_send)
-
-    def copy(self):
-        try:
-            logic.copy_to_clipboard()
-        except logic.FigureNumsError as e:
-            tk.messagebox.showerror(title='Error', message=e.message)
+    def active_deactive_range(self): return logic.active_deactive_range(self.config_widgets)
+    def plot(self): return logic.plot(self.config_widgets)
+    def copy(self): return logic.copy()
