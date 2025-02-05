@@ -163,7 +163,7 @@ class App:
         tab = notebook.tabs_[tabname]
         Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
 
-        Button(labelframe, 1, 0, 'Import', self.font, lambda: self.import_csv())
+        Button(labelframe, 1, 0, 'Import', self.font, self.import_csv)
         Button(labelframe, 1, 1, 'Clear', self.font, lambda: self.clear_data_pool())
         self.config_widgets['data_pool'] = notebook
 
@@ -298,36 +298,13 @@ class App:
     def save_as(self): return logic.save_as(self.config_widgets)
     def close(self): return logic.close(self.root)
     def open_csvs(self): return logic.open_csvs(self.config_widgets)
-
-
-    def check_csv_chosen(self):
-        if not self.config_widgets['csv_info'].get_children():
-            raise NoCsvError
+    def import_csv(self): return logic.import_csv(self.config_widgets)
 
     def check_data_pool(self):
         treeview_csv_info = self.config_widgets['csv_info']
         data_pool = treeview_csv_info.collect_data_pool()
         if data_pool == {}:
             raise EmptyDataPoolError
-
-    def import_csv(self):
-        try:
-            self.check_csv_chosen()
-        except NoCsvError as e:
-            tk.messagebox.showerror(title='Error', message=e.message)
-        else:
-            treeview_csv_info = self.config_widgets['csv_info']
-            notebook_data_pool = self.config_widgets['data_pool']
-            notebook_data_visual = self.config_widgets['data_visual']
-            spinbox_dataset = self.config_widgets['dataset_number']
-            self.data_pool = treeview_csv_info.collect_data_pool()
-            notebook_data_pool.remove_all_tabs()
-            notebook_data_pool.present_data_pool(self.data_pool)
-            notebook_data_visual.remove_all_tabs()
-            notebook_data_visual.create_new_empty_tab('1')
-            notebook_data_visual.fill_data_visual_widgets('1')
-            notebook_data_visual.initialize_widgets('1', self.data_pool)
-            spinbox_dataset.set(1)
 
     def clear_data_pool(self):
         self.data_pool: DataPool = {}
