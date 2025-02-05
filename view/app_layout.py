@@ -16,7 +16,7 @@ from components.Spinbox import Spinbox
 from components.Treeview import Treeview
 from logic.app_logic import AxisVisualWidgets
 from logic.app_logic import FigureVisualWidgets
-from logic.app_logic import ConfigWidgets
+from logic.app_logic import LogicWidgets
 
 
 NAME = 'CSViewer'
@@ -34,7 +34,7 @@ class App:
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
-        self.config_widgets = self.initialize_configuration_widgets()
+        self.logic_widgets = self.initialize_logic_widgets()
         self.create_menubar()
         self.create_frame_for_csv_info()
         self.create_frame_for_data_pool()
@@ -45,8 +45,8 @@ class App:
         self.create_frame_for_plot()
         self.root.mainloop()
 
-    def initialize_configuration_widgets(self) -> ConfigWidgets:
-        config_widgets: ConfigWidgets = {
+    def initialize_logic_widgets(self) -> LogicWidgets:
+        logic_widgets: LogicWidgets = {
             'csv_info': CsvInfoTreeview,
             'data_pool': None,
             'dataset_number': None,
@@ -55,7 +55,7 @@ class App:
             'axis_x': AxisVisualWidgets(),
             'axis_y': AxisVisualWidgets()
         }
-        return config_widgets
+        return logic_widgets
 
     def initialize_main_window(self) -> tk.Tk:
         root = tk.Tk()
@@ -89,7 +89,8 @@ class App:
         self.root.configure(menu=menubar)
 
     def create_frame_for_csv_info(self):
-        labelframe = LabelFrame(self.root, 0, 0, 'Choose CSV files', self.font, colspan=3)
+        labelframe = LabelFrame(
+            self.root, 0, 0, 'Choose CSV files', self.font, colspan=3)
         labelframe.rowconfigure(0, weight=1)
         labelframe.columnconfigure(0, weight=1)
 
@@ -99,10 +100,11 @@ class App:
 
         frame = Frame(labelframe, 0, 1, sticky=False)
         Button(frame, 0, 0, 'Choose', self.font, self.open_csvs)
-        self.config_widgets['csv_info'] = treeview
+        self.logic_widgets['csv_info'] = treeview
 
     def create_frame_for_data_pool(self):
-        labelframe = LabelFrame(self.root, 1, 0, 'Review CSV data', self.font, rowspan=3)
+        labelframe = LabelFrame(
+            self.root, 1, 0, 'Review CSV data', self.font, rowspan=3)
         labelframe.rowconfigure(0, weight=1)
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
@@ -116,11 +118,12 @@ class App:
         Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
 
         Button(labelframe, 1, 0, 'Import', self.font, self.import_csv)
-        Button(labelframe, 1, 1, 'Clear', self.font, lambda: self.clear_data_pool())
-        self.config_widgets['data_pool'] = notebook
+        Button(labelframe, 1, 1, 'Clear', self.font, self.clear_data_pool)
+        self.logic_widgets['data_pool'] = notebook
 
     def create_frame_for_data_visual(self):
-        labelframe = LabelFrame(self.root, 1, 1, 'Data Visualization', self.font)
+        labelframe = LabelFrame(
+            self.root, 1, 1, 'Data Visualization', self.font)
         labelframe.rowconfigure(1, weight=1)
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
@@ -138,12 +141,13 @@ class App:
             labelframe, row=0, col=1, from_=1, to=20, width=3,
             intvar=intvar, command=self.change_number_of_dataset
         )
-        self.config_widgets['data_visual'] = notebook
-        self.config_widgets['dataset_number'] = intvar
+        self.logic_widgets['data_visual'] = notebook
+        self.logic_widgets['dataset_number'] = intvar
 
     def create_frame_for_figure_visual(self):
-        widgets = self.config_widgets['figure_visual']
-        labelframe = LabelFrame(self.root, 2, 1, 'Figure Visualization', self.font)
+        widgets = self.logic_widgets['figure_visual']
+        labelframe = LabelFrame(
+            self.root, 2, 1, 'Figure Visualization', self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Title: ', self.font)
@@ -171,8 +175,9 @@ class App:
         Checkbutton(labelframe, 3, 0, 'Show legend', self.font, None, intvar)
 
     def create_frame_for_axis_visual_x(self):
-        widgets = self.config_widgets['axis_x']
-        labelframe = LabelFrame(self.root, 1, 2, 'X-Axis Visualization', self.font)
+        widgets = self.logic_widgets['axis_x']
+        labelframe = LabelFrame(
+            self.root, 1, 2, 'X-Axis Visualization', self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Label: ', self.font)
@@ -187,7 +192,8 @@ class App:
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
         widgets['assign_range'] = intvar
-        Checkbutton(frame, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
+        Checkbutton(frame, 0, 0, 'Assign range', self.font,
+                    self.active_deactive_range, intvar)
 
         doublevar = tk.DoubleVar()
         Label(frame, 1, 0, 'Min: ', self.font)
@@ -204,8 +210,9 @@ class App:
         widgets['max_entry'] = entry
 
     def create_frame_for_axis_visual_y(self):
-        widgets = self.config_widgets['axis_y']
-        labelframe = LabelFrame(self.root, 2, 2, 'Y-Axis Visualization', self.font)
+        widgets = self.logic_widgets['axis_y']
+        labelframe = LabelFrame(
+            self.root, 2, 2, 'Y-Axis Visualization', self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Label: ', self.font)
@@ -220,7 +227,8 @@ class App:
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
         widgets['assign_range'] = intvar
-        Checkbutton(frame, 0, 0, 'Assign range', self.font, self.active_deactive_range, intvar)
+        Checkbutton(frame, 0, 0, 'Assign range', self.font,
+                    self.active_deactive_range, intvar)
 
         doublevar = tk.DoubleVar()
         Label(frame, 1, 0, 'Min: ', self.font)
@@ -237,7 +245,8 @@ class App:
         widgets['max_entry'] = entry
 
     def create_frame_for_plot(self):
-        labelframe = LabelFrame(self.root, 3, 1, 'Plot Actions', self.font, colspan=2)
+        labelframe = LabelFrame(
+            self.root, 3, 1, 'Plot Actions', self.font, colspan=2)
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
         Button(labelframe, 0, 0, 'Plot', self.font, self.plot)
@@ -245,14 +254,17 @@ class App:
 
     # logic
     def new(self): return logic.new()
-    def open(self): return logic.open(self.config_widgets)
+    def open(self): return logic.open(self.logic_widgets)
     def save(self): return logic.save()
-    def save_as(self): return logic.save_as(self.config_widgets)
+    def save_as(self): return logic.save_as(self.logic_widgets)
     def close(self): return logic.close(self.root)
-    def open_csvs(self): return logic.open_csvs(self.config_widgets)
-    def import_csv(self): return logic.import_csv(self.config_widgets)
-    def clear_data_pool(self): return logic.clear_data_pool(self.config_widgets)
-    def change_number_of_dataset(self): return logic.change_number_of_dataset(self.config_widgets)
-    def active_deactive_range(self): return logic.active_deactive_range(self.config_widgets)
-    def plot(self): return logic.plot(self.config_widgets)
+    def open_csvs(self): return logic.open_csvs(self.logic_widgets)
+    def import_csv(self): return logic.import_csv(self.logic_widgets)
+    def clear_data_pool(self): return logic.clear_data_pool(
+        self.logic_widgets)
+    def change_number_of_dataset(
+        self): return logic.change_number_of_dataset(self.logic_widgets)
+    def active_deactive_range(
+        self): return logic.active_deactive_range(self.logic_widgets)
+    def plot(self): return logic.plot(self.logic_widgets)
     def copy(self): return logic.copy()

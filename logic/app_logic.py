@@ -16,6 +16,7 @@ from components.DataPoolNotebook import DataPoolNotebook
 from components.DataVisualNotebook import DataVisualNotebook
 
 
+# logic widgets
 class AxisVisualWidgets(TypedDict):
     label: tk.StringVar
     scale: ttk.Combobox
@@ -34,7 +35,7 @@ class FigureVisualWidgets(TypedDict):
     legend_visible: tk.IntVar
 
 
-class ConfigWidgets(TypedDict):
+class LogicWidgets(TypedDict):
     csv_info: CsvInfoTreeview
     data_pool: DataPoolNotebook
     data_visual: DataVisualNotebook
@@ -44,6 +45,7 @@ class ConfigWidgets(TypedDict):
     axis_y: AxisVisualWidgets
 
 
+# app configs
 class CsvsConfig(TypedDict):
     indices: Sequence[int]
     paths: Sequence[str]
@@ -77,6 +79,7 @@ class AppConfig(TypedDict):
     axis_y: AxisConfig
 
 
+# errors
 class Error(Exception):
     '''Base class for exceptions in this module.'''
     pass
@@ -97,11 +100,12 @@ class EmptyDataPoolError(Error):
     message = 'Please import data first.'
 
 
-def update_csv_info(config_widgets: ConfigWidgets, csv_info: pd.DataFrame):
-    treeview_csv_info = config_widgets['csv_info']
-    notebook_data_pool = config_widgets['data_pool']
-    notebook_data_visual = config_widgets['data_visual']
-    spinbox_dataset = config_widgets['dataset_number']
+# logic functions
+def update_csv_info(logic_widgets: LogicWidgets, csv_info: pd.DataFrame):
+    treeview_csv_info = logic_widgets['csv_info']
+    notebook_data_pool = logic_widgets['data_pool']
+    notebook_data_visual = logic_widgets['data_visual']
+    spinbox_dataset = logic_widgets['dataset_number']
     treeview_csv_info.clear_content()
     treeview_csv_info.insert_dataframe(csv_info)
     treeview_csv_info.adjust_column_width()
@@ -112,21 +116,21 @@ def update_csv_info(config_widgets: ConfigWidgets, csv_info: pd.DataFrame):
     spinbox_dataset.set(1)
 
 
-def check_csv_chosen(config_widgets: ConfigWidgets):
-    if not config_widgets['csv_info'].get_children():
+def check_csv_chosen(logic_widgets: LogicWidgets):
+    if not logic_widgets['csv_info'].get_children():
         raise NoCsvError
 
 
-def import_csv(config_widgets: ConfigWidgets):
+def import_csv(logic_widgets: LogicWidgets):
     try:
-        check_csv_chosen(config_widgets)
+        check_csv_chosen(logic_widgets)
     except NoCsvError as e:
         tk.messagebox.showerror(title='Error', message=e.message)
     else:
-        treeview_csv_info = config_widgets['csv_info']
-        notebook_data_pool = config_widgets['data_pool']
-        notebook_data_visual = config_widgets['data_visual']
-        spinbox_dataset = config_widgets['dataset_number']
+        treeview_csv_info = logic_widgets['csv_info']
+        notebook_data_pool = logic_widgets['data_pool']
+        notebook_data_visual = logic_widgets['data_visual']
+        spinbox_dataset = logic_widgets['dataset_number']
         data_pool = treeview_csv_info.collect_data_pool()
         notebook_data_pool.remove_all_tabs()
         notebook_data_pool.present_data_pool(data_pool)
@@ -137,21 +141,21 @@ def import_csv(config_widgets: ConfigWidgets):
         spinbox_dataset.set(1)
 
 
-def clear_data_pool(config_widgets: ConfigWidgets):
-    config_widgets['data_pool'].clear_content()
+def clear_data_pool(logic_widgets: LogicWidgets):
+    logic_widgets['data_pool'].clear_content()
 
 
-def check_data_pool(config_widgets: ConfigWidgets):
-    treeview_csv_info = config_widgets['csv_info']
+def check_data_pool(logic_widgets: LogicWidgets):
+    treeview_csv_info = logic_widgets['csv_info']
     data_pool = treeview_csv_info.collect_data_pool()
     if data_pool == {}:
         raise EmptyDataPoolError
 
 
-def modify_data_visual_tabs(config_widgets: ConfigWidgets, tgt_num: int):
-    notebook = config_widgets['data_visual']
-    exist_num = len(config_widgets['data_visual'].tabs())
-    treeview_csv_info = config_widgets['csv_info']
+def modify_data_visual_tabs(logic_widgets: LogicWidgets, tgt_num: int):
+    notebook = logic_widgets['data_visual']
+    exist_num = len(logic_widgets['data_visual'].tabs())
+    treeview_csv_info = logic_widgets['csv_info']
     data_pool = treeview_csv_info.collect_data_pool()
     if tgt_num > exist_num:
         tabname = str(tgt_num)
@@ -163,21 +167,21 @@ def modify_data_visual_tabs(config_widgets: ConfigWidgets, tgt_num: int):
         notebook.remove_tab(tabname)
 
 
-def change_number_of_dataset(config_widgets: ConfigWidgets):
+def change_number_of_dataset(logic_widgets: LogicWidgets):
     try:
-        check_data_pool(config_widgets)
+        check_data_pool(logic_widgets)
     except EmptyDataPoolError as e:
-        config_widgets['dataset_number'].set(1)
+        logic_widgets['dataset_number'].set(1)
         tk.messagebox.showerror(title='Error', message=e.message)
     else:
-        tgt_num = config_widgets['dataset_number'].get()
-        modify_data_visual_tabs(config_widgets, tgt_num)
+        tgt_num = logic_widgets['dataset_number'].get()
+        modify_data_visual_tabs(logic_widgets, tgt_num)
 
 
-def modify_data_visual_tabs(config_widgets: ConfigWidgets, tgt_num: int):
-    treeview_csv_info = config_widgets['csv_info']
-    notebook = config_widgets['data_visual']
-    exist_num = len(config_widgets['data_visual'].tabs())
+def modify_data_visual_tabs(logic_widgets: LogicWidgets, tgt_num: int):
+    treeview_csv_info = logic_widgets['csv_info']
+    notebook = logic_widgets['data_visual']
+    exist_num = len(logic_widgets['data_visual'].tabs())
     if tgt_num > exist_num:
         data_pool = treeview_csv_info.collect_data_pool()
         tabname = str(tgt_num)
@@ -189,8 +193,8 @@ def modify_data_visual_tabs(config_widgets: ConfigWidgets, tgt_num: int):
         notebook.remove_tab(tabname)
 
 
-def active_deactive_range(config_widgets: ConfigWidgets):
-    widgets = config_widgets['axis_x']
+def active_deactive_range(logic_widgets: LogicWidgets):
+    widgets = logic_widgets['axis_x']
     if widgets['assign_range'].get():
         widgets['min_entry'].config(state='normal')
         widgets['max_entry'].config(state='normal')
@@ -198,7 +202,7 @@ def active_deactive_range(config_widgets: ConfigWidgets):
         widgets['min_entry'].config(state='disabled')
         widgets['max_entry'].config(state='disabled')
 
-    widgets = config_widgets['axis_y']
+    widgets = logic_widgets['axis_y']
     if widgets['assign_range'].get():
         widgets['min_entry'].config(state='normal')
         widgets['max_entry'].config(state='normal')
@@ -207,30 +211,30 @@ def active_deactive_range(config_widgets: ConfigWidgets):
         widgets['max_entry'].config(state='disabled')
 
 
-def collect_configurations_csvs(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
-    csv_info = config_widgets['csv_info'].get_dataframe()
-    config_values['csvs']['indices'] = csv_info['CSV ID'].to_list()
-    config_values['csvs']['paths'] = csv_info['CSV Path'].to_list()
-    return config_values
+def collect_configurations_csvs(logic_widgets: LogicWidgets, app_config: AppConfig) -> AppConfig:
+    csv_info = logic_widgets['csv_info'].get_dataframe()
+    app_config['csvs']['indices'] = csv_info['CSV ID'].to_list()
+    app_config['csvs']['paths'] = csv_info['CSV Path'].to_list()
+    return app_config
 
 
-def collect_configurations_data(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
-    csv_indices = config_values['data']['csv_indices']
-    labels = config_values['data']['labels']
-    fieldnames = config_values['data']['fieldnames']
-    for tab in config_widgets['data_visual'].tabs_.values():
+def collect_configurations_data(logic_widgets: LogicWidgets, app_config: AppConfig) -> AppConfig:
+    csv_indices = app_config['data']['csv_indices']
+    labels = app_config['data']['labels']
+    fieldnames = app_config['data']['fieldnames']
+    for tab in logic_widgets['data_visual'].tabs_.values():
         csv_indices.append(tab.widgets['csv_idx'].get())
         labels.append(tab.widgets['label'].get())
         fieldnames.append({
             'x': tab.widgets['field_x'].get(),
             'y': tab.widgets['field_y'].get()
         })
-    return config_values
+    return app_config
 
 
-def collect_configurations_figure(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
-    widgets = config_widgets['figure_visual']
-    values = config_values['figure']
+def collect_configurations_figure(logic_widgets: LogicWidgets, app_config: AppConfig) -> AppConfig:
+    widgets = logic_widgets['figure_visual']
+    values = app_config['figure']
     values['title'] = widgets['title'].get()
     values['size'] = [
         widgets['width'].get(),
@@ -238,12 +242,12 @@ def collect_configurations_figure(config_widgets: ConfigWidgets, config_values: 
     ]
     values['grid_visible'] = widgets['grid_visible'].get()
     values['legend_visible'] = widgets['legend_visible'].get()
-    return config_values
+    return app_config
 
 
-def collect_configurations_axes(config_widgets: ConfigWidgets, config_values: AppConfig) -> AppConfig:
-    widgets = config_widgets['axis_x']
-    values = config_values['axis_x']
+def collect_configurations_axes(logic_widgets: LogicWidgets, app_config: AppConfig) -> AppConfig:
+    widgets = logic_widgets['axis_x']
+    values = app_config['axis_x']
     values['scale'] = widgets['scale'].get()
     values['label'] = widgets['label'].get()
     if widgets['assign_range'].get():
@@ -254,8 +258,8 @@ def collect_configurations_axes(config_widgets: ConfigWidgets, config_values: Ap
     else:
         values['lim'] = None
 
-    widgets = config_widgets['axis_y']
-    values = config_values['axis_y']
+    widgets = logic_widgets['axis_y']
+    values = app_config['axis_y']
     values['scale'] = widgets['scale'].get()
     values['label'] = widgets['label'].get()
     if widgets['assign_range'].get():
@@ -265,13 +269,13 @@ def collect_configurations_axes(config_widgets: ConfigWidgets, config_values: Ap
         ]
     else:
         values['lim'] = None
-    return config_values
+    return app_config
 
 
 def new(): os.execl(sys.executable, sys.executable, *sys.argv)
 
 
-def open(config_widgets: ConfigWidgets):
+def open(logic_widgets: LogicWidgets):
     # Read configs
     types = [('JSON File', '*.json'), ]
     file = filedialog.askopenfile(filetypes=types, defaultextension=types)
@@ -284,18 +288,18 @@ def open(config_widgets: ConfigWidgets):
         data=[[idx, path] for idx, path in zip(indices, paths)],
         columns=['CSV ID', 'CSV Path']
     )
-    update_csv_info(config_widgets, csv_info)
-    import_csv(config_widgets)
+    update_csv_info(logic_widgets, csv_info)
+    import_csv(logic_widgets)
 
     # Update data visual
     dataset_num = len(configs['data']['csv_indices'])
-    notebook = config_widgets['data_visual']
+    notebook = logic_widgets['data_visual']
     for idx in range(dataset_num):
         tgt_num = idx + 1
         csv_idx = configs['data']['csv_indices'][idx]
         label = configs['data']['labels'][idx]
         field_name = configs['data']['fieldnames'][idx]
-        modify_data_visual_tabs(config_widgets, tgt_num)
+        modify_data_visual_tabs(logic_widgets, tgt_num)
         tab = notebook.tabs_[str(tgt_num)]
         tab.widgets['csv_idx'].set(csv_idx)
         tab.widgets['label'].set(label)
@@ -307,7 +311,7 @@ def open(config_widgets: ConfigWidgets):
     size = configs['figure']['size']
     grid_visible = configs['figure']['grid_visible']
     legend_visible = configs['figure']['legend_visible']
-    widgets = config_widgets['figure_visual']
+    widgets = logic_widgets['figure_visual']
     widgets['title'].set(title)
     widgets['width'].set(size[0])
 
@@ -319,58 +323,59 @@ def open(config_widgets: ConfigWidgets):
     label = configs['axis_x']['label']
     scale = configs['axis_x']['scale']
 
-    widgets = config_widgets['axis_x']
+    widgets = logic_widgets['axis_x']
     widgets['label'].set(label)
     widgets['scale'].set(scale)
 
     if configs['axis_x'].get('lim'):
         lim_min, lim_max = configs['axis_x']['lim']
         widgets['assign_range'].set(1)
-        active_deactive_range(config_widgets)
+        active_deactive_range(logic_widgets)
         widgets['min_var'].set(lim_min)
         widgets['max_var'].set(lim_max)
     else:
         widgets['assign_range'].set(0)
-        active_deactive_range(config_widgets)
+        active_deactive_range(logic_widgets)
 
     # Update axis visual - y
     label = configs['axis_y']['label']
     scale = configs['axis_y']['scale']
 
-    widgets = config_widgets['axis_y']
+    widgets = logic_widgets['axis_y']
     widgets['label'].set(label)
     widgets['scale'].set(scale)
 
     if configs['axis_y'].get('lim'):
         lim_min, lim_max = configs['axis_y']['lim']
         widgets['assign_range'].set(1)
-        active_deactive_range(config_widgets)
+        active_deactive_range(logic_widgets)
         widgets['min_var'].set(lim_min)
         widgets['max_var'].set(lim_max)
     else:
         widgets['assign_range'].set(0)
-        active_deactive_range(config_widgets)
+        active_deactive_range(logic_widgets)
 
 
 def save(): ...
 
 
-def save_as(config_widgets: ConfigWidgets):
-    config_values = get_initial_configuration()
-    config_values = collect_configurations_csvs(config_widgets, config_values)
-    config_values = collect_configurations_data(config_widgets, config_values)
-    config_values = collect_configurations_figure(config_widgets, config_values)
-    config_values = collect_configurations_axes(config_widgets, config_values)
+def save_as(logic_widgets: LogicWidgets):
+    app_config = get_initial_configuration()
+    app_config = collect_configurations_csvs(logic_widgets, app_config)
+    app_config = collect_configurations_data(logic_widgets, app_config)
+    app_config = collect_configurations_figure(
+        logic_widgets, app_config)
+    app_config = collect_configurations_axes(logic_widgets, app_config)
     types = [('JSON File', '*.json'), ]
     file = filedialog.asksaveasfile(filetypes=types, defaultextension=types)
-    json.dump(config_values, file, indent=4)
+    json.dump(app_config, file, indent=4)
     file.close()
 
 
 def close(root: tk.Tk): root.destroy()
 
 
-def open_csvs(config_widgets: ConfigWidgets):
+def open_csvs(logic_widgets: LogicWidgets):
     csv_paths = filedialog.askopenfilenames(
         title='Choose csv files',
         filetypes=[('csv files', '*.csv')]
@@ -379,33 +384,33 @@ def open_csvs(config_widgets: ConfigWidgets):
         [[idx + 1, path] for idx, path in enumerate(csv_paths)],
         columns=['CSV ID', 'CSV Path']
     )
-    update_csv_info(config_widgets, csv_info)
+    update_csv_info(logic_widgets, csv_info)
 
 
-def collect_data_send(config_widgets: ConfigWidgets) -> Sequence[pd.DataFrame]:
-    treeview_csv_info = config_widgets['csv_info']
+def collect_data_send(logic_widgets: LogicWidgets) -> Sequence[pd.DataFrame]:
+    treeview_csv_info = logic_widgets['csv_info']
     data_pool = treeview_csv_info.collect_data_pool()
     data_send = []
-    notebook = config_widgets['data_visual']
+    notebook = logic_widgets['data_visual']
     for tab in notebook.tabs_.values():
         csv_idx = tab.widgets['csv_idx'].get()
         data_send.append(data_pool[csv_idx])
     return data_send
 
 
-def plot(config_widgets: ConfigWidgets):
+def plot(logic_widgets: LogicWidgets):
     try:
-        check_data_pool(config_widgets)
+        check_data_pool(logic_widgets)
     except EmptyDataPoolError as e:
         tk.messagebox.showerror(title='Error', message=e.message)
     else:
-        data_send = collect_data_send(config_widgets)
-        config_values = get_initial_configuration()
-        collect_configurations_csvs(config_widgets, config_values)
-        collect_configurations_data(config_widgets, config_values)
-        collect_configurations_figure(config_widgets, config_values)
-        collect_configurations_axes(config_widgets, config_values)
-        plot_all_csv(config_values, data_send)
+        data_send = collect_data_send(logic_widgets)
+        app_config = get_initial_configuration()
+        collect_configurations_csvs(logic_widgets, app_config)
+        collect_configurations_data(logic_widgets, app_config)
+        collect_configurations_figure(logic_widgets, app_config)
+        collect_configurations_axes(logic_widgets, app_config)
+        plot_all_csv(app_config, data_send)
 
 
 def copy():
