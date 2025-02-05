@@ -1,9 +1,5 @@
 import tkinter as tk
 from tkinter import font
-from tkinter import ttk
-from typing import Dict, TypedDict
-
-import pandas as pd
 
 import logic.app_logic as logic
 from components.Button import Button
@@ -18,34 +14,9 @@ from components.Label import Label
 from components.LabelFrame import LabelFrame
 from components.Spinbox import Spinbox
 from components.Treeview import Treeview
-
-
-class AxisVisualWidgets(TypedDict):
-    label: tk.StringVar
-    scale: ttk.Combobox
-    assign_range: tk.IntVar
-    min_var: tk.DoubleVar
-    max_var: tk.DoubleVar
-    min_entry: tk.Entry
-    max_entry: tk.Entry
-
-
-class FigureVisualWidgets(TypedDict):
-    title: tk.StringVar
-    width: tk.DoubleVar
-    height: tk.DoubleVar
-    grid_visible: tk.IntVar
-    legend_visible: tk.IntVar
-
-
-class ConfigWidgets(TypedDict):
-    csv_info: CsvInfoTreeview
-    data_pool: DataPoolNotebook
-    data_visual: DataVisualNotebook
-    dataset_number: tk.IntVar
-    figure_visual: FigureVisualWidgets
-    axis_x: AxisVisualWidgets
-    axis_y: AxisVisualWidgets
+from logic.app_logic import AxisVisualWidgets
+from logic.app_logic import FigureVisualWidgets
+from logic.app_logic import ConfigWidgets
 
 
 NAME = 'CSViewer'
@@ -54,8 +25,6 @@ STATE = 'zoomed'
 ROOT_MINSIZE = {'width': 400, 'height': 400}
 FONT_FAMILY = 'Helvetica'
 FONT_SIZE = 10
-TabName = str
-DataPool = Dict[TabName, pd.DataFrame]
 
 
 class App:
@@ -274,7 +243,7 @@ class App:
         Button(labelframe, 0, 0, 'Plot', self.font, self.plot)
         Button(labelframe, 0, 1, 'Copy', self.font, self.copy)
 
-    # actions
+    # logic
     def new(self): return logic.new()
     def open(self): return logic.open(self.config_widgets)
     def save(self): return logic.save()
