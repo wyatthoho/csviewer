@@ -146,7 +146,7 @@ class App:
         treeview = CsvInfoTreeview(frame, columns, App.HIGHT_FILENAMES)
 
         frame = Frame(labelframe, 0, 1, sticky=False)
-        Button(frame, 0, 0, 'Choose', self.font, lambda: self.open_csvs())
+        Button(frame, 0, 0, 'Choose', self.font, self.open_csvs)
         self.config_widgets['csv_info'] = treeview
 
     def create_frame_for_data_pool(self):
@@ -297,32 +297,8 @@ class App:
     def save(self): return logic.save()
     def save_as(self): return logic.save_as(self.config_widgets)
     def close(self): return logic.close(self.root)
+    def open_csvs(self): return logic.open_csvs(self.config_widgets)
 
-
-    def update_csv_info(self, csv_info: pd.DataFrame):
-        treeview_csv_info = self.config_widgets['csv_info']
-        notebook_data_pool = self.config_widgets['data_pool']
-        notebook_data_visual = self.config_widgets['data_visual']
-        spinbox_dataset = self.config_widgets['dataset_number']
-        treeview_csv_info.clear_content()
-        treeview_csv_info.insert_dataframe(csv_info)
-        treeview_csv_info.adjust_column_width()
-        notebook_data_pool.clear_content()
-        notebook_data_visual.remove_all_tabs()
-        notebook_data_visual.create_new_empty_tab('1')
-        notebook_data_visual.fill_data_visual_widgets('1')
-        spinbox_dataset.set(1)
-
-    def open_csvs(self):
-        csv_paths = filedialog.askopenfilenames(
-            title='Choose csv files',
-            filetypes=[('csv files', '*.csv')]
-        )
-        csv_info = pd.DataFrame(
-            [[idx + 1, path] for idx, path in enumerate(csv_paths)],
-            columns=['CSV ID', 'CSV Path']
-        )
-        self.update_csv_info(csv_info)
 
     def check_csv_chosen(self):
         if not self.config_widgets['csv_info'].get_children():

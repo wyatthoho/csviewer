@@ -328,6 +328,18 @@ def save_as(config_widgets: ConfigWidgets):
 def close(root: tk.Tk): root.destroy()
 
 
+def open_csvs(config_widgets: ConfigWidgets):
+    csv_paths = filedialog.askopenfilenames(
+        title='Choose csv files',
+        filetypes=[('csv files', '*.csv')]
+    )
+    csv_info = pd.DataFrame(
+        [[idx + 1, path] for idx, path in enumerate(csv_paths)],
+        columns=['CSV ID', 'CSV Path']
+    )
+    update_csv_info(config_widgets, csv_info)
+
+
 def get_initial_configuration() -> AppConfig:
     config_ini = {
         'csvs': {
