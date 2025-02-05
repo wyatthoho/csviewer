@@ -299,16 +299,13 @@ class App:
     def close(self): return logic.close(self.root)
     def open_csvs(self): return logic.open_csvs(self.config_widgets)
     def import_csv(self): return logic.import_csv(self.config_widgets)
+    def clear_data_pool(self): return logic.clear_data_pool(self.config_widgets)
 
     def check_data_pool(self):
         treeview_csv_info = self.config_widgets['csv_info']
         data_pool = treeview_csv_info.collect_data_pool()
         if data_pool == {}:
             raise EmptyDataPoolError
-
-    def clear_data_pool(self):
-        self.data_pool: DataPool = {}
-        self.config_widgets['data_pool'].clear_content()
 
     def modify_data_visual_tabs(self, tgt_num: int):
         notebook = self.config_widgets['data_visual']

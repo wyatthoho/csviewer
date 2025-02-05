@@ -132,6 +132,10 @@ def import_csv(config_widgets: ConfigWidgets):
         spinbox_dataset.set(1)
 
 
+def clear_data_pool(config_widgets: ConfigWidgets):
+    config_widgets['data_pool'].clear_content()
+
+
 def modify_data_visual_tabs(config_widgets: ConfigWidgets, tgt_num: int):
     treeview_csv_info = config_widgets['csv_info']
     notebook = config_widgets['data_visual']
