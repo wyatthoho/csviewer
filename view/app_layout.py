@@ -184,7 +184,7 @@ class App:
         intvar = tk.IntVar(value=1)
         Spinbox(
             labelframe, row=0, col=1, from_=1, to=20, width=3,
-            intvar=intvar, command=lambda: self.change_number_of_dataset()
+            intvar=intvar, command=self.change_number_of_dataset
         )
         self.config_widgets['data_visual'] = notebook
         self.config_widgets['dataset_number'] = intvar
@@ -300,34 +300,7 @@ class App:
     def open_csvs(self): return logic.open_csvs(self.config_widgets)
     def import_csv(self): return logic.import_csv(self.config_widgets)
     def clear_data_pool(self): return logic.clear_data_pool(self.config_widgets)
-
-    def check_data_pool(self):
-        treeview_csv_info = self.config_widgets['csv_info']
-        data_pool = treeview_csv_info.collect_data_pool()
-        if data_pool == {}:
-            raise EmptyDataPoolError
-
-    def modify_data_visual_tabs(self, tgt_num: int):
-        notebook = self.config_widgets['data_visual']
-        exist_num = len(self.config_widgets['data_visual'].tabs())
-        if tgt_num > exist_num:
-            tabname = str(tgt_num)
-            notebook.create_new_empty_tab(tabname)
-            notebook.fill_data_visual_widgets(tabname)
-            notebook.initialize_widgets(tabname, self.data_pool)
-        elif tgt_num < exist_num:
-            tabname = str(exist_num)
-            notebook.remove_tab(tabname)
-
-    def change_number_of_dataset(self):
-        try:
-            self.check_data_pool()
-        except EmptyDataPoolError as e:
-            self.config_widgets['dataset_number'].set(1)
-            tk.messagebox.showerror(title='Error', message=e.message)
-        else:
-            tgt_num = self.config_widgets['dataset_number'].get()
-            self.modify_data_visual_tabs(tgt_num)
+    def change_number_of_dataset(self): return logic.change_number_of_dataset(self.config_widgets)
 
     def active_deactive_range(self):
         widgets = self.config_widgets['axis_x']

@@ -92,6 +92,11 @@ class NoCsvError(Error):
     message = 'Please choose CSV file first.'
 
 
+class EmptyDataPoolError(Error):
+    '''Exception raised when no csv files were chosen.'''
+    message = 'Please import data first.'
+
+
 def update_csv_info(config_widgets: ConfigWidgets, csv_info: pd.DataFrame):
     treeview_csv_info = config_widgets['csv_info']
     notebook_data_pool = config_widgets['data_pool']
@@ -134,6 +139,39 @@ def import_csv(config_widgets: ConfigWidgets):
 
 def clear_data_pool(config_widgets: ConfigWidgets):
     config_widgets['data_pool'].clear_content()
+
+
+def check_data_pool(config_widgets: ConfigWidgets):
+    treeview_csv_info = config_widgets['csv_info']
+    data_pool = treeview_csv_info.collect_data_pool()
+    if data_pool == {}:
+        raise EmptyDataPoolError
+
+
+def modify_data_visual_tabs(config_widgets: ConfigWidgets, tgt_num: int):
+    notebook = config_widgets['data_visual']
+    exist_num = len(config_widgets['data_visual'].tabs())
+    treeview_csv_info = config_widgets['csv_info']
+    data_pool = treeview_csv_info.collect_data_pool()
+    if tgt_num > exist_num:
+        tabname = str(tgt_num)
+        notebook.create_new_empty_tab(tabname)
+        notebook.fill_data_visual_widgets(tabname)
+        notebook.initialize_widgets(tabname, data_pool)
+    elif tgt_num < exist_num:
+        tabname = str(exist_num)
+        notebook.remove_tab(tabname)
+
+
+def change_number_of_dataset(config_widgets: ConfigWidgets):
+    try:
+        check_data_pool(config_widgets)
+    except EmptyDataPoolError as e:
+        config_widgets['dataset_number'].set(1)
+        tk.messagebox.showerror(title='Error', message=e.message)
+    else:
+        tgt_num = config_widgets['dataset_number'].get()
+        modify_data_visual_tabs(config_widgets, tgt_num)
 
 
 def modify_data_visual_tabs(config_widgets: ConfigWidgets, tgt_num: int):
