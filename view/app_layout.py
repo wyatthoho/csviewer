@@ -34,7 +34,7 @@ class App:
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
-        self.logic_widgets = self.initialize_logic_widgets()
+        self.logic_widgets = LogicWidgets()
         self.create_menubar()
         self.create_frame_for_csv_info()
         self.create_frame_for_data_pool()
@@ -44,18 +44,6 @@ class App:
         self.create_frame_for_axis_visual_y()
         self.create_frame_for_plot()
         self.root.mainloop()
-
-    def initialize_logic_widgets(self) -> LogicWidgets:
-        logic_widgets: LogicWidgets = {
-            'csv_info': CsvInfoTreeview,
-            'data_pool': None,
-            'dataset_number': None,
-            'data_visual': None,
-            'figure_visual': FigureVisualWidgets(),
-            'axis_x': AxisVisualWidgets(),
-            'axis_y': AxisVisualWidgets()
-        }
-        return logic_widgets
 
     def initialize_main_window(self) -> tk.Tk:
         root = tk.Tk()
@@ -145,104 +133,104 @@ class App:
         self.logic_widgets['dataset_number'] = intvar
 
     def create_frame_for_figure_visual(self):
-        widgets = self.logic_widgets['figure_visual']
+        self.logic_widgets['figure_visual'] = FigureVisualWidgets()
         labelframe = LabelFrame(
             self.root, 2, 1, 'Figure Visualization', self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Title: ', self.font)
         Entry(labelframe, 0, 1, self.font, textvariable=strvar)
-        widgets['title'] = strvar
+        self.logic_widgets['figure_visual']['title'] = strvar
 
         doublevar = tk.DoubleVar(value=4.8)
         Label(labelframe, 1, 0, 'Width: ', self.font)
         Entry(labelframe, 1, 1, self.font, textvariable=doublevar)
-        widgets['width'] = doublevar
+        self.logic_widgets['figure_visual']['width'] = doublevar
 
         doublevar = tk.DoubleVar(value=3.0)
         Label(labelframe, 1, 2, 'Height: ', self.font)
         Entry(labelframe, 1, 3, self.font, textvariable=doublevar)
-        widgets['height'] = doublevar
+        self.logic_widgets['figure_visual']['height'] = doublevar
 
         intvar = tk.IntVar()
         intvar.set(True)
-        widgets['grid_visible'] = intvar
         Checkbutton(labelframe, 2, 0, 'Show grid', self.font, None, intvar)
+        self.logic_widgets['figure_visual']['grid_visible'] = intvar
 
         intvar = tk.IntVar()
         intvar.set(True)
-        widgets['legend_visible'] = intvar
         Checkbutton(labelframe, 3, 0, 'Show legend', self.font, None, intvar)
+        self.logic_widgets['figure_visual']['legend_visible'] = intvar
 
     def create_frame_for_axis_visual_x(self):
-        widgets = self.logic_widgets['axis_x']
+        self.logic_widgets['axis_x'] = AxisVisualWidgets()
         labelframe = LabelFrame(
             self.root, 1, 2, 'X-Axis Visualization', self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Label: ', self.font)
         Entry(labelframe, 0, 1, self.font, textvariable=strvar)
-        widgets['label'] = strvar
+        self.logic_widgets['axis_x']['label'] = strvar
 
         Label(labelframe, 1, 0, 'Scale: ', self.font)
         values = ['linear', 'log']
         combobox = Combobox(labelframe, 1, 1, values=values, font=self.font)
-        widgets['scale'] = combobox
+        self.logic_widgets['axis_x']['scale'] = combobox
 
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
-        widgets['assign_range'] = intvar
         Checkbutton(frame, 0, 0, 'Assign range', self.font,
                     self.active_deactive_range, intvar)
+        self.logic_widgets['axis_x']['assign_range'] = intvar
 
         doublevar = tk.DoubleVar()
         Label(frame, 1, 0, 'Min: ', self.font)
         entry = Entry(frame, 1, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
-        widgets['min_var'] = doublevar
-        widgets['min_entry'] = entry
+        self.logic_widgets['axis_x']['min_var'] = doublevar
+        self.logic_widgets['axis_x']['min_entry'] = entry
 
         doublevar = tk.DoubleVar()
         Label(frame, 2, 0, 'Max: ', self.font)
         entry = Entry(frame, 2, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
-        widgets['max_var'] = doublevar
-        widgets['max_entry'] = entry
+        self.logic_widgets['axis_x']['max_var'] = doublevar
+        self.logic_widgets['axis_x']['max_entry'] = entry
 
     def create_frame_for_axis_visual_y(self):
-        widgets = self.logic_widgets['axis_y']
+        self.logic_widgets['axis_y'] = AxisVisualWidgets()
         labelframe = LabelFrame(
             self.root, 2, 2, 'Y-Axis Visualization', self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Label: ', self.font)
         Entry(labelframe, 0, 1, self.font, textvariable=strvar)
-        widgets['label'] = strvar
+        self.logic_widgets['axis_y']['label'] = strvar
 
         Label(labelframe, 1, 0, 'Scale: ', self.font)
         values = ['linear', 'log']
         combobox = Combobox(labelframe, 1, 1, values=values, font=self.font)
-        widgets['scale'] = combobox
+        self.logic_widgets['axis_y']['scale'] = combobox
 
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
-        widgets['assign_range'] = intvar
         Checkbutton(frame, 0, 0, 'Assign range', self.font,
                     self.active_deactive_range, intvar)
+        self.logic_widgets['axis_y']['assign_range'] = intvar
 
         doublevar = tk.DoubleVar()
         Label(frame, 1, 0, 'Min: ', self.font)
         entry = Entry(frame, 1, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
-        widgets['min_var'] = doublevar
-        widgets['min_entry'] = entry
+        self.logic_widgets['axis_y']['min_var'] = doublevar
+        self.logic_widgets['axis_y']['min_entry'] = entry
 
         doublevar = tk.DoubleVar()
         Label(frame, 2, 0, 'Max: ', self.font)
         entry = Entry(frame, 2, 1, self.font, textvariable=doublevar)
         entry.config(state='disabled')
-        widgets['max_var'] = doublevar
-        widgets['max_entry'] = entry
+        self.logic_widgets['axis_y']['max_var'] = doublevar
+        self.logic_widgets['axis_y']['max_entry'] = entry
 
     def create_frame_for_plot(self):
         labelframe = LabelFrame(
