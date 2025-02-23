@@ -167,7 +167,7 @@ def modify_data_visual_tabs(logic_widgets: LogicWidgets, tgt_num: int):
         notebook.remove_tab(tabname)
 
 
-def change_number_of_dataset(logic_widgets: LogicWidgets):
+def spin_number(logic_widgets: LogicWidgets):
     try:
         check_data_pool(logic_widgets)
     except EmptyDataPoolError as e:
@@ -193,7 +193,7 @@ def modify_data_visual_tabs(logic_widgets: LogicWidgets, tgt_num: int):
         notebook.remove_tab(tabname)
 
 
-def active_deactive_range(logic_widgets: LogicWidgets):
+def assign_range(logic_widgets: LogicWidgets):
     widgets = logic_widgets['axis_x']
     if widgets['assign_range'].get():
         widgets['min_entry'].config(state='normal')
@@ -275,7 +275,7 @@ def collect_configurations_axes(logic_widgets: LogicWidgets, app_config: AppConf
 def new(): os.execl(sys.executable, sys.executable, *sys.argv)
 
 
-def open(logic_widgets: LogicWidgets):
+def open_cfg(logic_widgets: LogicWidgets):
     # Read configs
     types = [('JSON File', '*.json'), ]
     file = filedialog.askopenfile(filetypes=types, defaultextension=types)
@@ -330,12 +330,12 @@ def open(logic_widgets: LogicWidgets):
     if configs['axis_x'].get('lim'):
         lim_min, lim_max = configs['axis_x']['lim']
         widgets['assign_range'].set(1)
-        active_deactive_range(logic_widgets)
+        assign_range(logic_widgets)
         widgets['min_var'].set(lim_min)
         widgets['max_var'].set(lim_max)
     else:
         widgets['assign_range'].set(0)
-        active_deactive_range(logic_widgets)
+        assign_range(logic_widgets)
 
     # Update axis visual - y
     label = configs['axis_y']['label']
@@ -348,12 +348,12 @@ def open(logic_widgets: LogicWidgets):
     if configs['axis_y'].get('lim'):
         lim_min, lim_max = configs['axis_y']['lim']
         widgets['assign_range'].set(1)
-        active_deactive_range(logic_widgets)
+        assign_range(logic_widgets)
         widgets['min_var'].set(lim_min)
         widgets['max_var'].set(lim_max)
     else:
         widgets['assign_range'].set(0)
-        active_deactive_range(logic_widgets)
+        assign_range(logic_widgets)
 
 
 def save(): ...

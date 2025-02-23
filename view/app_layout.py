@@ -64,7 +64,7 @@ class App:
         menubar = tk.Menu(self.root)
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label='New', command=self.new)
-        filemenu.add_command(label='Open', command=self.open)
+        filemenu.add_command(label='Open', command=self.open_cfg)
         filemenu.add_command(label='Save', command=self.save)
         filemenu.add_command(label='Save as...', command=self.save_as)
         filemenu.add_command(label='Close', command=self.close)
@@ -127,7 +127,7 @@ class App:
         intvar = tk.IntVar(value=1)
         Spinbox(
             labelframe, row=0, col=1, from_=1, to=20, width=3,
-            intvar=intvar, command=self.change_number_of_dataset
+            intvar=intvar, command=self.spin_number
         )
         self.logic_widgets['data_visual'] = notebook
         self.logic_widgets['dataset_number'] = intvar
@@ -180,7 +180,7 @@ class App:
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
         Checkbutton(frame, 0, 0, 'Assign range', self.font,
-                    self.active_deactive_range, intvar)
+                    self.assign_range, intvar)
         self.logic_widgets['axis_x']['assign_range'] = intvar
 
         doublevar = tk.DoubleVar()
@@ -215,7 +215,7 @@ class App:
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
         Checkbutton(frame, 0, 0, 'Assign range', self.font,
-                    self.active_deactive_range, intvar)
+                    self.assign_range, intvar)
         self.logic_widgets['axis_y']['assign_range'] = intvar
 
         doublevar = tk.DoubleVar()
@@ -242,17 +242,14 @@ class App:
 
     # logic
     def new(self): return logic.new()
-    def open(self): return logic.open(self.logic_widgets)
+    def open_cfg(self): return logic.open_cfg(self.logic_widgets)
     def save(self): return logic.save()
     def save_as(self): return logic.save_as(self.logic_widgets)
     def close(self): return logic.close(self.root)
     def open_csvs(self): return logic.open_csvs(self.logic_widgets)
     def import_csv(self): return logic.import_csv(self.logic_widgets)
-    def clear_data_pool(self): return logic.clear_data_pool(
-        self.logic_widgets)
-    def change_number_of_dataset(
-        self): return logic.change_number_of_dataset(self.logic_widgets)
-    def active_deactive_range(
-        self): return logic.active_deactive_range(self.logic_widgets)
+    def clear_data_pool(self): return logic.clear_data_pool(self.logic_widgets)
+    def spin_number(self): return logic.spin_number(self.logic_widgets)
+    def assign_range(self): return logic.assign_range(self.logic_widgets)
     def plot(self): return logic.plot(self.logic_widgets)
     def copy(self): return logic.copy()
