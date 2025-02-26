@@ -18,8 +18,7 @@ class DataPoolNotebook(Notebook):
 
     def present_data_pool(self, datapool: DataPool):
         for tabname, dataframe in datapool.items():
-            self.create_new_empty_tab(tabname)
-            tab = self.tabs_[tabname]
+            tab = self.create_new_tab(tabname)
             columns = list(dataframe.columns)
             treeview = Treeview(tab, columns, HEIGHT)
             treeview.insert_dataframe(dataframe)
@@ -27,7 +26,5 @@ class DataPoolNotebook(Notebook):
 
     def clear_content(self):
         self.remove_all_tabs()
-        tabname = '1'
-        self.create_new_empty_tab(tabname)
-        tab = self.tabs_[tabname]
+        tab = self.create_new_tab('1')
         Treeview(tab, columns=('',), height=HEIGHT)

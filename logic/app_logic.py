@@ -111,8 +111,8 @@ def update_csv_info(logic_widgets: LogicWidgets, csv_info: pd.DataFrame):
     treeview_csv_info.adjust_column_width()
     notebook_data_pool.clear_content()
     notebook_data_visual.remove_all_tabs()
-    notebook_data_visual.create_new_empty_tab('1')
-    notebook_data_visual.fill_data_visual_widgets('1')
+    tab = notebook_data_visual.create_new_tab('1')
+    notebook_data_visual.fill_widgets('1')
     spinbox_dataset.set(1)
 
 
@@ -135,8 +135,8 @@ def import_csv(logic_widgets: LogicWidgets):
         notebook_data_pool.remove_all_tabs()
         notebook_data_pool.present_data_pool(data_pool)
         notebook_data_visual.remove_all_tabs()
-        notebook_data_visual.create_new_empty_tab('1')
-        notebook_data_visual.fill_data_visual_widgets('1')
+        tab = notebook_data_visual.create_new_tab('1')
+        notebook_data_visual.fill_widgets('1')
         notebook_data_visual.initialize_widgets('1', data_pool)
         spinbox_dataset.set(1)
 
@@ -159,8 +159,8 @@ def modify_data_visual_tabs(logic_widgets: LogicWidgets, tgt_num: int):
     data_pool = treeview_csv_info.collect_data_pool()
     if tgt_num > exist_num:
         tabname = str(tgt_num)
-        notebook.create_new_empty_tab(tabname)
-        notebook.fill_data_visual_widgets(tabname)
+        tab = notebook.create_new_tab(tabname)
+        notebook.fill_widgets(tabname)
         notebook.initialize_widgets(tabname, data_pool)
     elif tgt_num < exist_num:
         tabname = str(exist_num)
@@ -185,8 +185,8 @@ def modify_data_visual_tabs(logic_widgets: LogicWidgets, tgt_num: int):
     if tgt_num > exist_num:
         data_pool = treeview_csv_info.collect_data_pool()
         tabname = str(tgt_num)
-        notebook.create_new_empty_tab(tabname)
-        notebook.fill_data_visual_widgets(tabname)
+        tab = notebook.create_new_tab(tabname)
+        notebook.fill_widgets(tabname)
         notebook.initialize_widgets(tabname, data_pool)
     elif tgt_num < exist_num:
         tabname = str(exist_num)

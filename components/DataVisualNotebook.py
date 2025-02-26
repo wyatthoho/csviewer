@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-from typing import Dict, Union
+from typing import Dict, TypedDict, Union
 
 from components.Combobox import Combobox
-from components.DataVisualTab import DataVisualTab
 from components.Entry import Entry
 from components.Notebook import Notebook
 from components.Label import Label
@@ -14,15 +13,30 @@ import pandas as pd
 TabName = str
 DataPool = Dict[TabName, pd.DataFrame]
 
+class DataVisualWidgets(TypedDict):
+    csv_idx: ttk.Combobox
+    field_x: ttk.Combobox
+    field_y: ttk.Combobox
+    label: tk.StringVar
+
 
 class DataVisualNotebook(Notebook):
     def __init__(self, frame: Union[tk.Frame, ttk.Frame]):
         super().__init__(frame)
-        self.tabs_: Dict[TabName, DataVisualTab] = {}
 
-    def fill_data_visual_widgets(self, tabname: TabName):
+    '''
+    The methods below are beloning to `DataVisualNotebook`
+    maybe redesigning to a `Tab` class is more reasonable.
+
+    DataTabVisual.fill_widgets()
+    DataTabVisual.update_options()
+    DataTabVisual.initialize_widgets()
+
+    '''
+
+    def fill_widgets(self, tabname: TabName):
         tab = self.tabs_[tabname]
-        widgets: DataVisualTab.DataVisualWidgets = {}
+        widgets: DataVisualWidgets = {}
 
         Label(tab, 0, 0, 'CSV ID: ', 'TkDefaultFont')
         combobox = Combobox(tab, 0, 1)
@@ -43,7 +57,7 @@ class DataVisualNotebook(Notebook):
 
         tab.widgets = widgets
 
-    def update_fieldname_options(self, tabname: TabName, data_pool: DataPool):
+    def update_options(self, tabname: TabName, data_pool: DataPool):
         widgets = self.tabs_[tabname].widgets
         csv_idx = widgets['csv_idx'].get()
         columns = list(data_pool[csv_idx].columns)
@@ -57,8 +71,8 @@ class DataVisualNotebook(Notebook):
         values_csv_idx = list(data_pool.keys())
         widgets['csv_idx'].config(values=values_csv_idx)
         widgets['csv_idx'].current(0)
-        self.update_fieldname_options(tabname, data_pool)
+        self.update_options(tabname, data_pool)
         widgets['csv_idx'].bind(
             '<<ComboboxSelected>>',
-            lambda event: self.update_fieldname_options(tabname, data_pool)
+            lambda event: self.update_options(tabname, data_pool)
         )

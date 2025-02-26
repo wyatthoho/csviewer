@@ -100,9 +100,7 @@ class App:
         notebook = DataPoolNotebook(labelframe)
         notebook.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW)
 
-        tabname = '1'
-        notebook.create_new_empty_tab(tabname=tabname)
-        tab = notebook.tabs_[tabname]
+        tab = notebook.create_new_tab(tabname='1')
         Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
 
         Button(labelframe, 1, 0, 'Import', self.font, self.import_csv)
@@ -119,9 +117,8 @@ class App:
         notebook = DataVisualNotebook(labelframe)
         notebook.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
 
-        tabname = '1'
-        notebook.create_new_empty_tab(tabname=tabname)
-        notebook.fill_data_visual_widgets(tabname=tabname)
+        tab = notebook.create_new_tab(tabname='1')
+        notebook.fill_widgets(tabname='1')
 
         Label(labelframe, 0, 0, 'Numbers of datasets', self.font)
         intvar = tk.IntVar(value=1)

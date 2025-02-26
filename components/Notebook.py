@@ -8,9 +8,10 @@ class Notebook(ttk.Notebook):
         super().__init__(frame)
         self.tabs_: Dict[str, ttk.Frame] = {}
 
-    def create_new_empty_tab(self, tabname: str):
+    def create_new_tab(self, tabname: str) -> ttk.Frame:
         self.tabs_[tabname] = tab = ttk.Frame(self)
         self.add(tab, text=tabname)
+        return tab
 
     def remove_tab(self, tabname: str):
         tab_idx = list(self.tabs_.keys()).index(tabname)
