@@ -4,14 +4,15 @@ from typing import Dict, TypedDict, Union
 
 from components.Combobox import Combobox
 from components.Entry import Entry
-from components.Notebook import Notebook
 from components.Label import Label
 
 import pandas as pd
 
 
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
 TabName = str
 DataPool = Dict[TabName, pd.DataFrame]
+
 
 class DataVisualWidgets(TypedDict):
     csv_idx: ttk.Combobox
@@ -20,59 +21,69 @@ class DataVisualWidgets(TypedDict):
     label: tk.StringVar
 
 
-class DataVisualNotebook(Notebook):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame]):
-        super().__init__(frame)
+class DataVisualTab(ttk.Frame):
+    def __init__(self, master: master, text: str, font: tk.font):
+        super().__init__(master, name=text)
+        self.grid(row=0, column=0)
+        self.font = font
+        self.name = text
+        self.widgets = DataVisualWidgets()
 
-    '''
-    The methods below are beloning to `DataVisualNotebook`
-    maybe redesigning to a `Tab` class is more reasonable.
-
-    DataTabVisual.fill_widgets()
-    DataTabVisual.update_options()
-    DataTabVisual.initialize_widgets()
-
-    '''
-
-    def fill_widgets(self, tabname: TabName):
-        tab = self.tabs_[tabname]
-        widgets: DataVisualWidgets = {}
-
-        Label(tab, 0, 0, 'CSV ID: ', 'TkDefaultFont')
-        combobox = Combobox(tab, 0, 1)
-        widgets['csv_idx'] = combobox
-
-        Label(tab, 1, 0, 'Field X: ', 'TkDefaultFont')
-        combobox = Combobox(tab, 1, 1)
-        widgets['field_x'] = combobox
-
-        Label(tab, 2, 0, 'Field Y: ', 'TkDefaultFont')
-        combobox = Combobox(tab, 2, 1)
-        widgets['field_y'] = combobox
-
+    def fill_widgets(self):
+        Label(self, 0, 0, 'CSV ID: ', self.font)
+        combobox = Combobox(self, 0, 1)
+        self.widgets['csv_idx'] = combobox
+        Label(self, 1, 0, 'Field X: ', self.font)
+        combobox = Combobox(self, 1, 1)
+        self.widgets['field_x'] = combobox
+        Label(self, 2, 0, 'Field Y: ', self.font)
+        combobox = Combobox(self, 2, 1)
+        self.widgets['field_y'] = combobox
         strvar = tk.StringVar()
-        Label(tab, 3, 0, 'Label: ', 'TkDefaultFont')
-        Entry(tab, 3, 1, 'TkDefaultFont', textvariable=strvar)
-        widgets['label'] = strvar
+        Label(self, 3, 0, 'Label: ', self.font)
+        Entry(self, 3, 1, self.font, textvariable=strvar)
+        self.widgets['label'] = strvar
 
-        tab.widgets = widgets
-
-    def update_options(self, tabname: TabName, data_pool: DataPool):
-        widgets = self.tabs_[tabname].widgets
-        csv_idx = widgets['csv_idx'].get()
+    def update_options(self, data_pool: DataPool):
+        csv_idx = self.widgets['csv_idx'].get()
         columns = list(data_pool[csv_idx].columns)
-        widgets['field_x'].config(values=columns)
-        widgets['field_x'].current(0)
-        widgets['field_y'].config(values=columns)
-        widgets['field_y'].current(1)
+        self.widgets['field_x'].config(values=columns)
+        self.widgets['field_x'].current(0)
+        self.widgets['field_y'].config(values=columns)
+        self.widgets['field_y'].current(1)
 
-    def initialize_widgets(self, tabname: TabName, data_pool: DataPool):
-        widgets = self.tabs_[tabname].widgets
+    def initialize_widgets(self, data_pool: DataPool):
         values_csv_idx = list(data_pool.keys())
-        widgets['csv_idx'].config(values=values_csv_idx)
-        widgets['csv_idx'].current(0)
-        self.update_options(tabname, data_pool)
-        widgets['csv_idx'].bind(
+        self.widgets['csv_idx'].config(values=values_csv_idx)
+        self.widgets['csv_idx'].current(0)
+        self.update_options(data_pool)
+        self.widgets['csv_idx'].bind(
             '<<ComboboxSelected>>',
-            lambda event: self.update_options(tabname, data_pool)
+            lambda event: self.update_options(data_pool)
         )
+
+
+class DataVisualNotebook(ttk.Notebook):
+    def __init__(self, frame: Union[tk.Frame, ttk.Frame], font: tk.font):
+        super().__init__(frame)
+        self.font = font
+        self.tabs_: Dict[str, DataVisualTab] = {}
+        self.create_new_tab('1')
+
+    def create_new_tab(self, tabname: str, data_pool: DataPool = None) -> DataVisualTab:
+        self.tabs_[tabname] = tab = DataVisualTab(self, tabname, self.font)
+        self.add(tab, text=tabname)
+        tab.fill_widgets()
+        if data_pool:
+            tab.initialize_widgets(data_pool)
+        return tab
+
+    def remove_tab(self, tabname: str):
+        tab_idx = list(self.tabs_.keys()).index(tabname)
+        self.forget(tab_idx)
+        self.tabs_.pop(tabname)
+
+    def remove_all_tabs(self):
+        self.tabs_ = {}
+        while self.index('end') > 0:
+            self.forget(0)

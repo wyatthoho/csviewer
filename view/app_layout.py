@@ -97,7 +97,7 @@ class App:
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
 
-        notebook = DataPoolNotebook(labelframe)
+        notebook = DataPoolNotebook(labelframe, self.font)
         notebook.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW)
 
         tab = notebook.create_new_tab(tabname='1')
@@ -114,11 +114,8 @@ class App:
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
 
-        notebook = DataVisualNotebook(labelframe)
+        notebook = DataVisualNotebook(labelframe, self.font)
         notebook.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
-
-        tab = notebook.create_new_tab(tabname='1')
-        notebook.fill_widgets(tabname='1')
 
         Label(labelframe, 0, 0, 'Numbers of datasets', self.font)
         intvar = tk.IntVar(value=1)
