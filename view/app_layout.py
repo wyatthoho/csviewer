@@ -77,13 +77,13 @@ class App:
         self.root.configure(menu=menubar)
 
     def create_frame_for_csv_info(self):
-        labelframe = LabelFrame(
-            self.root, 0, 0, 'Choose CSV files', self.font, colspan=3)
+        text = 'Choose CSV files'
+        labelframe = LabelFrame(self.root, 0, 0, text, self.font, colspan=3)
         labelframe.rowconfigure(0, weight=1)
         labelframe.columnconfigure(0, weight=1)
 
-        frame = Frame(labelframe, 0, 0, True)
         columns = ('CSV ID', 'CSV Path')
+        frame = Frame(labelframe, 0, 0, True)
         treeview = CsvInfoTreeview(frame, columns, App.HIGHT_FILENAMES)
 
         frame = Frame(labelframe, 0, 1, sticky=False)
@@ -91,8 +91,8 @@ class App:
         self.logic_widgets['csv_info'] = treeview
 
     def create_frame_for_data_pool(self):
-        labelframe = LabelFrame(
-            self.root, 1, 0, 'Review CSV data', self.font, rowspan=3)
+        text = 'Review CSV data'
+        labelframe = LabelFrame(self.root, 1, 0, text, self.font, rowspan=3)
         labelframe.rowconfigure(0, weight=1)
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
@@ -108,8 +108,8 @@ class App:
         self.logic_widgets['data_pool'] = notebook
 
     def create_frame_for_data_visual(self):
-        labelframe = LabelFrame(
-            self.root, 1, 1, 'Data Visualization', self.font)
+        text = 'Data Visualization'
+        labelframe = LabelFrame(self.root, 1, 1, text, self.font)
         labelframe.rowconfigure(1, weight=1)
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
@@ -127,13 +127,13 @@ class App:
         self.logic_widgets['dataset_number'] = intvar
 
     def create_frame_for_figure_visual(self):
-        self.logic_widgets['figure_visual'] = FigureVisualWidgets()
-        labelframe = LabelFrame(
-            self.root, 2, 1, 'Figure Visualization', self.font)
+        text = 'Figure Visualization'
+        labelframe = LabelFrame(self.root, 2, 1, text, self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Title: ', self.font)
         Entry(labelframe, 0, 1, self.font, textvariable=strvar)
+        self.logic_widgets['figure_visual'] = FigureVisualWidgets()
         self.logic_widgets['figure_visual']['title'] = strvar
 
         doublevar = tk.DoubleVar(value=4.8)
@@ -157,13 +157,13 @@ class App:
         self.logic_widgets['figure_visual']['legend_visible'] = intvar
 
     def create_frame_for_axis_visual_x(self):
-        self.logic_widgets['axis_x'] = AxisVisualWidgets()
-        labelframe = LabelFrame(
-            self.root, 1, 2, 'X-Axis Visualization', self.font)
+        text = 'X-Axis Visualization'
+        labelframe = LabelFrame(self.root, 1, 2, text, self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Label: ', self.font)
         Entry(labelframe, 0, 1, self.font, textvariable=strvar)
+        self.logic_widgets['axis_x'] = AxisVisualWidgets()
         self.logic_widgets['axis_x']['label'] = strvar
 
         Label(labelframe, 1, 0, 'Scale: ', self.font)
@@ -192,13 +192,13 @@ class App:
         self.logic_widgets['axis_x']['max_entry'] = entry
 
     def create_frame_for_axis_visual_y(self):
-        self.logic_widgets['axis_y'] = AxisVisualWidgets()
-        labelframe = LabelFrame(
-            self.root, 2, 2, 'Y-Axis Visualization', self.font)
+        text = 'Y-Axis Visualization'
+        labelframe = LabelFrame(self.root, 2, 2, text, self.font)
 
         strvar = tk.StringVar()
         Label(labelframe, 0, 0, 'Label: ', self.font)
         Entry(labelframe, 0, 1, self.font, textvariable=strvar)
+        self.logic_widgets['axis_y'] = AxisVisualWidgets()
         self.logic_widgets['axis_y']['label'] = strvar
 
         Label(labelframe, 1, 0, 'Scale: ', self.font)
@@ -227,8 +227,8 @@ class App:
         self.logic_widgets['axis_y']['max_entry'] = entry
 
     def create_frame_for_plot(self):
-        labelframe = LabelFrame(
-            self.root, 3, 1, 'Plot Actions', self.font, colspan=2)
+        text = 'Plot Actions'
+        labelframe = LabelFrame(self.root, 3, 1, text, self.font, colspan=2)
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
         Button(labelframe, 0, 0, 'Plot', self.font, self.plot)
