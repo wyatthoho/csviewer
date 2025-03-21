@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from tkinter import ttk
 from typing import Union
 
 
@@ -7,7 +7,7 @@ PADS = {'padx': 0, 'pady': 0}
 IPADS = {'ipadx': 0, 'ipady': 0}
 STICKY = tk.NSEW
 
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Frame(tk.Frame):

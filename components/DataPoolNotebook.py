@@ -7,13 +7,14 @@ from components.Treeview import Treeview
 import pandas as pd
 
 HEIGHT = 28
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 TabName = str
 DataPool = Dict[TabName, pd.DataFrame]
 
 
 class DataPoolNotebook(ttk.Notebook):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame], font: tk.font):
-        super().__init__(frame)
+    def __init__(self, master: master, font: tk.font):
+        super().__init__(master)
         self.font = font
         self.tabs_: Dict[str, ttk.Frame] = {}
 

@@ -8,7 +8,7 @@ import pandas as pd
 COLUMN_WIDTH_RATIO = 9
 
 
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Treeview(ttk.Treeview):

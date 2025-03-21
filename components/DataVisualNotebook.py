@@ -9,7 +9,7 @@ from components.Label import Label
 import pandas as pd
 
 
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 TabName = str
 DataPool = Dict[TabName, pd.DataFrame]
 
@@ -64,8 +64,8 @@ class DataVisualTab(ttk.Frame):
 
 
 class DataVisualNotebook(ttk.Notebook):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame], font: tk.font):
-        super().__init__(frame)
+    def __init__(self, master: master, font: tk.font):
+        super().__init__(master)
         self.font = font
         self.tabs_: Dict[str, DataVisualTab] = {}
         self.create_new_tab('1')

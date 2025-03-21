@@ -8,13 +8,14 @@ from components.Treeview import Treeview
 import pandas as pd
 
 
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 TabName = str
 DataPool = Dict[TabName, pd.DataFrame]
 
 
 class CsvInfoTreeview(Treeview):
-    def __init__(self, frame: Union[tk.Frame, ttk.Frame], columns: Sequence[str], height: int):
-        super().__init__(frame, columns, height)
+    def __init__(self, master: master, columns: Sequence[str], height: int):
+        super().__init__(master, columns, height)
 
     def collect_data_pool(self) -> DataPool:
         data_pool: DataPool = {}

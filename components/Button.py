@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 from collections.abc import Callable
 from typing import Union
@@ -9,7 +10,7 @@ IPADS = {'ipadx': 1, 'ipady': 1}
 BUTTON_WIDTH = 6
 STICKY = tk.NSEW
 
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Button(tk.Button):

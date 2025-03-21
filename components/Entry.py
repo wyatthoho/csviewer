@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from tkinter import ttk
 from typing import Union
 
 
@@ -8,7 +8,7 @@ IPADS = {'ipadx': 1, 'ipady': 1}
 ENTRY_WIDTH = 14
 STICKY = tk.NSEW
 
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame]
+type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Entry(tk.Entry):
