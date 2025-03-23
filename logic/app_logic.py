@@ -3,7 +3,7 @@ import os
 import sys
 import tkinter as tk
 from io import BytesIO
-from tkinter import filedialog, ttk
+from tkinter import filedialog
 from typing import Dict, Sequence, TypedDict
 
 import matplotlib.pyplot as plt
@@ -11,28 +11,11 @@ import pandas as pd
 import win32clipboard
 
 import utils.plt_utils as plt_utils
-from components.CsvInfoTreeview import CsvInfoTreeview
-from components.DataPoolNotebook import DataPoolNotebook
-from components.DataVisualNotebook import DataVisualNotebook
-
-
-# logic widgets
-class AxisVisualWidgets(TypedDict):
-    label: tk.StringVar
-    scale: ttk.Combobox
-    assign_range: tk.IntVar
-    min_var: tk.DoubleVar
-    max_var: tk.DoubleVar
-    min_entry: tk.Entry
-    max_entry: tk.Entry
-
-
-class FigureVisualWidgets(TypedDict):
-    title: tk.StringVar
-    width: tk.DoubleVar
-    height: tk.DoubleVar
-    grid_visible: tk.IntVar
-    legend_visible: tk.IntVar
+from view.AxisVisualWidgets import AxisVisualWidgets
+from view.CsvInfoTreeview import CsvInfoTreeview
+from view.DataPoolNotebook import DataPoolNotebook
+from view.DataVisualNotebook import DataVisualNotebook
+from view.FigureVisualWidgets import FigureVisualWidgets
 
 
 class LogicWidgets(TypedDict):

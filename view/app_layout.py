@@ -5,18 +5,17 @@ import logic.app_logic as logic
 from components.Button import Button
 from components.Checkbutton import Checkbutton
 from components.Combobox import Combobox
-from components.CsvInfoTreeview import CsvInfoTreeview
-from components.DataPoolNotebook import DataPoolNotebook
-from components.DataVisualNotebook import DataVisualNotebook
 from components.Entry import Entry
 from components.Frame import Frame
 from components.Label import Label
 from components.LabelFrame import LabelFrame
 from components.Spinbox import Spinbox
 from components.Treeview import Treeview
-from logic.app_logic import AxisVisualWidgets
-from logic.app_logic import FigureVisualWidgets
-from logic.app_logic import LogicWidgets
+from view.AxisVisualWidgets import AxisVisualWidgets
+from view.CsvInfoTreeview import CsvInfoTreeview
+from view.DataPoolNotebook import DataPoolNotebook
+from view.DataVisualNotebook import DataVisualNotebook
+from view.FigureVisualWidgets import FigureVisualWidgets
 
 
 NAME = 'CSViewer'
@@ -34,7 +33,7 @@ class App:
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
-        self.logic_widgets = LogicWidgets()
+        self.logic_widgets = logic.LogicWidgets()
         self.create_menubar()
         self.create_frame_for_csv_info()
         self.create_frame_for_data_pool()
