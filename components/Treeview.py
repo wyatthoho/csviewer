@@ -40,9 +40,8 @@ class Treeview(ttk.Treeview):
         for idx, row in df.iterrows():
             self.insert(
                 parent='',
-                index=idx,
+                index=tk.END,
                 values=list(row.values),
-                tags=str(idx)
             )
 
     def get_dataframe(self) -> pd.DataFrame:
