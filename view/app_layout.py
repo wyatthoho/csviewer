@@ -10,7 +10,6 @@ from components.Frame import Frame
 from components.Label import Label
 from components.LabelFrame import LabelFrame
 from components.Spinbox import Spinbox
-from components.Treeview import Treeview
 from view.AxisVisualWidgets import AxisVisualWidgets
 from view.CsvInfoTreeview import CsvInfoTreeview
 from view.DataPoolNotebook import DataPoolNotebook
@@ -21,15 +20,12 @@ from view.FigureVisualWidgets import FigureVisualWidgets
 NAME = 'CSViewer'
 FAVICON = 'icon\\favicon.ico'
 STATE = 'zoomed'
-ROOT_MINSIZE = {'width': 400, 'height': 400}
+ROOT_MINSIZE = {'width': 800, 'height': 800}
 FONT_FAMILY = 'Helvetica'
 FONT_SIZE = 10
 
 
 class App:
-    HIGHT_FILENAMES = 5
-    HIGHT_DATAPOOL = 28
-
     def __init__(self):
         self.root = self.initialize_main_window()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
@@ -48,12 +44,13 @@ class App:
         root = tk.Tk()
         root.title(NAME)
         root.iconbitmap(FAVICON)
-        root.columnconfigure(0, weight=1)
-        root.columnconfigure(1, weight=1)
-        root.columnconfigure(2, weight=1)
-        root.rowconfigure(0, weight=1)
-        root.rowconfigure(1, weight=5)
-        root.rowconfigure(2, weight=5)
+        root.columnconfigure(0, weight=1, minsize=200)
+        root.columnconfigure(1, weight=1, minsize=300)
+        root.columnconfigure(2, weight=1, minsize=300)
+        root.rowconfigure(0, weight=1, minsize=150)
+        root.rowconfigure(1, weight=5, minsize=250)
+        root.rowconfigure(2, weight=5, minsize=250)
+        root.rowconfigure(3, weight=0, minsize=60)
         root.state(STATE)
         root.minsize(**ROOT_MINSIZE)
         root.configure()
@@ -81,9 +78,8 @@ class App:
         labelframe.rowconfigure(0, weight=1)
         labelframe.columnconfigure(0, weight=1)
 
-        columns = ('CSV ID', 'CSV Path')
         frame = Frame(labelframe, 0, 0, True)
-        treeview = CsvInfoTreeview(frame, columns, App.HIGHT_FILENAMES)
+        treeview = CsvInfoTreeview(frame)
 
         frame = Frame(labelframe, 0, 1, sticky=False)
         Button(frame, 0, 0, 'Choose', self.font, self.open_csvs)
@@ -98,9 +94,7 @@ class App:
 
         notebook = DataPoolNotebook(labelframe, self.font)
         notebook.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW)
-
-        tab = notebook.create_new_tab(tabname='1')
-        Treeview(tab, columns=('',), height=App.HIGHT_DATAPOOL)
+        notebook.initialize()
 
         Button(labelframe, 1, 0, 'Import', self.font, self.import_csv)
         Button(labelframe, 1, 1, 'Clear', self.font, self.clear_data_pool)

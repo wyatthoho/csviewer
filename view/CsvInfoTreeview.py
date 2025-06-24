@@ -7,15 +7,20 @@ from components.Treeview import Treeview
 
 import pandas as pd
 
-
+HEIGHT = 10
+COLUMNS = ('CSV ID', 'CSV Path')
 type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 TabName = str
 DataPool = Dict[TabName, pd.DataFrame]
 
 
 class CsvInfoTreeview(Treeview):
-    def __init__(self, master: master, columns: Sequence[str], height: int):
-        super().__init__(master, columns, height)
+    def __init__(self, master: master):
+        super().__init__(
+            master, 
+            columns=COLUMNS, 
+            height=HEIGHT
+        )
 
     def collect_data_pool(self) -> DataPool:
         data_pool: DataPool = {}

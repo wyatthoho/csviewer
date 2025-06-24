@@ -6,7 +6,7 @@ from components.Treeview import Treeview
 
 import pandas as pd
 
-HEIGHT = 28
+HEIGHT = 80
 type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 TabName = str
 DataPool = Dict[TabName, pd.DataFrame]
@@ -41,7 +41,7 @@ class DataPoolNotebook(ttk.Notebook):
             treeview.insert_dataframe(dataframe)
             treeview.adjust_column_width()
 
-    def clear_content(self):
+    def initialize(self):
         self.remove_all_tabs()
         tab = self.create_new_tab('1')
         Treeview(tab, columns=('',), height=HEIGHT)
