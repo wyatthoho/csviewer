@@ -135,18 +135,18 @@ class App:
         self.logic_widgets['figure_visual']['width'] = doublevar
 
         doublevar = tk.DoubleVar(value=3.0)
-        Label(labelframe, 1, 2, 'Height: ', self.font)
-        Entry(labelframe, 1, 3, self.font, textvariable=doublevar)
+        Label(labelframe, 2, 0, 'Height: ', self.font)
+        Entry(labelframe, 2, 1, self.font, textvariable=doublevar)
         self.logic_widgets['figure_visual']['height'] = doublevar
 
         intvar = tk.IntVar()
         intvar.set(True)
-        Checkbutton(labelframe, 2, 0, 'Show grid', self.font, None, intvar)
+        Checkbutton(labelframe, 3, 0, 2, 'Show grid', self.font, None, intvar)
         self.logic_widgets['figure_visual']['grid_visible'] = intvar
 
         intvar = tk.IntVar()
         intvar.set(True)
-        Checkbutton(labelframe, 3, 0, 'Show legend', self.font, None, intvar)
+        Checkbutton(labelframe, 4, 0, 2, 'Show legend', self.font, None, intvar)
         self.logic_widgets['figure_visual']['legend_visible'] = intvar
 
     def create_frame_for_axis_visual_x(self):
@@ -166,7 +166,7 @@ class App:
 
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
-        Checkbutton(frame, 0, 0, 'Assign range', self.font,
+        Checkbutton(frame, 0, 0, 2, 'Assign range', self.font,
                     self.assign_range, intvar)
         self.logic_widgets['axis_x']['assign_range'] = intvar
 
@@ -201,7 +201,7 @@ class App:
 
         frame = Frame(labelframe, 2, 0, columnspan=2)
         intvar = tk.IntVar()
-        Checkbutton(frame, 0, 0, 'Assign range', self.font,
+        Checkbutton(frame, 0, 0, 2, 'Assign range', self.font,
                     self.assign_range, intvar)
         self.logic_widgets['axis_y']['assign_range'] = intvar
 

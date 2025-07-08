@@ -8,7 +8,6 @@ from typing import Union
 PADS = {'padx': 4, 'pady': 4}
 IPADS = {'ipadx': 1, 'ipady': 1}
 BUTTON_WIDTH = 6
-STICKY = tk.NSEW
 
 type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
@@ -19,4 +18,4 @@ class Button(tk.Button):
             master, text=text, font=font,
             command=command, width=BUTTON_WIDTH
         )
-        self.grid(row=row, column=col, sticky=STICKY, **PADS, **IPADS)
+        self.grid(row=row, column=col, **PADS, **IPADS)
