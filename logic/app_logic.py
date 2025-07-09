@@ -92,7 +92,8 @@ def update_csv_info(logic_widgets: LogicWidgets, csv_info: pd.DataFrame):
     treeview_csv_info.clear_content()
     treeview_csv_info.insert_dataframe(csv_info)
     treeview_csv_info.adjust_column_width()
-    notebook_data_pool.initialize()
+    notebook_data_pool.remove_all_tabs()
+    notebook_data_pool.create_new_tab('1')
     notebook_data_visual.remove_all_tabs()
     notebook_data_visual.create_new_tab('1')
     spinbox_dataset.set(1)
@@ -122,7 +123,8 @@ def import_csv(logic_widgets: LogicWidgets):
 
 
 def clear_data_pool(logic_widgets: LogicWidgets):
-    logic_widgets['data_pool'].initialize()
+    logic_widgets['data_pool'].remove_all_tabs()
+    logic_widgets['data_pool'].create_new_tab('1')
 
 
 def check_data_pool(logic_widgets: LogicWidgets):

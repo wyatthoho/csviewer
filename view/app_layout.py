@@ -94,7 +94,6 @@ class App:
 
         notebook = DataPoolNotebook(labelframe, self.font)
         notebook.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW)
-        notebook.initialize()
 
         Button(labelframe, 1, 0, 'Import', self.font, self.import_csv)
         Button(labelframe, 1, 1, 'Clear', self.font, self.clear_data_pool)
@@ -107,17 +106,17 @@ class App:
         labelframe.columnconfigure(0, weight=1)
         labelframe.columnconfigure(1, weight=1)
 
-        notebook = DataVisualNotebook(labelframe, self.font)
-        notebook.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
-
         Label(labelframe, 0, 0, 'Numbers of datasets', self.font)
         intvar = tk.IntVar(value=1)
         Spinbox(
             labelframe, row=0, col=1, from_=1, to=20, width=3,
             intvar=intvar, command=self.spin_number
         )
-        self.logic_widgets['data_visual'] = notebook
         self.logic_widgets['dataset_number'] = intvar
+
+        notebook = DataVisualNotebook(labelframe, self.font)
+        notebook.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
+        self.logic_widgets['data_visual'] = notebook
 
     def create_frame_for_figure_visual(self):
         text = 'Figure Visualization'
