@@ -116,7 +116,7 @@ def import_csv(logic_widgets: LogicWidgets):
         spinbox_dataset = logic_widgets['dataset_number']
         data_pool = treeview_csv_info.collect_data_pool()
         notebook_data_pool.remove_all_tabs()
-        notebook_data_pool.present_data_pool(data_pool)
+        notebook_data_pool.display_data_pool(data_pool)
         notebook_data_visual.remove_all_tabs()
         notebook_data_visual.create_new_tab('1', data_pool)
         spinbox_dataset.set(1)

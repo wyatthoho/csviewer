@@ -94,10 +94,10 @@ class App:
 
         notebook = DataPoolNotebook(labelframe, self.font)
         notebook.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW)
+        self.logic_widgets['data_pool'] = notebook
 
         Button(labelframe, 1, 0, 'Import', self.font, self.import_csv)
         Button(labelframe, 1, 1, 'Clear', self.font, self.clear_data_pool)
-        self.logic_widgets['data_pool'] = notebook
 
     def create_frame_for_data_visual(self):
         text = 'Data Visualization'
