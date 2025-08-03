@@ -1,8 +1,11 @@
-from tkinter import filedialog
+from tkinter import ttk, filedialog
+from typing import Dict
 
+from components.Combobox import Combobox
 from components.Treeview import Treeview
 from components.Notebook import Notebook
-from logic.csv_utils import check_header
+from components.Spinbox import Spinbox
+from logic.csv_utils import get_dataframe_from_csv
 from view.CsvInfoFrame import TREEVIEW_COLUMNS
 from view.DataPoolFrame import TREEVIEW_HEIGHT, TREEVIEW_COLUMNS_INI
 
@@ -13,7 +16,84 @@ FILEDIALOG_TITLE = 'Choose csv files'
 FILETYPES = [('csv files', '*.csv')]
 
 
-def open_csvs(treeview: Treeview):
+DataPool = Dict[str, pd.DataFrame]
+
+
+def get_data_pool(treeview_csv_info: Treeview) -> DataPool:
+    data_pool = {}
+    for row in treeview_csv_info.get_dataframe().itertuples():
+        csv_idx, csv_path = row[1:]
+        tabname = str(csv_idx)
+        dataframe = get_dataframe_from_csv(csv_path)
+        data_pool[tabname] = dataframe
+    return data_pool
+
+
+def present_data_pool(notebook_data_pool: Notebook, data_pool: DataPool):
+    notebook_data_pool.remove_all_tabs()
+    for tabname, dataframe in data_pool.items():
+        tab = notebook_data_pool.create_new_tab(tabname)
+        if dataframe is None:
+            Treeview(
+                master=tab, columns=TREEVIEW_COLUMNS_INI,
+                height=TREEVIEW_HEIGHT
+            )
+        else:
+            treeview = Treeview(
+                master=tab, columns=list(dataframe.columns),
+                height=TREEVIEW_HEIGHT
+            )
+            treeview.insert_dataframe(dataframe)
+            treeview.adjust_column_width()
+
+
+def cleanup_notebook_data_visual(notebook_data_visual: Notebook):
+    for tabname in notebook_data_visual.tabs_.keys():
+        if tabname != '1':
+            notebook_data_visual.remove_tab(tabname)
+    tab1 = notebook_data_visual.tabs_['1']
+    combobox_csv_idx: Combobox = tab1.widgets['csv_idx']
+    combobox_field_x: Combobox = tab1.widgets['field_x']
+    combobox_field_y: Combobox = tab1.widgets['field_y']
+    combobox_csv_idx.configure(values=('', ))
+    combobox_field_x.configure(values=('', ))
+    combobox_field_y.configure(values=('', ))
+    combobox_csv_idx.current(0)
+    combobox_field_x.current(0)
+    combobox_field_y.current(0)
+
+
+def reset_csv_idx(tab: ttk.Frame, csv_indices: list[str]):
+    combobox: Combobox = tab.widgets['csv_idx']
+    combobox.configure(values=csv_indices)
+    combobox.current(0)
+
+
+def reset_field_x_and_y(tab: ttk.Frame, data_pool: DataPool):
+    combobox_csv_idx: Combobox = tab.widgets['csv_idx']
+    combobox_field_x: Combobox = tab.widgets['field_x']
+    combobox_field_y: Combobox = tab.widgets['field_y']
+
+    csv_idx = combobox_csv_idx.get()
+    columns = list(data_pool[csv_idx].columns)
+    combobox_field_x.configure(values=columns)
+    combobox_field_y.configure(values=columns)
+    combobox_field_x.current(0)
+    if len(columns) > 1:
+        combobox_field_y.current(1)
+    else:
+        combobox_field_y.current(0)
+
+
+def bind_csv_idx_combobox(tab: ttk.Frame, data_pool: DataPool):
+    combobox: Combobox = tab.widgets['csv_idx']
+    combobox.bind(
+        '<<ComboboxSelected>>',
+        lambda event: reset_field_x_and_y(tab, data_pool)
+    )
+
+
+def button_choose_action(treeview: Treeview):
     csv_paths = filedialog.askopenfilenames(
         title=FILEDIALOG_TITLE,
         filetypes=FILETYPES
@@ -27,34 +107,45 @@ def open_csvs(treeview: Treeview):
     treeview.adjust_column_width()
 
 
-def import_csv_data(treeview_csv_info: Treeview, notebook_data_pool: Notebook):
-    notebook_data_pool.remove_all_tabs()
+def button_import_action(
+        data_pool: DataPool,
+        notebook_data_pool: Notebook,
+        notebook_data_visual: Notebook,
+):
+    # Modify notebook_data_pool
+    present_data_pool(notebook_data_pool, data_pool)
 
-    csv_info = treeview_csv_info.get_dataframe()
-    for row in csv_info.itertuples():
-        csv_idx, csv_path = row[1:]
-        tabname = str(csv_idx)
-        if check_header(csv_path):
-            csv_dataframe = pd.read_csv(csv_path)
-        else:
-            csv_dataframe = pd.read_csv(csv_path, header=None)
-            columns = [f'column-{col}' for col in csv_dataframe.columns]
-            csv_dataframe.columns = columns
-
-        notebook_data_pool.create_new_tab(tabname)
-        tab = notebook_data_pool.tabs_[tabname]
-        treeview = Treeview(
-            master=tab, columns=list(csv_dataframe.columns),
-            height=TREEVIEW_HEIGHT
-        )
-        treeview.insert_dataframe(csv_dataframe)
-        treeview.adjust_column_width()
+    # Modify notebook_data_visual
+    csv_indices = list(data_pool.keys())
+    cleanup_notebook_data_visual(notebook_data_visual)
+    for tab in notebook_data_visual.tabs_.values():
+        reset_csv_idx(tab, csv_indices)
+        reset_field_x_and_y(tab, data_pool)
+        bind_csv_idx_combobox(tab, data_pool)
 
 
-def clear_csv_data(notebook: Notebook):
-    notebook.remove_all_tabs()
-    tab = notebook.create_new_tab('1')
-    Treeview(
-        master=tab, columns=TREEVIEW_COLUMNS_INI,
-        height=TREEVIEW_HEIGHT
-    )
+def button_clear_action(notebook_data_pool: Notebook, notebook_data_visual: Notebook):
+    # Modify notebook_data_pool
+    present_data_pool(notebook_data_pool, {'1': None})
+
+    # Modify notebook_data_visual
+    cleanup_notebook_data_visual(notebook_data_visual)
+
+
+def spinbox_action(
+        data_pool: DataPool,
+        spinbox_data_visual: Spinbox,
+        notebook_data_visual: Notebook
+) -> ttk.Frame | None:
+    spinbox_num = spinbox_data_visual.get()
+    exist_num = list(notebook_data_visual.tabs_.keys())[-1]
+
+    if int(spinbox_num) > int(exist_num):
+        tab = notebook_data_visual.create_new_tab(spinbox_num)
+        csv_indices = list(data_pool.keys())    
+        reset_csv_idx(tab, csv_indices)
+        reset_field_x_and_y(tab, data_pool)
+        bind_csv_idx_combobox(tab, data_pool)
+    else:
+        notebook_data_visual.remove_tab(exist_num)
+    

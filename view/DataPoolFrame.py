@@ -42,10 +42,9 @@ class DataPoolFrame(LabelFrame):
         self.initialize_components(font)
 
     def initialize_components(self, font: font.Font):
-        notebook = Notebook(self, font)
-        notebook.grid(
-            row=0, column=0, columnspan=2,
-            sticky=tk.NSEW
+        notebook = Notebook(
+            master=self, row=0, col=0,
+            colspan=2
         )
         self.widgets['notebook'] = notebook
 

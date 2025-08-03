@@ -4,13 +4,21 @@ from typing import Dict, Union
 
 
 type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
-TabName = str
+STICKY = tk.NSEW
 
 
 class Notebook(ttk.Notebook):
-    def __init__(self, master: master, font: tk.font):
-        super().__init__(master)
-        self.font = font
+    def __init__(
+        self, master: master,
+        row: int, col: int,
+        rowspan: int = 1, colspan: int = 1,
+    ):
+        super().__init__(master=master)
+        self.grid(
+            row=row, column=col,
+            rowspan=rowspan, columnspan=colspan,
+            sticky=STICKY
+        )
         self.tabs_: Dict[str, ttk.Frame] = {}
 
     def create_new_tab(self, tabname: str) -> ttk.Frame:

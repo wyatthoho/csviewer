@@ -11,6 +11,12 @@ type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Label(tk.Label):
-    def __init__(self, master: master, row: int, col: int, text: str, font: tk.font):
-        super().__init__(master, text=text, font=font)
+    def __init__(
+            self, master: master,
+            row: int, col: int,
+            text: str, font: tk.font
+    ):
+        super().__init__(
+            master=master, text=text, font=font
+        )
         self.grid(row=row, column=col, sticky=STICKY, **PADS, **IPADS)

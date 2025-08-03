@@ -21,7 +21,7 @@ class Checkbutton(tk.Checkbutton):
             command: Callable, variable: tk.IntVar,
     ):
         super().__init__(
-            master, text=text, font=font,
+            master=master, text=text, font=font,
             command=command, variable=variable,
             onvalue=1, offvalue=0
         )

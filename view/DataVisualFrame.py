@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import font
+from tkinter import ttk, font
 from typing import TypedDict
 
 from components.Combobox import Combobox
@@ -53,32 +53,50 @@ class DataVisualFrame(LabelFrame):
         Label(self, 0, 0, SPINBOX_LABEL, font)
         intvar = tk.IntVar(value=1)
         spinbox = Spinbox(
-            self, row=0, col=1, 
+            self, row=0, col=1,
             from_=FROM, to=TO, width=SPINBOX_WIDTH,
             intvar=intvar, command=lambda *args: None
         )
         self.widgets['spinbox'] = spinbox
 
-        notebook = Notebook(self, font)
-        notebook.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW)
+        notebook = DataVisualNotebook(
+            master=self, row=1, column=0,
+            rowspan=1, columnspan=2,
+            font=font
+        )
         self.widgets['notebook'] = notebook
 
-        tab = notebook.create_new_tab('1')
+
+class DataVisualNotebook(Notebook):
+    def __init__(
+            self, master: tk.Tk, row: int, column: int,
+            rowspan: int, columnspan: int, font: font.Font
+    ):
+        self.font = font
+        super().__init__(
+            master, row=row, col=column,
+            rowspan=rowspan, colspan=columnspan
+        )
+        self.create_new_tab('1')
+
+    def create_new_tab(self, tabname) -> ttk.Frame:
+        tab = super().create_new_tab(tabname)
         tab.widgets = TabWidgets()
 
-        Label(tab, 0, 0, LABEL_CSV_IDX, font)
-        combobox = Combobox(tab, 0, 1)
+        Label(tab, 0, 0, LABEL_CSV_IDX, self.font)
+        combobox = Combobox(tab, 0, 1, values=['1',])
         tab.widgets['csv_idx'] = combobox
 
-        Label(tab, 1, 0, LABEL_FIELD_X, font)
+        Label(tab, 1, 0, LABEL_FIELD_X, self.font)
         combobox = Combobox(tab, 1, 1)
         tab.widgets['field_x'] = combobox
 
-        Label(tab, 2, 0, LABEL_FIELD_Y, font)
+        Label(tab, 2, 0, LABEL_FIELD_Y, self.font)
         combobox = Combobox(tab, 2, 1)
         tab.widgets['field_y'] = combobox
 
         strvar = tk.StringVar()
-        Label(tab, 3, 0, LABEL_LABEL, font)
-        Entry(tab, 3, 1, font, textvariable=strvar)
+        Label(tab, 3, 0, LABEL_LABEL, self.font)
+        Entry(tab, 3, 1, self.font, textvariable=strvar)
         tab.widgets['label'] = strvar
+        return tab

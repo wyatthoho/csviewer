@@ -13,9 +13,14 @@ type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Entry(tk.Entry):
-    def __init__(self, master: master, row: int, col: int, font: tk.font, width: int = None, textvariable: tk.StringVar = None):
+    def __init__(
+            self, master: master, 
+            row: int, col: int, 
+            font: tk.font, width: int = None, 
+            textvariable: tk.StringVar = None
+    ):
         super().__init__(
-            master,
+            master=master,
             width=width if width else ENTRY_WIDTH,
             textvariable=textvariable if textvariable else None,
             font=font,

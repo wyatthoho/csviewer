@@ -12,9 +12,18 @@ type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Combobox(ttk.Combobox):
-    def __init__(self, master: master, row: int, col: int, values: list[str] = [], width: int = WIDTH, font: tk.font = 'TkDefaultFont'):
-        super().__init__(master, width=width, font=font)
-        self.grid(row=row, column=col, sticky=STICKY, **PADS, **IPADS)
+    def __init__(
+            self, master: master,
+            row: int, col: int,
+            values: list[str] = [], width: int = WIDTH,
+            font: tk.font = 'TkDefaultFont'
+    ):
+        super().__init__(
+            master=master, width=width, font=font
+        )
+        self.grid(
+            row=row, column=col, sticky=STICKY, **PADS, **IPADS
+        )
         self.config(values=values, state='readonly')
         if self['values']:
             self.current(0)

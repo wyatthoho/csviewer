@@ -12,14 +12,15 @@ type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 
 
 class Treeview(ttk.Treeview):
-    def __init__(self, master: master, columns: Sequence[str], height: int):
-
-        scrollbar_x = tk.Scrollbar(master, orient=tk.HORIZONTAL)
-        scrollbar_y = tk.Scrollbar(master, orient=tk.VERTICAL)
+    def __init__(
+            self, master: master, columns: Sequence[str], height: int
+    ):
+        scrollbar_x = tk.Scrollbar(master=master, orient=tk.HORIZONTAL)
+        scrollbar_y = tk.Scrollbar(master=master, orient=tk.VERTICAL)
         scrollbar_x.pack(side=tk.BOTTOM, fill=tk.X)
         scrollbar_y.pack(side=tk.RIGHT, fill=tk.Y)
         super().__init__(
-            master,
+            master=master,
             xscrollcommand=scrollbar_x.set,
             yscrollcommand=scrollbar_y.set,
             height=height

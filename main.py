@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import font
 from typing import TypedDict
 
-import logic.gui_actions
+import logic.gui_actions as actions
+from logic.gui_actions import DataPool
 from view.AxisVisualFrame import AxisVisualFrame
 from view.CsvInfoFrame import CsvInfoFrame
 from view.DataPoolFrame import DataPoolFrame
@@ -35,6 +36,7 @@ class App:
         self.root = self.initialize_main_window()
         self.frames = AppFrames()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
+        self.data_pool: DataPool = {}
         self.initialize_menubar()
         self.initialize_csv_info_frame()
         self.initialize_data_pool_frame()
@@ -72,7 +74,7 @@ class App:
             colspan=3
         )
         self.frames['csv_info'].widgets['button'].configure(
-            command=self.open_csvs
+            command=self.button_choose_action
         )
 
     def initialize_data_pool_frame(self):
@@ -82,16 +84,19 @@ class App:
             rowspan=3
         )
         self.frames['data_pool'].widgets['button_import'].configure(
-            command=self.import_csv_data
+            command=self.button_import_action
         )
         self.frames['data_pool'].widgets['button_clear'].configure(
-            command=self.clear_csv_data
+            command=self.button_clear_action
         )
 
     def initialize_data_visual_frame(self):
         self.frames['data_visual'] = DataVisualFrame(
             master=self.root, row=1, col=1,
             text='Data Visualization', font=self.font,
+        )
+        self.frames['data_visual'].widgets['spinbox'].configure(
+            command=self.spinbox_action
         )
 
     def initialize_figure_visual_frame(self):
@@ -120,18 +125,30 @@ class App:
         )
 
     # GUI actions
-    def open_csvs(self):
+    def button_choose_action(self):
         treeview = self.frames['csv_info'].widgets['treeview']
-        logic.gui_actions.open_csvs(treeview)
+        actions.button_choose_action(treeview)
 
-    def import_csv_data(self):
+    def button_import_action(self):
         treeview_csv_info = self.frames['csv_info'].widgets['treeview']
         notebook_data_pool = self.frames['data_pool'].widgets['notebook']
-        logic.gui_actions.import_csv_data(treeview_csv_info, notebook_data_pool)
+        notebook_data_visual = self.frames['data_visual'].widgets['notebook']
+        self.data_pool = actions.get_data_pool(treeview_csv_info)
+        actions.button_import_action(
+            self.data_pool, notebook_data_pool, notebook_data_visual
+        )
 
-    def clear_csv_data(self):
-        notebook = self.frames['data_pool'].widgets['notebook']
-        logic.gui_actions.clear_csv_data(notebook)
+    def button_clear_action(self):
+        notebook_data_pool = self.frames['data_pool'].widgets['notebook']
+        notebook_data_visual = self.frames['data_visual'].widgets['notebook']
+        actions.button_clear_action(notebook_data_pool, notebook_data_visual)
+
+    def spinbox_action(self):
+        spinbox_data_visual = self.frames['data_visual'].widgets['spinbox']
+        notebook_data_visual = self.frames['data_visual'].widgets['notebook']
+        actions.spinbox_action(
+            self.data_pool, spinbox_data_visual, notebook_data_visual
+        )
 
 
 if __name__ == '__main__':
