@@ -26,33 +26,34 @@ class AxisVisualFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1
     ):
+        self.font = font
         super().__init__(
             master=master, row=row, col=col,
-            text=text, font=font,
+            text=text, font=self.font,
             rowspan=rowspan, colspan=colspan
         )
         self.widgets = AxisVisualWidgets()
-        self.create_widgets(font)
+        self.create_widgets()
 
-    def create_widgets(self, font: font.Font):
+    def create_widgets(self):
         strvar = tk.StringVar()
         Label(
             master=self, row=0, col=0,
-            text='Label: ', font=font
+            text='Label: ', font=self.font
         )
         Entry(
             master=self, row=0, col=1,
-            font=font, textvariable=strvar
+            font=self.font, textvariable=strvar
         )
         self.widgets['label'] = strvar
 
         Label(
             master=self, row=1, col=0,
-            text='Scale: ', font=font
+            text='Scale: ', font=self.font
         )
         combobox = Combobox(
             master=self, row=1, col=1,
-            values=['linear', 'log'], font=font
+            values=['linear', 'log'], font=self.font
         )
         self.widgets['scale'] = combobox
 
@@ -62,19 +63,20 @@ class AxisVisualFrame(LabelFrame):
         intvar = tk.IntVar()
         Checkbutton(
             master=frame, row=0, col=0, colspan=2, 
-            text='Assign range', font=font,
+            text='Assign range', font=self.font,
             command=self.change_widgets_state, variable=intvar
         )
+        # should extract the command to logic method
         self.widgets['assign_range'] = intvar
 
         doublevar = tk.DoubleVar()
         Label(
             master=frame, row=1, col=0,
-            text='Min: ', font=font
+            text='Min: ', font=self.font
         )
         entry = Entry(
             master=frame, row=1, col=1,
-            font=font, textvariable=doublevar
+            font=self.font, textvariable=doublevar
         )
         entry.config(state='disabled')
         self.widgets['min_var'] = doublevar
@@ -83,11 +85,11 @@ class AxisVisualFrame(LabelFrame):
         doublevar = tk.DoubleVar()
         Label(
             master=frame, row=2, col=0,
-            text='Max: ', font=font
+            text='Max: ', font=self.font
         )
         entry = Entry(
             master=frame, row=2, col=1,
-            font=font, textvariable=doublevar
+            font=self.font, textvariable=doublevar
         )
         entry.config(state='disabled')
         self.widgets['max_var'] = doublevar

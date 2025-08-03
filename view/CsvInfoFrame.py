@@ -24,17 +24,18 @@ class CsvInfoFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1
     ):
+        self.font = font
         super().__init__(
             master=master, row=row, col=col,
-            text=text, font=font,
+            text=text, font=self.font,
             rowspan=rowspan, colspan=colspan
         )
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
         self.widgets = FrameWidgets()
-        self.initialize_components(font)
+        self.initialize_components()
 
-    def initialize_components(self, font: font.Font):
+    def initialize_components(self):
         frame = Frame(
             master=self, row=0, col=0, sticky=True
         )
@@ -50,7 +51,7 @@ class CsvInfoFrame(LabelFrame):
         )
         button = Button(
             master=frame, row=0, col=0,
-            text=BUTTON_TEXT, font=font,
+            text=BUTTON_TEXT, font=self.font,
             command=lambda *args: None
         )
         self.widgets['button'] = button

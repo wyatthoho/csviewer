@@ -30,18 +30,19 @@ class DataPoolFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1,
     ):
+        self.font = font
         super().__init__(
             master=master, row=row, col=col,
-            text=text, font=font,
+            text=text, font=self.font,
             rowspan=rowspan, colspan=colspan
         )
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.widgets = FrameWidgets()
-        self.initialize_components(font)
+        self.initialize_components()
 
-    def initialize_components(self, font: font.Font):
+    def initialize_components(self):
         notebook = Notebook(
             master=self, row=0, col=0,
             colspan=2
@@ -59,14 +60,14 @@ class DataPoolFrame(LabelFrame):
 
         button = Button(
             master=self, row=1, col=0,
-            text=BUTTON_TEXT_IMPORT, font=font,
+            text=BUTTON_TEXT_IMPORT, font=self.font,
             command=lambda *args: None
         )
         self.widgets['button_import'] = button
 
         button = Button(
             master=self, row=1, col=1,
-            text=BUTTON_TEXT_CLEAR, font=font,
+            text=BUTTON_TEXT_CLEAR, font=self.font,
             command=lambda *args: None
         )
         self.widgets['button_clear'] = button

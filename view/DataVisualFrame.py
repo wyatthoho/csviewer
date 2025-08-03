@@ -38,44 +38,48 @@ class DataVisualFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1
     ):
+        self.font = font
         super().__init__(
-            master, row, col,
-            text, font,
+            master=master, row=row, col=col,
+            text=text, font=self.font,
             rowspan=rowspan, colspan=colspan
         )
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.widgets = FrameWidgets()
-        self.initialize_components(font)
+        self.initialize_components()
 
-    def initialize_components(self, font: font.Font):
-        Label(self, 0, 0, SPINBOX_LABEL, font)
+    def initialize_components(self):
+        Label(
+            master=self, row=0, col=0,
+            text=SPINBOX_LABEL, font=self.font
+        )
         intvar = tk.IntVar(value=1)
         spinbox = Spinbox(
-            self, row=0, col=1,
+            master=self, row=0, col=1,
             from_=FROM, to=TO, width=SPINBOX_WIDTH,
             intvar=intvar, command=lambda *args: None
         )
         self.widgets['spinbox'] = spinbox
 
         notebook = DataVisualNotebook(
-            master=self, row=1, column=0,
-            rowspan=1, columnspan=2,
-            font=font
+            master=self, row=1, col=0,
+            rowspan=1, colspan=2,
+            font=self.font
         )
         self.widgets['notebook'] = notebook
 
 
 class DataVisualNotebook(Notebook):
     def __init__(
-            self, master: tk.Tk, row: int, column: int,
-            rowspan: int, columnspan: int, font: font.Font
+            self, master: tk.Tk, row: int, col: int,
+            rowspan: int, colspan: int, font: font.Font
     ):
         self.font = font
         super().__init__(
-            master, row=row, col=column,
-            rowspan=rowspan, colspan=columnspan
+            master=master, row=row, col=col,
+            rowspan=rowspan, colspan=colspan
         )
         self.create_new_tab('1')
 
@@ -83,20 +87,41 @@ class DataVisualNotebook(Notebook):
         tab = super().create_new_tab(tabname)
         tab.widgets = TabWidgets()
 
-        Label(tab, 0, 0, LABEL_CSV_IDX, self.font)
-        combobox = Combobox(tab, 0, 1, values=['1',])
+        Label(
+            master=tab, row=0, col=0,
+            text=LABEL_CSV_IDX, font=self.font
+        )
+        combobox = Combobox(
+            master=tab, row=0, col=1, values=['1',]
+        )
         tab.widgets['csv_idx'] = combobox
 
-        Label(tab, 1, 0, LABEL_FIELD_X, self.font)
-        combobox = Combobox(tab, 1, 1)
+        Label(
+            master=tab, row=1, col=0,
+            text=LABEL_FIELD_X, font=self.font
+        )
+        combobox = Combobox(
+            master=tab, row=1, col=1
+        )
         tab.widgets['field_x'] = combobox
 
-        Label(tab, 2, 0, LABEL_FIELD_Y, self.font)
-        combobox = Combobox(tab, 2, 1)
+        Label(
+            master=tab, row=2, col=0,
+            text=LABEL_FIELD_Y, font=self.font
+        )
+        combobox = Combobox(
+            master=tab, row=2, col=1
+        )
         tab.widgets['field_y'] = combobox
 
         strvar = tk.StringVar()
-        Label(tab, 3, 0, LABEL_LABEL, self.font)
-        Entry(tab, 3, 1, self.font, textvariable=strvar)
+        Label(
+            master=tab, row=3, col=0,
+            text=LABEL_LABEL, font=self.font
+        )
+        Entry(
+            master=tab, row=3, col=1,
+            font=self.font, textvariable=strvar
+        )
         tab.widgets['label'] = strvar
         return tab

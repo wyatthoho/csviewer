@@ -22,28 +22,55 @@ class FigureVisualFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1
     ):
+        self.font = font
         super().__init__(
-            master, row, col,
-            text, font,
+            master=master, row=row, col=col,
+            text=text, font=self.font,
             rowspan=rowspan, colspan=colspan
         )
 
         strvar = tk.StringVar()
-        Label(self, 0, 0, 'Title: ', font)
-        Entry(self, 0, 1, font, textvariable=strvar)
+        Label(
+            master=self, row=0, col=0, 
+            text='Title: ', font=self.font
+        )
+        Entry(
+            master=self, row=0, col=1, 
+            font=self.font, textvariable=strvar
+        )
 
         doublevar = tk.DoubleVar(value=4.8)
-        Label(self, 1, 0, 'Width: ', font)
-        Entry(self, 1, 1, font, textvariable=doublevar)
+        Label(
+            master=self, row=1, col=0, 
+            text='Width: ', font=self.font
+        )
+        Entry(
+            master=self, row=1, col=1, 
+            font=self.font, textvariable=doublevar
+        )
 
         doublevar = tk.DoubleVar(value=3.0)
-        Label(self, 2, 0, 'Height: ', font)
-        Entry(self, 2, 1, font, textvariable=doublevar)
+        Label(
+            master=self, row=2, col=0, 
+            text='Height: ', font=self.font
+        )
+        Entry(
+            master=self, row=2, col=1, 
+            font=self.font, textvariable=doublevar
+        )
 
         intvar = tk.IntVar()
         intvar.set(True)
-        Checkbutton(self, 3, 0, 2, 'Show grid', font, None, intvar)
+        Checkbutton(
+            master=self, row=3, col=0, 
+            colspan=2, text='Show grid', font=self.font, 
+            command=None, variable=intvar
+        )
 
         intvar = tk.IntVar()
         intvar.set(True)
-        Checkbutton(self, 4, 0, 2, 'Show legend', font, None, intvar)
+        Checkbutton(
+            master=self, row=4, col=0, 
+            colspan=2, text='Show legend', font=self.font, 
+            command=None, variable=intvar
+        )
