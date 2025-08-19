@@ -22,13 +22,16 @@ class FigureVisualFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1
     ):
-        self.font = font
         super().__init__(
             master=master, row=row, col=col,
-            text=text, font=self.font,
+            text=text, font=font,
             rowspan=rowspan, colspan=colspan
         )
+        self.font = font
+        self.widgets = FigureVisualWidgets()
+        self.initialize_components()
 
+    def initialize_components(self):
         strvar = tk.StringVar()
         Label(
             master=self, row=0, col=0, 
@@ -38,6 +41,7 @@ class FigureVisualFrame(LabelFrame):
             master=self, row=0, col=1, 
             font=self.font, textvariable=strvar
         )
+        self.widgets['title'] = strvar
 
         doublevar = tk.DoubleVar(value=4.8)
         Label(
@@ -48,6 +52,7 @@ class FigureVisualFrame(LabelFrame):
             master=self, row=1, col=1, 
             font=self.font, textvariable=doublevar
         )
+        self.widgets['width'] = doublevar
 
         doublevar = tk.DoubleVar(value=3.0)
         Label(
@@ -58,6 +63,7 @@ class FigureVisualFrame(LabelFrame):
             master=self, row=2, col=1, 
             font=self.font, textvariable=doublevar
         )
+        self.widgets['height'] = doublevar
 
         intvar = tk.IntVar()
         intvar.set(True)
@@ -66,6 +72,7 @@ class FigureVisualFrame(LabelFrame):
             colspan=2, text='Show grid', font=self.font, 
             command=None, variable=intvar
         )
+        self.widgets['grid_visible'] = doublevar
 
         intvar = tk.IntVar()
         intvar.set(True)
@@ -74,3 +81,4 @@ class FigureVisualFrame(LabelFrame):
             colspan=2, text='Show legend', font=self.font, 
             command=None, variable=intvar
         )
+        self.widgets['legend_visible'] = doublevar

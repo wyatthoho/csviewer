@@ -1,11 +1,13 @@
 import tkinter as tk
-from tkinter import font
+from tkinter import ttk, font
 from typing import TypedDict
 
 from components.Button import Button
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
 from components.Treeview import Treeview
+
+import pandas as pd
 
 
 TREEVIEW_COLUMNS_INI = ('', )
@@ -14,14 +16,47 @@ BUTTON_TEXT_IMPORT = 'Import'
 BUTTON_TEXT_CLEAR = 'Clear'
 
 
+class TabWidgets(TypedDict):
+    treeview: Treeview
+
+
 class FrameWidgets(TypedDict):
     notebook: Notebook
     button_import: Button
     button_clear: Button
 
 
-class TabWidgets(TypedDict):
-    treeview: Treeview
+class DataPoolNotebook(Notebook):
+    def __init__(
+            self, master: tk.Tk, row: int, col: int,
+            rowspan: int, colspan: int, font: font.Font
+    ):
+        super().__init__(
+            master=master, row=row, col=col,
+            rowspan=rowspan, colspan=colspan
+        )
+        self.font = font
+        self.create_new_tab('1', None)
+
+    def create_new_tab(
+            self, tabname: str, dataframe: pd.DataFrame
+    ) -> ttk.Frame:
+        tab = super().create_new_tab(tabname)
+        tab.widgets = TabWidgets()
+        if dataframe is None:
+            treeview = Treeview(
+                master=tab, columns=TREEVIEW_COLUMNS_INI,
+                height=TREEVIEW_HEIGHT
+            )
+        else:
+            treeview = Treeview(
+                master=tab, columns=list(dataframe.columns),
+                height=TREEVIEW_HEIGHT
+            )
+            treeview.insert_dataframe(dataframe)
+            treeview.adjust_column_width()
+        tab.widgets['treeview'] = treeview
+        return tab
 
 
 class DataPoolFrame(LabelFrame):
@@ -30,12 +65,12 @@ class DataPoolFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1,
     ):
-        self.font = font
         super().__init__(
             master=master, row=row, col=col,
-            text=text, font=self.font,
+            text=text, font=font,
             rowspan=rowspan, colspan=colspan
         )
+        self.font = font
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -43,20 +78,11 @@ class DataPoolFrame(LabelFrame):
         self.initialize_components()
 
     def initialize_components(self):
-        notebook = Notebook(
+        notebook = DataPoolNotebook(
             master=self, row=0, col=0,
-            colspan=2
+            rowspan=1, colspan=2, font=self.font
         )
         self.widgets['notebook'] = notebook
-
-        tab = notebook.create_new_tab('1')
-        tab.widgets = TabWidgets()
-
-        treeview = Treeview(
-            master=tab, columns=TREEVIEW_COLUMNS_INI,
-            height=TREEVIEW_HEIGHT
-        )
-        tab.widgets['treeview'] = treeview
 
         button = Button(
             master=self, row=1, col=0,

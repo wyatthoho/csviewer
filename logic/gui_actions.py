@@ -7,7 +7,6 @@ from components.Notebook import Notebook
 from components.Spinbox import Spinbox
 from logic.csv_utils import get_dataframe_from_csv
 from view.CsvInfoFrame import TREEVIEW_COLUMNS
-from view.DataPoolFrame import TREEVIEW_HEIGHT, TREEVIEW_COLUMNS_INI
 
 import pandas as pd
 
@@ -32,19 +31,7 @@ def get_data_pool(treeview_csv_info: Treeview) -> DataPool:
 def present_data_pool(notebook_data_pool: Notebook, data_pool: DataPool):
     notebook_data_pool.remove_all_tabs()
     for tabname, dataframe in data_pool.items():
-        tab = notebook_data_pool.create_new_tab(tabname)
-        if dataframe is None:
-            Treeview(
-                master=tab, columns=TREEVIEW_COLUMNS_INI,
-                height=TREEVIEW_HEIGHT
-            )
-        else:
-            treeview = Treeview(
-                master=tab, columns=list(dataframe.columns),
-                height=TREEVIEW_HEIGHT
-            )
-            treeview.insert_dataframe(dataframe)
-            treeview.adjust_column_width()
+        notebook_data_pool.create_new_tab(tabname, dataframe)
 
 
 def cleanup_notebook_data_visual(notebook_data_visual: Notebook):

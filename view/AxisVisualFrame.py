@@ -26,16 +26,16 @@ class AxisVisualFrame(LabelFrame):
         text: str, font: font.Font,
         rowspan: int = 1, colspan: int = 1
     ):
-        self.font = font
         super().__init__(
             master=master, row=row, col=col,
-            text=text, font=self.font,
+            text=text, font=font,
             rowspan=rowspan, colspan=colspan
         )
+        self.font = font
         self.widgets = AxisVisualWidgets()
-        self.create_widgets()
+        self.initialize_components()
 
-    def create_widgets(self):
+    def initialize_components(self):
         strvar = tk.StringVar()
         Label(
             master=self, row=0, col=0,
