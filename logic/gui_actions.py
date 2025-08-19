@@ -1,6 +1,9 @@
+import tkinter as tk
 from tkinter import ttk, filedialog
+from collections.abc import Sequence
 from typing import Dict
 
+from components.Checkbutton import Checkbutton
 from components.Combobox import Combobox
 from components.Treeview import Treeview
 from components.Notebook import Notebook
@@ -111,7 +114,9 @@ def button_import_action(
         bind_csv_idx_combobox(tab, data_pool)
 
 
-def button_clear_action(notebook_data_pool: Notebook, notebook_data_visual: Notebook):
+def button_clear_action(
+        notebook_data_pool: Notebook, notebook_data_visual: Notebook
+):
     # Modify notebook_data_pool
     present_data_pool(notebook_data_pool, {'1': None})
 
@@ -129,10 +134,17 @@ def spinbox_action(
 
     if int(spinbox_num) > int(exist_num):
         tab = notebook_data_visual.create_new_tab(spinbox_num)
-        csv_indices = list(data_pool.keys())    
+        csv_indices = list(data_pool.keys())
         reset_csv_idx(tab, csv_indices)
         reset_field_x_and_y(tab, data_pool)
         bind_csv_idx_combobox(tab, data_pool)
     else:
         notebook_data_visual.remove_tab(exist_num)
-    
+
+
+def switch_widgets_state(
+        checkbutton: Checkbutton, widgets: Sequence[tk.Widget]
+) -> None:
+    config = {True: 'normal', False: 'disabled'}[checkbutton.getint()]
+    for widget in widgets:
+        widget.configure(state=config)

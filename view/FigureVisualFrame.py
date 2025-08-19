@@ -12,8 +12,8 @@ class FigureVisualWidgets(TypedDict):
     title: tk.StringVar
     width: tk.DoubleVar
     height: tk.DoubleVar
-    grid_visible: tk.IntVar
-    legend_visible: tk.IntVar
+    grid_visible: Checkbutton
+    legend_visible: Checkbutton
 
 
 class FigureVisualFrame(LabelFrame):
@@ -65,20 +65,18 @@ class FigureVisualFrame(LabelFrame):
         )
         self.widgets['height'] = doublevar
 
-        intvar = tk.IntVar()
-        intvar.set(True)
-        Checkbutton(
+        intvar = tk.IntVar(value=True)
+        checkbutton = Checkbutton(
             master=self, row=3, col=0, 
             colspan=2, text='Show grid', font=self.font, 
             command=None, variable=intvar
         )
-        self.widgets['grid_visible'] = doublevar
+        self.widgets['grid_visible'] = checkbutton
 
-        intvar = tk.IntVar()
-        intvar.set(True)
-        Checkbutton(
+        intvar = tk.IntVar(value=True)
+        checkbutton = Checkbutton(
             master=self, row=4, col=0, 
             colspan=2, text='Show legend', font=self.font, 
             command=None, variable=intvar
         )
-        self.widgets['legend_visible'] = doublevar
+        self.widgets['legend_visible'] = checkbutton

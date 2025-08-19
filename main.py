@@ -110,11 +110,17 @@ class App:
             master=self.root, row=1, col=2,
             text='X-Axis Visualization', font=self.font
         )
+        self.frames['axis_visual_x'].widgets['assign_range'].configure(
+            command=self.assign_range_x_action
+        )
 
     def initialize_axis_visual_frame_y(self):
         self.frames['axis_visual_y'] = AxisVisualFrame(
             master=self.root, row=2, col=2,
             text='Y-Axis Visualization', font=self.font
+        )
+        self.frames['axis_visual_y'].widgets['assign_range'].configure(
+            command=self.assign_range_y_action
         )
 
     def initialize_plot_actions_frame(self):
@@ -149,6 +155,22 @@ class App:
         actions.spinbox_action(
             self.data_pool, spinbox_data_visual, notebook_data_visual
         )
+
+    def assign_range_x_action(self):
+        checkbutton = self.frames['axis_visual_x'].widgets['assign_range']
+        widgets = [
+            self.frames['axis_visual_x'].widgets['min_entry'],
+            self.frames['axis_visual_x'].widgets['max_entry']
+        ]
+        actions.switch_widgets_state(checkbutton, widgets)
+
+    def assign_range_y_action(self):
+        checkbutton = self.frames['axis_visual_y'].widgets['assign_range']
+        widgets = [
+            self.frames['axis_visual_y'].widgets['min_entry'],
+            self.frames['axis_visual_y'].widgets['max_entry']
+        ]
+        actions.switch_widgets_state(checkbutton, widgets)
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ from components.LabelFrame import LabelFrame
 class AxisVisualWidgets(TypedDict):
     label: tk.StringVar
     scale: Combobox
-    assign_range: tk.IntVar
+    assign_range: Checkbutton
     min_var: tk.DoubleVar
     max_var: tk.DoubleVar
     min_entry: Entry
@@ -60,14 +60,13 @@ class AxisVisualFrame(LabelFrame):
         frame = Frame(
             master=self, row=2, col=0, columnspan=2
         )
-        intvar = tk.IntVar()
-        Checkbutton(
+        intvar = tk.IntVar(value=False)
+        checkbutton = Checkbutton(
             master=frame, row=0, col=0, colspan=2, 
             text='Assign range', font=self.font,
-            command=self.change_widgets_state, variable=intvar
+            command=lambda *args: None, variable=intvar
         )
-        # should extract the command to logic method
-        self.widgets['assign_range'] = intvar
+        self.widgets['assign_range'] = checkbutton
 
         doublevar = tk.DoubleVar()
         Label(
@@ -94,11 +93,3 @@ class AxisVisualFrame(LabelFrame):
         entry.config(state='disabled')
         self.widgets['max_var'] = doublevar
         self.widgets['max_entry'] = entry
-
-    def change_widgets_state(self):
-        if self.widgets['assign_range'].get():
-            self.widgets['min_entry'].config(state='normal')
-            self.widgets['max_entry'].config(state='normal')
-        else:
-            self.widgets['min_entry'].config(state='disabled')
-            self.widgets['max_entry'].config(state='disabled')

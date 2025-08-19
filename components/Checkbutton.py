@@ -29,3 +29,7 @@ class Checkbutton(tk.Checkbutton):
             row=row, column=col, columnspan=colspan,
             sticky=STICKY, **PADS, **IPADS
         )
+        self.variable = variable
+
+    def getint(self) -> int:
+        return self.variable.get()
