@@ -6,6 +6,7 @@ from components.Button import Button
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
 from components.Treeview import Treeview
+from logic import DataPool
 
 import pandas as pd
 
@@ -17,13 +18,7 @@ BUTTON_TEXT_CLEAR = 'Clear'
 
 
 class TabWidgets(TypedDict):
-    treeview: Treeview
-
-
-class FrameWidgets(TypedDict):
-    notebook: Notebook
-    button_import: Button
-    button_clear: Button
+    treeview_datapool: Treeview
 
 
 class DataPoolNotebook(Notebook):
@@ -55,8 +50,19 @@ class DataPoolNotebook(Notebook):
             )
             treeview.insert_dataframe(dataframe)
             treeview.adjust_column_width()
-        tab.widgets['treeview'] = treeview
+        tab.widgets['treeview_datapool'] = treeview
         return tab
+
+    def present_data_pool(self, data_pool: DataPool):
+        self.remove_all_tabs()
+        for tabname, dataframe in data_pool.items():
+            self.create_new_tab(tabname, dataframe)
+
+
+class FrameWidgets(TypedDict):
+    notebook_datapool: DataPoolNotebook
+    button_import: Button
+    button_clear: Button
 
 
 class DataPoolFrame(LabelFrame):
@@ -82,7 +88,7 @@ class DataPoolFrame(LabelFrame):
             master=self, row=0, col=0,
             rowspan=1, colspan=2, font=self.font
         )
-        self.widgets['notebook'] = notebook
+        self.widgets['notebook_datapool'] = notebook
 
         button = Button(
             master=self, row=1, col=0,

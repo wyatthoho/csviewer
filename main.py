@@ -3,7 +3,7 @@ from tkinter import font
 from typing import TypedDict
 
 import logic.gui_actions as actions
-from logic.gui_actions import DataPool
+from logic import DataPool
 from view.AxisVisualFrame import AxisVisualFrame
 from view.CsvInfoFrame import CsvInfoFrame
 from view.DataPoolFrame import DataPoolFrame
@@ -36,7 +36,7 @@ class App:
         self.root = self.initialize_main_window()
         self.frames = AppFrames()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
-        self.data_pool: DataPool = {}
+        self.datapool: DataPool = {}
         self.initialize_menubar()
         self.initialize_csv_info_frame()
         self.initialize_data_pool_frame()
@@ -73,7 +73,7 @@ class App:
             text='CSV Information', font=self.font,
             colspan=3
         )
-        self.frames['csv_info'].widgets['button'].configure(
+        self.frames['csv_info'].widgets['button_choose'].configure(
             command=self.button_choose_action
         )
 
@@ -95,8 +95,8 @@ class App:
             master=self.root, row=1, col=1,
             text='Data Visualization', font=self.font,
         )
-        self.frames['data_visual'].widgets['spinbox'].configure(
-            command=self.spinbox_action
+        self.frames['data_visual'].widgets['spinbox_num'].configure(
+            command=self.spinbox_num_action
         )
 
     def initialize_figure_visual_frame(self):
@@ -110,8 +110,8 @@ class App:
             master=self.root, row=1, col=2,
             text='X-Axis Visualization', font=self.font
         )
-        self.frames['axis_visual_x'].widgets['assign_range'].configure(
-            command=self.assign_range_x_action
+        self.frames['axis_visual_x'].widgets['checkbutton_range'].configure(
+            command=self.checkbutton_range_x_action
         )
 
     def initialize_axis_visual_frame_y(self):
@@ -119,8 +119,8 @@ class App:
             master=self.root, row=2, col=2,
             text='Y-Axis Visualization', font=self.font
         )
-        self.frames['axis_visual_y'].widgets['assign_range'].configure(
-            command=self.assign_range_y_action
+        self.frames['axis_visual_y'].widgets['checkbutton_range'].configure(
+            command=self.checkbutton_range_y_action
         )
 
     def initialize_plot_actions_frame(self):
@@ -132,43 +132,43 @@ class App:
 
     # GUI actions
     def button_choose_action(self):
-        treeview = self.frames['csv_info'].widgets['treeview']
-        actions.button_choose_action(treeview)
+        treeview_csvinfo = self.frames['csv_info'].widgets['treeview_csvinfo']
+        actions.button_choose_action(treeview_csvinfo)
 
     def button_import_action(self):
-        treeview_csv_info = self.frames['csv_info'].widgets['treeview']
-        notebook_data_pool = self.frames['data_pool'].widgets['notebook']
-        notebook_data_visual = self.frames['data_visual'].widgets['notebook']
-        self.data_pool = actions.get_data_pool(treeview_csv_info)
+        self.datapool = self.frames['csv_info'].widgets['treeview_csvinfo'].get_data_pool(
+        )
+        notebook_datapool = self.frames['data_pool'].widgets['notebook_datapool']
+        notebook_datavisual = self.frames['data_visual'].widgets['notebook_datavisual']
         actions.button_import_action(
-            self.data_pool, notebook_data_pool, notebook_data_visual
+            self.datapool, notebook_datapool, notebook_datavisual
         )
 
     def button_clear_action(self):
-        notebook_data_pool = self.frames['data_pool'].widgets['notebook']
-        notebook_data_visual = self.frames['data_visual'].widgets['notebook']
-        actions.button_clear_action(notebook_data_pool, notebook_data_visual)
+        notebook_datapool = self.frames['data_pool'].widgets['notebook_datapool']
+        notebook_datavisual = self.frames['data_visual'].widgets['notebook_datavisual']
+        actions.button_clear_action(notebook_datapool, notebook_datavisual)
 
-    def spinbox_action(self):
-        spinbox_data_visual = self.frames['data_visual'].widgets['spinbox']
-        notebook_data_visual = self.frames['data_visual'].widgets['notebook']
-        actions.spinbox_action(
-            self.data_pool, spinbox_data_visual, notebook_data_visual
+    def spinbox_num_action(self):
+        spinbox_num = self.frames['data_visual'].widgets['spinbox_num']
+        notebook_datavisual = self.frames['data_visual'].widgets['notebook_datavisual']
+        actions.spinbox_num_action(
+            self.datapool, spinbox_num, notebook_datavisual
         )
 
-    def assign_range_x_action(self):
-        checkbutton = self.frames['axis_visual_x'].widgets['assign_range']
+    def checkbutton_range_x_action(self):
+        checkbutton = self.frames['axis_visual_x'].widgets['checkbutton_range']
         widgets = [
-            self.frames['axis_visual_x'].widgets['min_entry'],
-            self.frames['axis_visual_x'].widgets['max_entry']
+            self.frames['axis_visual_x'].widgets['entry_min'],
+            self.frames['axis_visual_x'].widgets['entry_max']
         ]
         actions.switch_widgets_state(checkbutton, widgets)
 
-    def assign_range_y_action(self):
-        checkbutton = self.frames['axis_visual_y'].widgets['assign_range']
+    def checkbutton_range_y_action(self):
+        checkbutton = self.frames['axis_visual_y'].widgets['checkbutton_range']
         widgets = [
-            self.frames['axis_visual_y'].widgets['min_entry'],
-            self.frames['axis_visual_y'].widgets['max_entry']
+            self.frames['axis_visual_y'].widgets['entry_min'],
+            self.frames['axis_visual_y'].widgets['entry_max']
         ]
         actions.switch_widgets_state(checkbutton, widgets)
 

@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from typing import Dict, Union
+from typing import Union
 
 
 type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
@@ -19,19 +19,19 @@ class Notebook(ttk.Notebook):
             rowspan=rowspan, columnspan=colspan,
             sticky=STICKY
         )
-        self.tabs_: Dict[str, ttk.Frame] = {}
 
     def create_new_tab(self, tabname: str) -> ttk.Frame:
-        self.tabs_[tabname] = tab = ttk.Frame(self)
+        tab = ttk.Frame(master=self)
         self.add(tab, text=tabname)
         return tab
 
-    def remove_tab(self, tabname: str):
-        tab_idx = list(self.tabs_.keys()).index(tabname)
-        self.forget(tab_idx)
-        self.tabs_.pop(tabname)
+    def remove_tab_by_name(self, tabname: str) -> None:
+        for tab_idx in self.tabs():
+            text = self.tab(tab_idx, 'text')
+            if text == tabname:
+                self.forget(tab_idx)
+                return
 
     def remove_all_tabs(self):
-        self.tabs_ = {}
         while self.index('end') > 0:
             self.forget(0)

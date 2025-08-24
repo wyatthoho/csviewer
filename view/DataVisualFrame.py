@@ -8,6 +8,7 @@ from components.Label import Label
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
 from components.Spinbox import Spinbox
+from logic import DataPool
 
 
 FROM = 1
@@ -21,15 +22,78 @@ LABEL_LABEL = 'Label: '
 
 
 class TabWidgets(TypedDict):
-    csv_idx: Combobox
-    field_x: Combobox
-    field_y: Combobox
-    label: tk.StringVar
+    combobox_csvidx: Combobox
+    combobox_fieldx: Combobox
+    combobox_fieldy: Combobox
+    stringvar_label: tk.StringVar
 
 
-class FrameWidgets(TypedDict):
-    spinbox: Spinbox
-    notebook: Notebook
+class DataVisualTab(ttk.Frame):
+    def __init__(self, master, font):
+        super().__init__(master=master)
+        self.font = font
+        self.widgets = TabWidgets()
+        self.initialize_components()
+
+    def initialize_components(self):
+        Label(
+            master=self, row=0, col=0,
+            text=LABEL_CSV_IDX, font=self.font
+        )
+        combobox = Combobox(
+            master=self, row=0, col=1, values=['1',]
+        )
+        self.widgets['combobox_csvidx'] = combobox
+
+        Label(
+            master=self, row=1, col=0,
+            text=LABEL_FIELD_X, font=self.font
+        )
+        combobox = Combobox(
+            master=self, row=1, col=1
+        )
+        self.widgets['combobox_fieldx'] = combobox
+
+        Label(
+            master=self, row=2, col=0,
+            text=LABEL_FIELD_Y, font=self.font
+        )
+        combobox = Combobox(
+            master=self, row=2, col=1
+        )
+        self.widgets['combobox_fieldy'] = combobox
+
+        strvar = tk.StringVar()
+        Label(
+            master=self, row=3, col=0,
+            text=LABEL_LABEL, font=self.font
+        )
+        Entry(
+            master=self, row=3, col=1,
+            font=self.font, textvariable=strvar
+        )
+        self.widgets['stringvar_label'] = strvar
+    
+    def reset_csv_idx(self, csv_indices: list[str]):
+        self.widgets['combobox_csvidx'].configure(values=csv_indices)
+        self.widgets['combobox_csvidx'].current(0)
+
+    def reset_field_x_and_y(self, data_pool: DataPool):
+        idx = self.widgets['combobox_csvidx'].get()
+        columns = list(data_pool[idx].columns)
+        self.widgets['combobox_fieldx'].configure(values=columns)
+        self.widgets['combobox_fieldy'].configure(values=columns)
+        self.widgets['combobox_fieldx'].current(0)
+        if len(columns) > 1:
+            self.widgets['combobox_fieldy'].current(1)
+        else:
+            self.widgets['combobox_fieldy'].current(0)
+
+    def bind_csv_idx_combobox(self, data_pool: DataPool):
+        self.widgets['combobox_csvidx'].bind(
+            '<<ComboboxSelected>>',
+            lambda event: self.reset_field_x_and_y(data_pool)
+        )
 
 
 class DataVisualNotebook(Notebook):
@@ -44,48 +108,26 @@ class DataVisualNotebook(Notebook):
         self.font = font
         self.create_new_tab('1')
 
-    def create_new_tab(self, tabname: str) -> ttk.Frame:
-        tab = super().create_new_tab(tabname)
-        tab.widgets = TabWidgets()
-
-        Label(
-            master=tab, row=0, col=0,
-            text=LABEL_CSV_IDX, font=self.font
-        )
-        combobox = Combobox(
-            master=tab, row=0, col=1, values=['1',]
-        )
-        tab.widgets['csv_idx'] = combobox
-
-        Label(
-            master=tab, row=1, col=0,
-            text=LABEL_FIELD_X, font=self.font
-        )
-        combobox = Combobox(
-            master=tab, row=1, col=1
-        )
-        tab.widgets['field_x'] = combobox
-
-        Label(
-            master=tab, row=2, col=0,
-            text=LABEL_FIELD_Y, font=self.font
-        )
-        combobox = Combobox(
-            master=tab, row=2, col=1
-        )
-        tab.widgets['field_y'] = combobox
-
-        strvar = tk.StringVar()
-        Label(
-            master=tab, row=3, col=0,
-            text=LABEL_LABEL, font=self.font
-        )
-        Entry(
-            master=tab, row=3, col=1,
-            font=self.font, textvariable=strvar
-        )
-        tab.widgets['label'] = strvar
+    def create_new_tab(self, tabname: str) -> DataVisualTab:
+        tab = DataVisualTab(self, self.font)
+        self.add(tab, text=tabname)
         return tab
+
+    def cleanup_notebook(self):
+        self.remove_all_tabs()
+        self.create_new_tab('1')
+
+    def update_comboboxes(self, data_pool: DataPool):
+        for tab_idx in self.tabs():
+            tab: DataVisualTab = self.nametowidget(tab_idx)
+            tab.reset_csv_idx(list(data_pool.keys()))
+            tab.reset_field_x_and_y(data_pool)
+            tab.bind_csv_idx_combobox(data_pool)
+
+
+class FrameWidgets(TypedDict):
+    spinbox_num: Spinbox
+    notebook_datavisual: DataVisualNotebook
 
 
 class DataVisualFrame(LabelFrame):
@@ -117,11 +159,11 @@ class DataVisualFrame(LabelFrame):
             from_=FROM, to=TO, width=SPINBOX_WIDTH,
             intvar=intvar, command=lambda *args: None
         )
-        self.widgets['spinbox'] = spinbox
+        self.widgets['spinbox_num'] = spinbox
 
         notebook = DataVisualNotebook(
             master=self, row=1, col=0,
             rowspan=1, colspan=2,
             font=self.font
         )
-        self.widgets['notebook'] = notebook
+        self.widgets['notebook_datavisual'] = notebook
