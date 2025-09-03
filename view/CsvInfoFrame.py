@@ -6,8 +6,8 @@ from components.Button import Button
 from components.Frame import Frame
 from components.LabelFrame import LabelFrame
 from components.Treeview import Treeview
+from logic import CsvInfo, DataPool
 from logic.csv_utils import get_dataframe_from_csv
-from logic import DataPool
 
 import pandas as pd
 
@@ -25,22 +25,29 @@ class CsvInfoTreeview(Treeview):
             master=master, columns=columns, height=height
         )
 
-    def get_data_pool(self) -> DataPool:
-        data_pool: DataPool = {}
+    def get_csvinfo(self) -> CsvInfo:
+        csvinfo: CsvInfo = {}
         for row in self.get_dataframe().itertuples():
             csv_idx, csv_path = row[1:]
-            tabname = str(csv_idx)
-            dataframe = get_dataframe_from_csv(csv_path)
-            data_pool[tabname] = dataframe
-        return data_pool
+            csvinfo[str(csv_idx)] = csv_path
+        return csvinfo
 
-    def present_csvinfo(self, csv_paths: list[str]):
-        csv_info = pd.DataFrame(
-            [[idx + 1, path] for idx, path in enumerate(csv_paths)],
-            columns=TREEVIEW_COLUMNS
-        )
+    def get_datapool(self) -> DataPool:
+        datapool: DataPool = {}
+        for row in self.get_dataframe().itertuples():
+            csv_idx, csv_path = row[1:]
+            dataframe = get_dataframe_from_csv(csv_path)
+            datapool[str(csv_idx)] = dataframe
+        return datapool
+
+    def present_csvinfo(self, csvinfo: CsvInfo):
         self.clear_content()
-        self.insert_dataframe(csv_info)
+        self.insert_dataframe(
+            pd.DataFrame({
+                TREEVIEW_COLUMNS[0]: csvinfo.keys(),
+                TREEVIEW_COLUMNS[1]: csvinfo.values()
+            })
+        )
         self.adjust_column_width()
 
 

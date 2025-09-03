@@ -23,3 +23,7 @@ class Spinbox(tk.Spinbox):
         )
         self.grid(row=row, column=col, **PADS, **IPADS)
         self.config(state=STATE, textvariable=intvar, command=command)
+        self.intvar = intvar
+    
+    def set(self, value: int) -> None:
+        self.intvar.set(value)

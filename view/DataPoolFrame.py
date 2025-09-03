@@ -53,10 +53,10 @@ class DataPoolNotebook(Notebook):
         tab.widgets['treeview_datapool'] = treeview
         return tab
 
-    def present_data_pool(self, data_pool: DataPool):
+    def present_datapool(self, datapool: DataPool):
         self.remove_all_tabs()
-        for tabname, dataframe in data_pool.items():
-            self.create_new_tab(tabname, dataframe)
+        for csv_idx, dataframe in datapool.items():
+            self.create_new_tab(csv_idx, dataframe)
 
 
 class FrameWidgets(TypedDict):

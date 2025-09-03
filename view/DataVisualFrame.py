@@ -78,9 +78,9 @@ class DataVisualTab(ttk.Frame):
         self.widgets['combobox_csvidx'].configure(values=csv_indices)
         self.widgets['combobox_csvidx'].current(0)
 
-    def reset_field_x_and_y(self, data_pool: DataPool):
+    def reset_field_x_and_y(self, datapool: DataPool):
         idx = self.widgets['combobox_csvidx'].get()
-        columns = list(data_pool[idx].columns)
+        columns = list(datapool[idx].columns)
         self.widgets['combobox_fieldx'].configure(values=columns)
         self.widgets['combobox_fieldy'].configure(values=columns)
         self.widgets['combobox_fieldx'].current(0)
@@ -89,10 +89,10 @@ class DataVisualTab(ttk.Frame):
         else:
             self.widgets['combobox_fieldy'].current(0)
 
-    def bind_csv_idx_combobox(self, data_pool: DataPool):
+    def bind_csv_idx_combobox(self, datapool: DataPool):
         self.widgets['combobox_csvidx'].bind(
             '<<ComboboxSelected>>',
-            lambda event: self.reset_field_x_and_y(data_pool)
+            lambda event: self.reset_field_x_and_y(datapool)
         )
 
 
@@ -117,12 +117,12 @@ class DataVisualNotebook(Notebook):
         self.remove_all_tabs()
         self.create_new_tab('1')
 
-    def update_comboboxes(self, data_pool: DataPool):
+    def update_comboboxes(self, datapool: DataPool):
         for tab_idx in self.tabs():
             tab: DataVisualTab = self.nametowidget(tab_idx)
-            tab.reset_csv_idx(list(data_pool.keys()))
-            tab.reset_field_x_and_y(data_pool)
-            tab.bind_csv_idx_combobox(data_pool)
+            tab.reset_csv_idx(list(datapool.keys()))
+            tab.reset_field_x_and_y(datapool)
+            tab.bind_csv_idx_combobox(datapool)
 
 
 class FrameWidgets(TypedDict):

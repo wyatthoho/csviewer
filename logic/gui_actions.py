@@ -4,7 +4,7 @@ from collections.abc import Sequence
 
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
-from logic import DataPool
+from logic import CsvInfo, DataPool
 from view.CsvInfoFrame import CsvInfoTreeview
 from view.DataPoolFrame import DataPoolNotebook
 from view.DataVisualFrame import DataVisualNotebook
@@ -19,7 +19,10 @@ def button_choose_action(treeview_csvinfo: CsvInfoTreeview):
         title=FILEDIALOG_TITLE,
         filetypes=FILETYPES
     )
-    treeview_csvinfo.present_csvinfo(paths)
+    csvinfo: CsvInfo = {
+        str(idx + 1): path for idx, path in enumerate(paths)
+    }
+    treeview_csvinfo.present_csvinfo(csvinfo)
 
 
 def button_import_action(
@@ -27,17 +30,19 @@ def button_import_action(
         notebook_datapool: DataPoolNotebook,
         notebook_datavisual: DataVisualNotebook,
 ):
-    notebook_datapool.present_data_pool(datapool)
+    notebook_datapool.present_datapool(datapool)
     notebook_datavisual.cleanup_notebook()
     notebook_datavisual.update_comboboxes(datapool)
 
 
 def button_clear_action(
         notebook_datapool: DataPoolNotebook,
-        notebook_datavisual: DataVisualNotebook
+        notebook_datavisual: DataVisualNotebook,
+        spinbox_num: Spinbox,
 ):
-    notebook_datapool.present_data_pool({'1': None})
+    notebook_datapool.present_datapool({'1': None})
     notebook_datavisual.cleanup_notebook()
+    spinbox_num.set(1)
 
 
 def spinbox_num_action(
@@ -65,3 +70,13 @@ def switch_widgets_state(
     config = {True: 'normal', False: 'disabled'}[checkbutton.getint()]
     for widget in widgets:
         widget.configure(state=config)
+
+
+def button_plot_action() -> None:
+    print("Plot action triggered")
+    # Implement the plotting logic here
+
+
+def button_copy_action() -> None:
+    print("Copy action triggered")
+    # Implement the copy logic here
