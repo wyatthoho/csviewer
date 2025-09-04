@@ -16,6 +16,14 @@ class FigureVisualWidgets(TypedDict):
     legend_visible: Checkbutton
 
 
+class FigureConfig(TypedDict):
+    title: str
+    width: float
+    height: float
+    grid_visible: bool
+    legend_visible: bool
+
+
 class FigureVisualFrame(LabelFrame):
     def __init__(
         self, master: tk.Tk, row: int, col: int,
@@ -80,3 +88,13 @@ class FigureVisualFrame(LabelFrame):
             command=None, variable=intvar
         )
         self.widgets['legend_visible'] = checkbutton
+
+    def collect_figure_config(self) -> FigureConfig:
+        config: FigureConfig = {
+            'title': self.widgets['title'].get(),
+            'width': self.widgets['width'].get(),
+            'height': self.widgets['height'].get(),
+            'grid_visible': bool(self.widgets['grid_visible'].getint()),
+            'legend_visible': bool(self.widgets['legend_visible'].getint())
+        }
+        return config

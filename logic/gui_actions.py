@@ -5,9 +5,11 @@ from collections.abc import Sequence
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from logic import CsvInfo, DataPool
+from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
 from view.CsvInfoFrame import CsvInfoTreeview
 from view.DataPoolFrame import DataPoolNotebook
-from view.DataVisualFrame import DataVisualNotebook
+from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, LineConfig
+from view.FigureVisualFrame import FigureVisualFrame, FigureConfig
 
 
 FILEDIALOG_TITLE = 'Choose csv files'
@@ -72,9 +74,33 @@ def switch_widgets_state(
         widget.configure(state=config)
 
 
-def button_plot_action() -> None:
-    print("Plot action triggered")
-    # Implement the plotting logic here
+def collect_configurations(
+        data_visual_frame: DataVisualFrame,
+        figure_visual_frame: FigureVisualFrame,
+        axis_visual_frame_x: AxisVisualFrame,
+        axis_visual_frame_y: AxisVisualFrame
+) -> dict:
+    configurations = {
+        'lines': data_visual_frame.collect_line_configs(),
+        'figure': figure_visual_frame.collect_figure_config(),
+        'axis_x': axis_visual_frame_x.collect_axis_config(),
+        'axis_y': axis_visual_frame_y.collect_axis_config()
+    }
+    return configurations
+
+
+def button_plot_action(
+        data_visual_frame: DataVisualFrame,
+        figure_visual_frame: FigureVisualFrame,
+        axis_visual_frame_x: AxisVisualFrame,
+        axis_visual_frame_y: AxisVisualFrame
+) -> None:
+    configs = collect_configurations(
+        data_visual_frame,
+        figure_visual_frame,
+        axis_visual_frame_x,
+        axis_visual_frame_y
+    )
 
 
 def button_copy_action() -> None:

@@ -182,7 +182,14 @@ class App:
         actions.switch_widgets_state(checkbutton, widgets)
 
     def button_plot_action(self):
-        actions.button_plot_action()
+        data_visual_frame = self.frames['datavisual']
+        figure_visual_frame = self.frames['figurevisual']
+        axis_visual_frame_x = self.frames['axisvisual_x']
+        axis_visual_frame_y = self.frames['axisvisual_y']
+        actions.button_plot_action(
+            data_visual_frame, figure_visual_frame,
+            axis_visual_frame_x, axis_visual_frame_y
+        )
 
     def button_copy_action(self):
         actions.button_copy_action()

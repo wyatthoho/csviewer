@@ -130,6 +130,13 @@ class FrameWidgets(TypedDict):
     notebook_datavisual: DataVisualNotebook
 
 
+class LineConfig(TypedDict):
+    csvidx: str
+    fieldx: str
+    fieldy: str
+    label: str
+
+
 class DataVisualFrame(LabelFrame):
     def __init__(
         self, master: tk.Tk, row: int, col: int,
@@ -167,3 +174,19 @@ class DataVisualFrame(LabelFrame):
             font=self.font
         )
         self.widgets['notebook_datavisual'] = notebook
+    
+    def collect_line_configs(self) -> list[LineConfig]:
+        configs = []
+        for tab_id in self.widgets['notebook_datavisual'].tabs():
+            tab: DataVisualTab = self.widgets['notebook_datavisual'].nametowidget(tab_id)
+            csvidx = tab.widgets['combobox_csvidx'].get()
+            fieldx = tab.widgets['combobox_fieldx'].get()
+            fieldy = tab.widgets['combobox_fieldy'].get()
+            label = tab.widgets['stringvar_label'].get()
+            configs.append({
+                'csvidx': csvidx,
+                'fieldx': fieldx,
+                'fieldy': fieldy,
+                'label': label
+            })
+        return configs
