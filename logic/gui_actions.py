@@ -5,11 +5,12 @@ from collections.abc import Sequence
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from logic import CsvInfo, DataPool
-from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
+from logic.plotter import PlotConfig, generate_graph, copy_to_clipboard
+from view.AxisVisualFrame import AxisVisualFrame
 from view.CsvInfoFrame import CsvInfoTreeview
 from view.DataPoolFrame import DataPoolNotebook
-from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, LineConfig
-from view.FigureVisualFrame import FigureVisualFrame, FigureConfig
+from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook
+from view.FigureVisualFrame import FigureVisualFrame
 
 
 FILEDIALOG_TITLE = 'Choose csv files'
@@ -79,8 +80,8 @@ def collect_configurations(
         figure_visual_frame: FigureVisualFrame,
         axis_visual_frame_x: AxisVisualFrame,
         axis_visual_frame_y: AxisVisualFrame
-) -> dict:
-    configurations = {
+) -> PlotConfig:
+    configurations: PlotConfig = {
         'lines': data_visual_frame.collect_line_configs(),
         'figure': figure_visual_frame.collect_figure_config(),
         'axis_x': axis_visual_frame_x.collect_axis_config(),
@@ -90,6 +91,7 @@ def collect_configurations(
 
 
 def button_plot_action(
+        datapool: DataPool,
         data_visual_frame: DataVisualFrame,
         figure_visual_frame: FigureVisualFrame,
         axis_visual_frame_x: AxisVisualFrame,
@@ -101,8 +103,8 @@ def button_plot_action(
         axis_visual_frame_x,
         axis_visual_frame_y
     )
+    generate_graph(configs, datapool)
 
 
 def button_copy_action() -> None:
-    print("Copy action triggered")
-    # Implement the copy logic here
+    copy_to_clipboard()

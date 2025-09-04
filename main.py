@@ -187,6 +187,7 @@ class App:
         axis_visual_frame_x = self.frames['axisvisual_x']
         axis_visual_frame_y = self.frames['axisvisual_y']
         actions.button_plot_action(
+            self.datapool,
             data_visual_frame, figure_visual_frame,
             axis_visual_frame_x, axis_visual_frame_y
         )
