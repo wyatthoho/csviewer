@@ -1,9 +1,7 @@
 from io import BytesIO
-from pathlib import Path
 from typing import Callable, Tuple, TypedDict
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import win32clipboard
 
 from logic import DataPool

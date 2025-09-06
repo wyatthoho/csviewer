@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import ttk, filedialog
 from collections.abc import Sequence
 
+import logic.plotter as plotter
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from logic import CsvInfo, DataPool
-from logic.plotter import PlotConfig, generate_graph, copy_to_clipboard
+from logic.plotter import PlotConfig
 from view.AxisVisualFrame import AxisVisualFrame
 from view.CsvInfoFrame import CsvInfoTreeview
 from view.DataPoolFrame import DataPoolNotebook
@@ -103,8 +104,8 @@ def button_plot_action(
         axis_visual_frame_x,
         axis_visual_frame_y
     )
-    generate_graph(configs, datapool)
+    plotter.generate_graph(configs, datapool)
 
 
 def button_copy_action() -> None:
-    copy_to_clipboard()
+    plotter.copy_to_clipboard()
