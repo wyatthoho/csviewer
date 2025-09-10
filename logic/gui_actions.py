@@ -142,3 +142,7 @@ def menu_save_as_action(
     )
     json.dump(config_values, file, indent=4)
     file.close()
+
+
+def menu_close_action(root: tk.Tk):
+    root.destroy()

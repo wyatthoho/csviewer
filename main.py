@@ -70,7 +70,7 @@ class App:
             open=lambda *args: None,
             save=lambda *args: None,
             save_as=self.menu_save_as_action,
-            close=lambda *args: None,
+            close=self.menu_close_action,
             help_index=lambda *args: None,
             about=lambda *args: None
         )
@@ -221,6 +221,8 @@ class App:
             axis_visual_frame_y
         )
 
+    def menu_close_action(self):
+        actions.menu_close_action(self.root)
 
 if __name__ == '__main__':
     App()
