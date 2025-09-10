@@ -9,7 +9,7 @@ from view.CsvInfoFrame import CsvInfoFrame
 from view.DataPoolFrame import DataPoolFrame
 from view.DataVisualFrame import DataVisualFrame
 from view.FigureVisualFrame import FigureVisualFrame
-from view.Menu import Menu
+from view.Menu import Menu, MenuCallbacks
 from view.PlotActionsFrame import PlotActionsFrame
 
 
@@ -65,7 +65,16 @@ class App:
         return root
 
     def initialize_menubar(self):
-        self.menu = Menu(self.root)
+        menucallbacks = MenuCallbacks(
+            new=self.menu_new_action,
+            open=lambda *args: None,
+            save=lambda *args: None,
+            save_as=self.menu_save_as_action,
+            close=lambda *args: None,
+            help_index=lambda *args: None,
+            about=lambda *args: None
+        )
+        self.menu = Menu(self.root, menucallbacks)
 
     # GUI frames setup
     def initialize_csv_info_frame(self):
@@ -156,7 +165,8 @@ class App:
         notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
         notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
         spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
-        actions.button_clear_action(notebook_datapool, notebook_datavisual, spinbox_num)
+        actions.button_clear_action(
+            notebook_datapool, notebook_datavisual, spinbox_num)
 
     def spinbox_num_action(self):
         spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
@@ -182,18 +192,34 @@ class App:
         actions.switch_widgets_state(checkbutton, widgets)
 
     def button_plot_action(self):
+        csv_info_frame = self.frames['csvinfo']
         data_visual_frame = self.frames['datavisual']
         figure_visual_frame = self.frames['figurevisual']
         axis_visual_frame_x = self.frames['axisvisual_x']
         axis_visual_frame_y = self.frames['axisvisual_y']
         actions.button_plot_action(
-            self.datapool,
+            self.datapool, csv_info_frame,
             data_visual_frame, figure_visual_frame,
             axis_visual_frame_x, axis_visual_frame_y
         )
 
     def button_copy_action(self):
         actions.button_copy_action()
+
+    def menu_new_action(self):
+        actions.menu_new_action()
+
+    def menu_save_as_action(self):
+        csv_info_frame = self.frames['csvinfo']
+        data_visual_frame = self.frames['datavisual']
+        figure_visual_frame = self.frames['figurevisual']
+        axis_visual_frame_x = self.frames['axisvisual_x']
+        axis_visual_frame_y = self.frames['axisvisual_y']
+        actions.menu_save_as_action(
+            csv_info_frame, data_visual_frame,
+            figure_visual_frame, axis_visual_frame_x,
+            axis_visual_frame_y
+        )
 
 
 if __name__ == '__main__':

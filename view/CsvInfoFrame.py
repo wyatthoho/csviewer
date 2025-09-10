@@ -56,6 +56,9 @@ class FrameWidgets(TypedDict):
     button_choose: Button
 
 
+CsvConfig = list[str]
+
+
 class CsvInfoFrame(LabelFrame):
     def __init__(
         self, master: tk.Tk, row: int, col: int,
@@ -93,3 +96,8 @@ class CsvInfoFrame(LabelFrame):
             command=lambda *args: None
         )
         self.widgets['button_choose'] = button
+
+    def collect_csv_config(self) -> CsvConfig:
+        csvinfo = self.widgets['treeview_csvinfo'].get_csvinfo()
+        config: CsvConfig = list(csvinfo.values())
+        return config

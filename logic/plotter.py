@@ -6,11 +6,13 @@ import win32clipboard
 
 from logic import DataPool
 from view.AxisVisualFrame import AxisConfig
+from view.CsvInfoFrame import CsvConfig
 from view.DataVisualFrame import LineConfig
 from view.FigureVisualFrame import FigureConfig
 
 
-class PlotConfig(TypedDict):
+class AppConfig(TypedDict):
+    csvs: CsvConfig
     lines: list[LineConfig]
     figure: FigureConfig
     axis_x: AxisConfig
@@ -87,7 +89,7 @@ def apply_axis_config(
     ax.set_ylim(ylim)
 
 
-def generate_graph(config: PlotConfig, datapool: DataPool) -> None:
+def generate_graph(config: AppConfig, datapool: DataPool) -> None:
     fig, ax = create_figure(config['figure'])
     plot_function = determine_plot_type(
         config['axis_x'],

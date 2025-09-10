@@ -1,27 +1,30 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
 from collections.abc import Sequence
+import json
+import os
+import sys
 
 import logic.plotter as plotter
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from logic import CsvInfo, DataPool
-from logic.plotter import PlotConfig
+from logic.plotter import AppConfig
 from view.AxisVisualFrame import AxisVisualFrame
-from view.CsvInfoFrame import CsvInfoTreeview
+from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview
 from view.DataPoolFrame import DataPoolNotebook
 from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook
 from view.FigureVisualFrame import FigureVisualFrame
 
 
-FILEDIALOG_TITLE = 'Choose csv files'
-FILETYPES = [('csv files', '*.csv')]
+FILETYPES_OPENCSV = [('csv files', '*.csv')]
+FILETYPES_SAVEAS = [('JSON File', '*.json')]
 
 
 def button_choose_action(treeview_csvinfo: CsvInfoTreeview):
     paths = filedialog.askopenfilenames(
-        title=FILEDIALOG_TITLE,
-        filetypes=FILETYPES
+        # title=DIALOG_TITLE_OPENCSV,
+        filetypes=FILETYPES_OPENCSV
     )
     csvinfo: CsvInfo = {
         str(idx + 1): path for idx, path in enumerate(paths)
@@ -77,12 +80,14 @@ def switch_widgets_state(
 
 
 def collect_configurations(
+        csv_info_frame: CsvInfoFrame,
         data_visual_frame: DataVisualFrame,
         figure_visual_frame: FigureVisualFrame,
         axis_visual_frame_x: AxisVisualFrame,
         axis_visual_frame_y: AxisVisualFrame
-) -> PlotConfig:
-    configurations: PlotConfig = {
+) -> AppConfig:
+    configurations: AppConfig = {
+        'csvs': csv_info_frame.collect_csv_config(),
         'lines': data_visual_frame.collect_line_configs(),
         'figure': figure_visual_frame.collect_figure_config(),
         'axis_x': axis_visual_frame_x.collect_axis_config(),
@@ -93,12 +98,14 @@ def collect_configurations(
 
 def button_plot_action(
         datapool: DataPool,
+        csv_info_frame: CsvInfoFrame,
         data_visual_frame: DataVisualFrame,
         figure_visual_frame: FigureVisualFrame,
         axis_visual_frame_x: AxisVisualFrame,
         axis_visual_frame_y: AxisVisualFrame
 ) -> None:
     configs = collect_configurations(
+        csv_info_frame,
         data_visual_frame,
         figure_visual_frame,
         axis_visual_frame_x,
@@ -109,3 +116,29 @@ def button_plot_action(
 
 def button_copy_action() -> None:
     plotter.copy_to_clipboard()
+
+
+def menu_new_action():
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+
+def menu_save_as_action(
+    csv_info_frame: CsvInfoFrame,
+    data_visual_frame: DataVisualFrame,
+    figure_visual_frame: FigureVisualFrame,
+    axis_visual_frame_x: AxisVisualFrame,
+    axis_visual_frame_y: AxisVisualFrame
+):
+    config_values = collect_configurations(
+        csv_info_frame,
+        data_visual_frame,
+        figure_visual_frame,
+        axis_visual_frame_x,
+        axis_visual_frame_y
+    )
+    file = filedialog.asksaveasfile(
+        filetypes=FILETYPES_SAVEAS,
+        defaultextension=FILETYPES_SAVEAS
+    )
+    json.dump(config_values, file, indent=4)
+    file.close()
