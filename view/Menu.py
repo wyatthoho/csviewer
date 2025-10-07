@@ -4,7 +4,7 @@ from typing import Callable, TypedDict
 
 class MenuCallbacks(TypedDict):
     new: Callable
-    open: Callable
+    _open: Callable
     save: Callable
     save_as: Callable
     close: Callable
@@ -18,7 +18,7 @@ class Menu(tk.Menu):
 
         filemenu = tk.Menu(master=self, tearoff=0)
         filemenu.add_command(label='New', command=callbacks['new'])
-        filemenu.add_command(label='Open', command=callbacks['open'])
+        filemenu.add_command(label='Open', command=callbacks['_open'])
         filemenu.add_command(label='Save', command=callbacks['save'])
         filemenu.add_command(label='Save as...', command=callbacks['save_as'])
         filemenu.add_command(label='Close', command=callbacks['close'])

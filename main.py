@@ -67,7 +67,7 @@ class App:
     def initialize_menubar(self):
         menucallbacks = MenuCallbacks(
             new=self.menu_new_action,
-            open=lambda *args: None,
+            _open=self.menu_open_action,
             save=lambda *args: None,
             save_as=self.menu_save_as_action,
             close=self.menu_close_action,
@@ -206,8 +206,23 @@ class App:
     def button_copy_action(self):
         actions.button_copy_action()
 
+    # Menu actions
     def menu_new_action(self):
         actions.menu_new_action()
+
+    def menu_open_action(self):
+        csv_info_treeview = self.frames['csvinfo'].widgets['treeview_csvinfo']
+        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
+        notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
+        spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
+        figure_visual_frame = self.frames['figurevisual']
+        axis_visual_frame_x = self.frames['axisvisual_x']
+        axis_visual_frame_y = self.frames['axisvisual_y']
+        self.datapool = actions.menu_open_action(
+            csv_info_treeview, notebook_datapool,
+            notebook_datavisual, spinbox_num, figure_visual_frame, 
+            axis_visual_frame_x, axis_visual_frame_y
+        )
 
     def menu_save_as_action(self):
         csv_info_frame = self.frames['csvinfo']
@@ -223,6 +238,7 @@ class App:
 
     def menu_close_action(self):
         actions.menu_close_action(self.root)
+
 
 if __name__ == '__main__':
     App()

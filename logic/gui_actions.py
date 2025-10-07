@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import filedialog
 from collections.abc import Sequence
 import json
 import os
@@ -10,21 +10,20 @@ from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from logic import CsvInfo, DataPool
 from logic.plotter import AppConfig
-from view.AxisVisualFrame import AxisVisualFrame
+from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
 from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview
 from view.DataPoolFrame import DataPoolNotebook
-from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook
-from view.FigureVisualFrame import FigureVisualFrame
+from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, DataVisualTab
+from view.FigureVisualFrame import FigureVisualFrame, FigureConfig
 
 
-FILETYPES_OPENCSV = [('csv files', '*.csv')]
-FILETYPES_SAVEAS = [('JSON File', '*.json')]
+FILETYPES_CSV = [('csv files', '*.csv')]
+FILETYPES_CONFIG = [('JSON File', '*.json')]
 
 
 def button_choose_action(treeview_csvinfo: CsvInfoTreeview):
     paths = filedialog.askopenfilenames(
-        # title=DIALOG_TITLE_OPENCSV,
-        filetypes=FILETYPES_OPENCSV
+        filetypes=FILETYPES_CSV
     )
     csvinfo: CsvInfo = {
         str(idx + 1): path for idx, path in enumerate(paths)
@@ -39,7 +38,7 @@ def button_import_action(
 ):
     notebook_datapool.present_datapool(datapool)
     notebook_datavisual.cleanup_notebook()
-    notebook_datavisual.update_comboboxes(datapool)
+    notebook_datavisual.update_tabs(datapool)
 
 
 def button_clear_action(
@@ -56,17 +55,14 @@ def spinbox_num_action(
         datapool: DataPool,
         spinbox_num: Spinbox,
         notebook_datavisual: DataVisualNotebook
-) -> ttk.Frame | None:
-    tgt_num = spinbox_num.get()
-    exist_num = notebook_datavisual.index('end')
-
-    if int(tgt_num) > int(exist_num):
-        tab = notebook_datavisual.create_new_tab(tgt_num)
-        indices = list(datapool.keys())
-        tab.reset_csv_idx(indices)
-        tab.reset_field_x_and_y(datapool)
-        tab.bind_csv_idx_combobox(datapool)
-    else:
+) -> None:
+    tgt_num = int(spinbox_num.get())
+    exist_num = int(notebook_datavisual.index('end'))
+    if tgt_num > exist_num:
+        tabname_new = str(exist_num + 1)
+        tab = notebook_datavisual.create_new_tab(tabname_new)
+        tab.update_comboboxes(datapool)
+    elif tgt_num < exist_num:
         notebook_datavisual.remove_tab_by_name(str(exist_num))
 
 
@@ -122,6 +118,148 @@ def menu_new_action():
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
+def read_config_file() -> dict:
+    file = filedialog.askopenfile(
+        filetypes=FILETYPES_CONFIG,
+        defaultextension=FILETYPES_CONFIG
+    )
+    config_values: dict = json.load(file)
+    file.close()
+    return config_values
+
+
+def config_csvinfo(
+    config_values: dict,
+    csv_info_treeview: CsvInfoTreeview
+) -> DataPool:
+    csv_paths = config_values.get('csvs', {})
+    csv_info = {
+        str(idx + 1): path
+        for idx, path in enumerate(csv_paths)
+    }
+    csv_info_treeview.present_csvinfo(csv_info)
+    return csv_info_treeview.get_datapool()
+
+
+def config_spinbox_num(
+    config_values: dict,
+    spinbox_num: Spinbox
+):
+    line_num = len(config_values.get('lines', 1))
+    spinbox_num.set(line_num)
+
+
+def config_datavisual_notebook(
+    config_values: dict,
+    datapool: DataPool,
+    spinbox_num: Spinbox,
+    notebook_datavisual: DataVisualNotebook
+):
+    line_num = len(config_values.get('lines', 1))
+    for line_idx in range(line_num):
+        csvidx = config_values['lines'][line_idx]['csvidx']
+        fieldx = config_values['lines'][line_idx]['fieldx']
+        fieldy = config_values['lines'][line_idx]['fieldy']
+        label = config_values['lines'][line_idx]['label']
+
+        spinbox_num_action(
+            datapool, spinbox_num, notebook_datavisual
+        )
+
+        tabname = str(line_idx + 1)
+        tab: DataVisualTab = notebook_datavisual.query_tab_by_name(tabname)
+        tab.widgets['combobox_csvidx'].set(csvidx)
+        tab.widgets['combobox_fieldx'].set(fieldx)
+        tab.widgets['combobox_fieldy'].set(fieldy)
+        tab.widgets['stringvar_label'].set(label)
+
+
+def config_figurevisual_frame(
+    configs: FigureConfig,
+    frame: FigureVisualFrame
+):
+    title = configs.get('title')
+    width = configs.get('width')
+    height = configs.get('height')
+    grid_visible = configs.get('grid_visible')
+    legend_visible = configs.get('legend_visible')
+
+    widgets = frame.widgets
+    widgets['title'].set(title)
+    widgets['width'].set(width)
+    widgets['height'].set(height)
+    widgets['grid_visible'].variable.set(grid_visible)
+    widgets['legend_visible'].variable.set(legend_visible)
+
+
+def config_axisvisual_frame(
+    configs: AxisConfig,
+    frame: AxisVisualFrame
+):
+    label = configs.get('label')
+    scale = configs.get('scale')
+    _min = configs.get('min', None)
+    _max = configs.get('max', None)
+
+    widgets = frame.widgets
+    widgets['stringvar_label'].set(label)
+    widgets['combobox_scale'].set(scale)
+    if _min is None and _max is None:
+        widgets['checkbutton_range'].variable.set(0)
+        switch_widgets_state(
+            widgets['checkbutton_range'],
+            [widgets['entry_min'], widgets['entry_max']]
+        )
+    else:
+        widgets['checkbutton_range'].variable.set(1)
+        switch_widgets_state(
+            widgets['checkbutton_range'],
+            [widgets['entry_min'], widgets['entry_max']]
+        )
+        widgets['doublevar_min'].set(_min)
+        widgets['doublevar_max'].set(_max)
+
+
+def menu_open_action(
+    csv_info_treeview: CsvInfoTreeview,
+    notebook_datapool: DataPoolNotebook,
+    notebook_datavisual: DataVisualNotebook,
+    spinbox_num: Spinbox,
+    figure_visual_frame: FigureVisualFrame,
+    axis_visual_frame_x: AxisVisualFrame,
+    axis_visual_frame_y: AxisVisualFrame
+) -> DataPool:
+    config_values = read_config_file()
+
+    datapool = config_csvinfo(
+        config_values, csv_info_treeview
+    )
+    notebook_datavisual.cleanup_notebook()
+    button_import_action(
+        datapool, notebook_datapool, notebook_datavisual
+    )
+    config_spinbox_num(
+        config_values, spinbox_num
+    )
+    config_datavisual_notebook(
+        config_values, datapool,
+        spinbox_num, notebook_datavisual
+    )
+    config_figurevisual_frame(
+        config_values.get('figure', {}),
+        figure_visual_frame
+    )
+    config_axisvisual_frame(
+        config_values.get('axis_x', {}),
+        axis_visual_frame_x
+    )
+    config_axisvisual_frame(
+        config_values.get('axis_y', {}),
+        axis_visual_frame_y
+    )
+    return datapool
+
+
 def menu_save_as_action(
     csv_info_frame: CsvInfoFrame,
     data_visual_frame: DataVisualFrame,
@@ -137,8 +275,8 @@ def menu_save_as_action(
         axis_visual_frame_y
     )
     file = filedialog.asksaveasfile(
-        filetypes=FILETYPES_SAVEAS,
-        defaultextension=FILETYPES_SAVEAS
+        filetypes=FILETYPES_CONFIG,
+        defaultextension=FILETYPES_CONFIG
     )
     json.dump(config_values, file, indent=4)
     file.close()

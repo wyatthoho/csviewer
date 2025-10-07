@@ -73,7 +73,7 @@ class DataVisualTab(ttk.Frame):
             font=self.font, textvariable=strvar
         )
         self.widgets['stringvar_label'] = strvar
-    
+
     def reset_csv_idx(self, csv_indices: list[str]):
         self.widgets['combobox_csvidx'].configure(values=csv_indices)
         self.widgets['combobox_csvidx'].current(0)
@@ -94,6 +94,11 @@ class DataVisualTab(ttk.Frame):
             '<<ComboboxSelected>>',
             lambda event: self.reset_field_x_and_y(datapool)
         )
+
+    def update_comboboxes(self, datapool: DataPool):
+        self.reset_csv_idx(list(datapool.keys()))
+        self.reset_field_x_and_y(datapool)
+        self.bind_csv_idx_combobox(datapool)
 
 
 class DataVisualNotebook(Notebook):
@@ -117,12 +122,10 @@ class DataVisualNotebook(Notebook):
         self.remove_all_tabs()
         self.create_new_tab('1')
 
-    def update_comboboxes(self, datapool: DataPool):
+    def update_tabs(self, datapool: DataPool):
         for tab_idx in self.tabs():
             tab: DataVisualTab = self.nametowidget(tab_idx)
-            tab.reset_csv_idx(list(datapool.keys()))
-            tab.reset_field_x_and_y(datapool)
-            tab.bind_csv_idx_combobox(datapool)
+            tab.update_comboboxes(datapool)
 
 
 class FrameWidgets(TypedDict):
@@ -174,11 +177,12 @@ class DataVisualFrame(LabelFrame):
             font=self.font
         )
         self.widgets['notebook_datavisual'] = notebook
-    
+
     def collect_line_configs(self) -> list[LineConfig]:
         configs = []
         for tab_id in self.widgets['notebook_datavisual'].tabs():
-            tab: DataVisualTab = self.widgets['notebook_datavisual'].nametowidget(tab_id)
+            tab: DataVisualTab \
+                = self.widgets['notebook_datavisual'].nametowidget(tab_id)
             csvidx = tab.widgets['combobox_csvidx'].get()
             fieldx = tab.widgets['combobox_fieldx'].get()
             fieldy = tab.widgets['combobox_fieldy'].get()
