@@ -13,7 +13,7 @@ from logic.plotter import AppConfig
 from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
 from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview, CsvConfig
 from view.DataPoolFrame import DataPoolNotebook
-from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, DataVisualTab, LineConfig
+from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, LineConfig
 from view.FigureVisualFrame import FigureVisualFrame, FigureConfig
 
 
@@ -28,10 +28,11 @@ def button_choose_action(treeview_csvinfo: CsvInfoTreeview) -> None:
 
 
 def button_import_action(
-        datapool: DataPool,
+        treeview_csvinfo: CsvInfoTreeview,
         notebook_datapool: DataPoolNotebook,
         notebook_datavisual: DataVisualNotebook,
 ) -> None:
+    datapool = treeview_csvinfo.get_datapool()
     notebook_datapool.present_datapool(datapool)
     notebook_datavisual.cleanup_notebook()
     notebook_datavisual.update_tabs(datapool)
@@ -127,10 +128,17 @@ def read_config_file() -> AppConfig:
 def config_csvinfo(
         config_csvs: CsvConfig,
         treeview_csvinfo: CsvInfoTreeview
-) -> DataPool:
+) -> None:
     csvinfo = {str(idx + 1): path for idx, path in enumerate(config_csvs)}
     treeview_csvinfo.present_csvinfo(csvinfo)
-    return treeview_csvinfo.get_datapool()
+
+
+def config_datapool_notebook(
+        treeview_csvinfo: CsvInfoTreeview,
+        notebook_datapool: DataPoolNotebook
+) -> None:
+    datapool = treeview_csvinfo.get_datapool()
+    notebook_datapool.present_datapool(datapool)
 
 
 def config_spinbox_num(
@@ -143,20 +151,17 @@ def config_spinbox_num(
 
 def config_datavisual_notebook(
         config_lines: list[LineConfig],
-        datapool: DataPool,
-        spinbox_num: Spinbox,
         notebook_datavisual: DataVisualNotebook
 ) -> None:
+    notebook_datavisual.remove_all_tabs()
     for idx, config_line in enumerate(config_lines):
         csvidx = config_line['csvidx']
         fieldx = config_line['fieldx']
         fieldy = config_line['fieldy']
         label = config_line['label']
 
-        spinbox_num_action(datapool, spinbox_num, notebook_datavisual)
-
         tabname = str(idx + 1)
-        tab: DataVisualTab = notebook_datavisual.query_tab_by_name(tabname)
+        tab = notebook_datavisual.create_new_tab(tabname)
         tab.widgets['combobox_csvidx'].set(csvidx)
         tab.widgets['combobox_fieldx'].set(fieldx)
         tab.widgets['combobox_fieldy'].set(fieldy)
@@ -212,25 +217,20 @@ def menu_open_action(
         frame_figurevisual: FigureVisualFrame,
         frame_axisvisual_x: AxisVisualFrame,
         frame_axisvisual_y: AxisVisualFrame
-) -> DataPool:
+) -> None:
     config_app = read_config_file()
     config_csvs = config_app.get('csvs', [])
     config_lines = config_app.get('lines', [])
     config_figure = config_app.get('figure', {})
     config_axis_x = config_app.get('axis_x', {})
     config_axis_y = config_app.get('axis_y', {})
-
-    datapool = config_csvinfo(config_csvs, treeview_csvinfo)
-    notebook_datavisual.cleanup_notebook()
-    button_import_action(datapool, notebook_datapool, notebook_datavisual)
+    config_csvinfo(config_csvs, treeview_csvinfo)
+    config_datapool_notebook(treeview_csvinfo, notebook_datapool)
     config_spinbox_num(config_lines, spinbox_num)
-    config_datavisual_notebook(
-        config_lines, datapool, spinbox_num, notebook_datavisual
-    )
+    config_datavisual_notebook(config_lines, notebook_datavisual)
     config_figurevisual_frame(config_figure, frame_figurevisual)
     config_axisvisual_frame(config_axis_x, frame_axisvisual_x)
     config_axisvisual_frame(config_axis_y, frame_axisvisual_y)
-    return datapool
 
 
 def menu_save_as_action(

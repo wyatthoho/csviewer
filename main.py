@@ -153,12 +153,11 @@ class App:
         self.csvinfo = treeview_csvinfo.get_csvinfo()
 
     def button_import_action(self):
-        self.datapool = self.frames['csvinfo'].widgets['treeview_csvinfo'].get_datapool(
-        )
+        treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
         notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
         notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
         actions.button_import_action(
-            self.datapool, notebook_datapool, notebook_datavisual
+            treeview_csvinfo, notebook_datapool, notebook_datavisual
         )
 
     def button_clear_action(self):
@@ -218,11 +217,12 @@ class App:
         frame_figurevisual = self.frames['figurevisual']
         frame_axisvisual_x = self.frames['axisvisual_x']
         frame_axisvisual_y = self.frames['axisvisual_y']
-        self.datapool = actions.menu_open_action(
+        actions.menu_open_action(
             treeview_csvinfo, notebook_datapool,
             notebook_datavisual, spinbox_num, frame_figurevisual,
             frame_axisvisual_x, frame_axisvisual_y
         )
+        self.datapool = treeview_csvinfo.get_datapool()
 
     def menu_save_as_action(self):
         frame_csvinfo = self.frames['csvinfo']
