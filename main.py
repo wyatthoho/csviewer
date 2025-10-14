@@ -181,7 +181,7 @@ class App:
             self.frames['axisvisual_x'].widgets['entry_min'],
             self.frames['axisvisual_x'].widgets['entry_max']
         ]
-        actions.switch_widgets_state(checkbutton, widgets)
+        actions.switch_widgets_by_checkbutton(checkbutton, widgets)
 
     def checkbutton_range_y_action(self):
         checkbutton = self.frames['axisvisual_y'].widgets['checkbutton_range']
@@ -189,18 +189,18 @@ class App:
             self.frames['axisvisual_y'].widgets['entry_min'],
             self.frames['axisvisual_y'].widgets['entry_max']
         ]
-        actions.switch_widgets_state(checkbutton, widgets)
+        actions.switch_widgets_by_checkbutton(checkbutton, widgets)
 
     def button_plot_action(self):
-        csv_info_frame = self.frames['csvinfo']
-        data_visual_frame = self.frames['datavisual']
+        frame_csvinfo = self.frames['csvinfo']
+        frame_datavisual = self.frames['datavisual']
         figure_visual_frame = self.frames['figurevisual']
-        axis_visual_frame_x = self.frames['axisvisual_x']
-        axis_visual_frame_y = self.frames['axisvisual_y']
+        frame_axisvisual_x = self.frames['axisvisual_x']
+        frame_axisvisual_y = self.frames['axisvisual_y']
         actions.button_plot_action(
-            self.datapool, csv_info_frame,
-            data_visual_frame, figure_visual_frame,
-            axis_visual_frame_x, axis_visual_frame_y
+            self.datapool, frame_csvinfo,
+            frame_datavisual, figure_visual_frame,
+            frame_axisvisual_x, frame_axisvisual_y
         )
 
     def button_copy_action(self):
@@ -211,29 +211,28 @@ class App:
         actions.menu_new_action()
 
     def menu_open_action(self):
-        csv_info_treeview = self.frames['csvinfo'].widgets['treeview_csvinfo']
+        treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
         notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
         notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
         spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
-        figure_visual_frame = self.frames['figurevisual']
-        axis_visual_frame_x = self.frames['axisvisual_x']
-        axis_visual_frame_y = self.frames['axisvisual_y']
+        frame_figurevisual = self.frames['figurevisual']
+        frame_axisvisual_x = self.frames['axisvisual_x']
+        frame_axisvisual_y = self.frames['axisvisual_y']
         self.datapool = actions.menu_open_action(
-            csv_info_treeview, notebook_datapool,
-            notebook_datavisual, spinbox_num, figure_visual_frame, 
-            axis_visual_frame_x, axis_visual_frame_y
+            treeview_csvinfo, notebook_datapool,
+            notebook_datavisual, spinbox_num, frame_figurevisual,
+            frame_axisvisual_x, frame_axisvisual_y
         )
 
     def menu_save_as_action(self):
-        csv_info_frame = self.frames['csvinfo']
-        data_visual_frame = self.frames['datavisual']
-        figure_visual_frame = self.frames['figurevisual']
-        axis_visual_frame_x = self.frames['axisvisual_x']
-        axis_visual_frame_y = self.frames['axisvisual_y']
+        frame_csvinfo = self.frames['csvinfo']
+        frame_datavisual = self.frames['datavisual']
+        frame_figurevisual = self.frames['figurevisual']
+        frame_axisvisual_x = self.frames['axisvisual_x']
+        frame_axisvisual_y = self.frames['axisvisual_y']
         actions.menu_save_as_action(
-            csv_info_frame, data_visual_frame,
-            figure_visual_frame, axis_visual_frame_x,
-            axis_visual_frame_y
+            frame_csvinfo, frame_datavisual, frame_figurevisual,
+            frame_axisvisual_x, frame_axisvisual_y
         )
 
     def menu_close_action(self):

@@ -89,7 +89,7 @@ def apply_axis_config(
     ax.set_ylim(ylim)
 
 
-def generate_graph(config: AppConfig, datapool: DataPool) -> None:
+def generate_graph(datapool: DataPool, config: AppConfig) -> None:
     fig, ax = create_figure(config['figure'])
     plot_function = determine_plot_type(
         config['axis_x'],

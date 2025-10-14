@@ -1,9 +1,9 @@
+import os
+import sys
+import json
 import tkinter as tk
 from tkinter import filedialog
 from collections.abc import Sequence
-import json
-import os
-import sys
 
 import logic.plotter as plotter
 from components.Checkbutton import Checkbutton
@@ -11,9 +11,9 @@ from components.Spinbox import Spinbox
 from logic import CsvInfo, DataPool
 from logic.plotter import AppConfig
 from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
-from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview
+from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview, CsvConfig
 from view.DataPoolFrame import DataPoolNotebook
-from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, DataVisualTab
+from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, DataVisualTab, LineConfig
 from view.FigureVisualFrame import FigureVisualFrame, FigureConfig
 
 
@@ -21,13 +21,9 @@ FILETYPES_CSV = [('csv files', '*.csv')]
 FILETYPES_CONFIG = [('JSON File', '*.json')]
 
 
-def button_choose_action(treeview_csvinfo: CsvInfoTreeview):
-    paths = filedialog.askopenfilenames(
-        filetypes=FILETYPES_CSV
-    )
-    csvinfo: CsvInfo = {
-        str(idx + 1): path for idx, path in enumerate(paths)
-    }
+def button_choose_action(treeview_csvinfo: CsvInfoTreeview) -> None:
+    paths = filedialog.askopenfilenames(filetypes=FILETYPES_CSV)
+    csvinfo: CsvInfo = {str(idx + 1): path for idx, path in enumerate(paths)}
     treeview_csvinfo.present_csvinfo(csvinfo)
 
 
@@ -35,7 +31,7 @@ def button_import_action(
         datapool: DataPool,
         notebook_datapool: DataPoolNotebook,
         notebook_datavisual: DataVisualNotebook,
-):
+) -> None:
     notebook_datapool.present_datapool(datapool)
     notebook_datavisual.cleanup_notebook()
     notebook_datavisual.update_tabs(datapool)
@@ -45,7 +41,7 @@ def button_clear_action(
         notebook_datapool: DataPoolNotebook,
         notebook_datavisual: DataVisualNotebook,
         spinbox_num: Spinbox,
-):
+) -> None:
     notebook_datapool.present_datapool({'1': None})
     notebook_datavisual.cleanup_notebook()
     spinbox_num.set(1)
@@ -66,7 +62,7 @@ def spinbox_num_action(
         notebook_datavisual.remove_tab_by_name(str(exist_num))
 
 
-def switch_widgets_state(
+def switch_widgets_by_checkbutton(
         checkbutton: Checkbutton,
         widgets: Sequence[tk.Widget]
 ) -> None:
@@ -75,98 +71,91 @@ def switch_widgets_state(
         widget.configure(state=config)
 
 
-def collect_configurations(
-        csv_info_frame: CsvInfoFrame,
-        data_visual_frame: DataVisualFrame,
-        figure_visual_frame: FigureVisualFrame,
-        axis_visual_frame_x: AxisVisualFrame,
-        axis_visual_frame_y: AxisVisualFrame
+def collect_app_config(
+        frame_csvinfo: CsvInfoFrame,
+        frame_datavisual: DataVisualFrame,
+        frame_figurevisual: FigureVisualFrame,
+        frame_axisvisual_x: AxisVisualFrame,
+        frame_axisvisual_y: AxisVisualFrame
 ) -> AppConfig:
-    configurations: AppConfig = {
-        'csvs': csv_info_frame.collect_csv_config(),
-        'lines': data_visual_frame.collect_line_configs(),
-        'figure': figure_visual_frame.collect_figure_config(),
-        'axis_x': axis_visual_frame_x.collect_axis_config(),
-        'axis_y': axis_visual_frame_y.collect_axis_config()
+    config_app: AppConfig = {
+        'csvs': frame_csvinfo.collect_csv_config(),
+        'lines': frame_datavisual.collect_line_configs(),
+        'figure': frame_figurevisual.collect_figure_config(),
+        'axis_x': frame_axisvisual_x.collect_axis_config(),
+        'axis_y': frame_axisvisual_y.collect_axis_config()
     }
-    return configurations
+    return config_app
 
 
 def button_plot_action(
         datapool: DataPool,
-        csv_info_frame: CsvInfoFrame,
-        data_visual_frame: DataVisualFrame,
-        figure_visual_frame: FigureVisualFrame,
-        axis_visual_frame_x: AxisVisualFrame,
-        axis_visual_frame_y: AxisVisualFrame
+        frame_csvinfo: CsvInfoFrame,
+        frame_datavisual: DataVisualFrame,
+        frame_figurevisual: FigureVisualFrame,
+        frame_axisvisual_x: AxisVisualFrame,
+        frame_axisvisual_y: AxisVisualFrame
 ) -> None:
-    configs = collect_configurations(
-        csv_info_frame,
-        data_visual_frame,
-        figure_visual_frame,
-        axis_visual_frame_x,
-        axis_visual_frame_y
+    config_app = collect_app_config(
+        frame_csvinfo,
+        frame_datavisual,
+        frame_figurevisual,
+        frame_axisvisual_x,
+        frame_axisvisual_y
     )
-    plotter.generate_graph(configs, datapool)
+    plotter.generate_graph(datapool, config_app)
 
 
 def button_copy_action() -> None:
     plotter.copy_to_clipboard()
 
 
-def menu_new_action():
+def menu_new_action() -> None:
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 
-def read_config_file() -> dict:
+def read_config_file() -> AppConfig:
     file = filedialog.askopenfile(
         filetypes=FILETYPES_CONFIG,
         defaultextension=FILETYPES_CONFIG
     )
-    config_values: dict = json.load(file)
+    config_app: AppConfig = json.load(file)
     file.close()
-    return config_values
+    return config_app
 
 
 def config_csvinfo(
-    config_values: dict,
-    csv_info_treeview: CsvInfoTreeview
+        config_csvs: CsvConfig,
+        treeview_csvinfo: CsvInfoTreeview
 ) -> DataPool:
-    csv_paths = config_values.get('csvs', {})
-    csv_info = {
-        str(idx + 1): path
-        for idx, path in enumerate(csv_paths)
-    }
-    csv_info_treeview.present_csvinfo(csv_info)
-    return csv_info_treeview.get_datapool()
+    csvinfo = {str(idx + 1): path for idx, path in enumerate(config_csvs)}
+    treeview_csvinfo.present_csvinfo(csvinfo)
+    return treeview_csvinfo.get_datapool()
 
 
 def config_spinbox_num(
-    config_values: dict,
-    spinbox_num: Spinbox
-):
-    line_num = len(config_values.get('lines', 1))
+        config_lines: list[LineConfig],
+        spinbox_num: Spinbox
+) -> None:
+    line_num = len(config_lines)
     spinbox_num.set(line_num)
 
 
 def config_datavisual_notebook(
-    config_values: dict,
-    datapool: DataPool,
-    spinbox_num: Spinbox,
-    notebook_datavisual: DataVisualNotebook
-):
-    line_num = len(config_values.get('lines', 1))
-    for line_idx in range(line_num):
-        csvidx = config_values['lines'][line_idx]['csvidx']
-        fieldx = config_values['lines'][line_idx]['fieldx']
-        fieldy = config_values['lines'][line_idx]['fieldy']
-        label = config_values['lines'][line_idx]['label']
+        config_lines: list[LineConfig],
+        datapool: DataPool,
+        spinbox_num: Spinbox,
+        notebook_datavisual: DataVisualNotebook
+) -> None:
+    for idx, config_line in enumerate(config_lines):
+        csvidx = config_line['csvidx']
+        fieldx = config_line['fieldx']
+        fieldy = config_line['fieldy']
+        label = config_line['label']
 
-        spinbox_num_action(
-            datapool, spinbox_num, notebook_datavisual
-        )
+        spinbox_num_action(datapool, spinbox_num, notebook_datavisual)
 
-        tabname = str(line_idx + 1)
+        tabname = str(idx + 1)
         tab: DataVisualTab = notebook_datavisual.query_tab_by_name(tabname)
         tab.widgets['combobox_csvidx'].set(csvidx)
         tab.widgets['combobox_fieldx'].set(fieldx)
@@ -175,14 +164,14 @@ def config_datavisual_notebook(
 
 
 def config_figurevisual_frame(
-    configs: FigureConfig,
-    frame: FigureVisualFrame
-):
-    title = configs.get('title')
-    width = configs.get('width')
-    height = configs.get('height')
-    grid_visible = configs.get('grid_visible')
-    legend_visible = configs.get('legend_visible')
+        config_figure: FigureConfig,
+        frame: FigureVisualFrame
+) -> None:
+    title = config_figure.get('title')
+    width = config_figure.get('width')
+    height = config_figure.get('height')
+    grid_visible = config_figure.get('grid_visible')
+    legend_visible = config_figure.get('legend_visible')
 
     widgets = frame.widgets
     widgets['title'].set(title)
@@ -193,94 +182,78 @@ def config_figurevisual_frame(
 
 
 def config_axisvisual_frame(
-    configs: AxisConfig,
-    frame: AxisVisualFrame
-):
-    label = configs.get('label')
-    scale = configs.get('scale')
-    _min = configs.get('min', None)
-    _max = configs.get('max', None)
+        config_axis: AxisConfig,
+        frame: AxisVisualFrame
+) -> None:
+    label = config_axis.get('label')
+    scale = config_axis.get('scale')
+    _min = config_axis.get('min', None)
+    _max = config_axis.get('max', None)
+    range_enabled = _min is not None or _max is not None
 
     widgets = frame.widgets
     widgets['stringvar_label'].set(label)
     widgets['combobox_scale'].set(scale)
-    if _min is None and _max is None:
-        widgets['checkbutton_range'].variable.set(0)
-        switch_widgets_state(
-            widgets['checkbutton_range'],
-            [widgets['entry_min'], widgets['entry_max']]
-        )
-    else:
-        widgets['checkbutton_range'].variable.set(1)
-        switch_widgets_state(
-            widgets['checkbutton_range'],
-            [widgets['entry_min'], widgets['entry_max']]
-        )
+    widgets['checkbutton_range'].variable.set(int(range_enabled))
+    switch_widgets_by_checkbutton(
+        widgets['checkbutton_range'],
+        [widgets['entry_min'], widgets['entry_max']]
+    )
+    if range_enabled:
         widgets['doublevar_min'].set(_min)
         widgets['doublevar_max'].set(_max)
 
 
 def menu_open_action(
-    csv_info_treeview: CsvInfoTreeview,
-    notebook_datapool: DataPoolNotebook,
-    notebook_datavisual: DataVisualNotebook,
-    spinbox_num: Spinbox,
-    figure_visual_frame: FigureVisualFrame,
-    axis_visual_frame_x: AxisVisualFrame,
-    axis_visual_frame_y: AxisVisualFrame
+        treeview_csvinfo: CsvInfoTreeview,
+        notebook_datapool: DataPoolNotebook,
+        notebook_datavisual: DataVisualNotebook,
+        spinbox_num: Spinbox,
+        frame_figurevisual: FigureVisualFrame,
+        frame_axisvisual_x: AxisVisualFrame,
+        frame_axisvisual_y: AxisVisualFrame
 ) -> DataPool:
-    config_values = read_config_file()
+    config_app = read_config_file()
+    config_csvs = config_app.get('csvs', [])
+    config_lines = config_app.get('lines', [])
+    config_figure = config_app.get('figure', {})
+    config_axis_x = config_app.get('axis_x', {})
+    config_axis_y = config_app.get('axis_y', {})
 
-    datapool = config_csvinfo(
-        config_values, csv_info_treeview
-    )
+    datapool = config_csvinfo(config_csvs, treeview_csvinfo)
     notebook_datavisual.cleanup_notebook()
-    button_import_action(
-        datapool, notebook_datapool, notebook_datavisual
-    )
-    config_spinbox_num(
-        config_values, spinbox_num
-    )
+    button_import_action(datapool, notebook_datapool, notebook_datavisual)
+    config_spinbox_num(config_lines, spinbox_num)
     config_datavisual_notebook(
-        config_values, datapool,
-        spinbox_num, notebook_datavisual
+        config_lines, datapool, spinbox_num, notebook_datavisual
     )
-    config_figurevisual_frame(
-        config_values.get('figure', {}),
-        figure_visual_frame
-    )
-    config_axisvisual_frame(
-        config_values.get('axis_x', {}),
-        axis_visual_frame_x
-    )
-    config_axisvisual_frame(
-        config_values.get('axis_y', {}),
-        axis_visual_frame_y
-    )
+    config_figurevisual_frame(config_figure, frame_figurevisual)
+    config_axisvisual_frame(config_axis_x, frame_axisvisual_x)
+    config_axisvisual_frame(config_axis_y, frame_axisvisual_y)
     return datapool
 
 
 def menu_save_as_action(
-    csv_info_frame: CsvInfoFrame,
-    data_visual_frame: DataVisualFrame,
-    figure_visual_frame: FigureVisualFrame,
-    axis_visual_frame_x: AxisVisualFrame,
-    axis_visual_frame_y: AxisVisualFrame
-):
-    config_values = collect_configurations(
-        csv_info_frame,
-        data_visual_frame,
-        figure_visual_frame,
-        axis_visual_frame_x,
-        axis_visual_frame_y
+        frame_csvinfo: CsvInfoFrame,
+        frame_datavisual: DataVisualFrame,
+        frame_figurevisual: FigureVisualFrame,
+        frame_axisvisual_x: AxisVisualFrame,
+        frame_axisvisual_y: AxisVisualFrame
+) -> None:
+    config_app = collect_app_config(
+        frame_csvinfo,
+        frame_datavisual,
+        frame_figurevisual,
+        frame_axisvisual_x,
+        frame_axisvisual_y
     )
     file = filedialog.asksaveasfile(
         filetypes=FILETYPES_CONFIG,
         defaultextension=FILETYPES_CONFIG
     )
-    json.dump(config_values, file, indent=4)
+    json.dump(config_app, file, indent=4)
     file.close()
 
 
-def menu_close_action(root: tk.Tk):
+def menu_close_action(root: tk.Tk) -> None:
     root.destroy()
