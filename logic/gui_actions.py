@@ -8,7 +8,7 @@ from collections.abc import Sequence
 import logic.plotter as plotter
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
-from logic import CsvInfo, DataPool
+from logic import CsvInfo
 from logic.plotter import AppConfig
 from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
 from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview, CsvConfig
@@ -49,7 +49,7 @@ def button_clear_action(
 
 
 def spinbox_num_action(
-        datapool: DataPool,
+        treeview_csvinfo: CsvInfoTreeview,
         spinbox_num: Spinbox,
         notebook_datavisual: DataVisualNotebook
 ) -> None:
@@ -57,6 +57,7 @@ def spinbox_num_action(
     exist_num = int(notebook_datavisual.index('end'))
     if tgt_num > exist_num:
         tabname_new = str(exist_num + 1)
+        datapool = treeview_csvinfo.get_datapool()
         tab = notebook_datavisual.create_new_tab(tabname_new)
         tab.update_comboboxes(datapool)
     elif tgt_num < exist_num:
@@ -90,7 +91,6 @@ def collect_app_config(
 
 
 def button_plot_action(
-        datapool: DataPool,
         frame_csvinfo: CsvInfoFrame,
         frame_datavisual: DataVisualFrame,
         frame_figurevisual: FigureVisualFrame,
@@ -104,6 +104,7 @@ def button_plot_action(
         frame_axisvisual_x,
         frame_axisvisual_y
     )
+    datapool = frame_csvinfo.widgets['treeview_csvinfo'].get_datapool()
     plotter.generate_graph(datapool, config_app)
 
 

@@ -3,7 +3,7 @@ from tkinter import font
 from typing import TypedDict
 
 import logic.gui_actions as actions
-from logic import CsvInfo, DataPool
+from logic import CsvInfo
 from view.AxisVisualFrame import AxisVisualFrame
 from view.CsvInfoFrame import CsvInfoFrame
 from view.DataPoolFrame import DataPoolFrame
@@ -37,7 +37,6 @@ class App:
         self.frames = AppFrames()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
         self.csvinfo: CsvInfo = {}
-        self.datapool: DataPool = {}
         self.initialize_menubar()
         self.initialize_csv_info_frame()
         self.initialize_data_pool_frame()
@@ -165,13 +164,15 @@ class App:
         notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
         spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
         actions.button_clear_action(
-            notebook_datapool, notebook_datavisual, spinbox_num)
+            notebook_datapool, notebook_datavisual, spinbox_num
+        )
 
     def spinbox_num_action(self):
+        treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
         spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
         notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
         actions.spinbox_num_action(
-            self.datapool, spinbox_num, notebook_datavisual
+            treeview_csvinfo, spinbox_num, notebook_datavisual
         )
 
     def checkbutton_range_x_action(self):
@@ -193,12 +194,11 @@ class App:
     def button_plot_action(self):
         frame_csvinfo = self.frames['csvinfo']
         frame_datavisual = self.frames['datavisual']
-        figure_visual_frame = self.frames['figurevisual']
+        frame_figurevisual = self.frames['figurevisual']
         frame_axisvisual_x = self.frames['axisvisual_x']
         frame_axisvisual_y = self.frames['axisvisual_y']
         actions.button_plot_action(
-            self.datapool, frame_csvinfo,
-            frame_datavisual, figure_visual_frame,
+            frame_csvinfo, frame_datavisual, frame_figurevisual,
             frame_axisvisual_x, frame_axisvisual_y
         )
 
@@ -222,7 +222,6 @@ class App:
             notebook_datavisual, spinbox_num, frame_figurevisual,
             frame_axisvisual_x, frame_axisvisual_y
         )
-        self.datapool = treeview_csvinfo.get_datapool()
 
     def menu_save_as_action(self):
         frame_csvinfo = self.frames['csvinfo']
