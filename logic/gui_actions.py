@@ -129,8 +129,11 @@ def read_config_file() -> AppConfig:
         filetypes=FILETYPES_CONFIG,
         defaultextension=FILETYPES_CONFIG
     )
-    config_app: AppConfig = json.load(file)
-    file.close()
+    try:
+        config_app: AppConfig = json.load(file)
+        file.close()
+    except AttributeError:
+        config_app = {}
     return config_app
 
 
@@ -228,6 +231,8 @@ def menu_open_action(
         frame_axisvisual_y: AxisVisualFrame
 ) -> None:
     config_app = read_config_file()
+    if not config_app:
+        return
     config_csvs = config_app.get('csvs', [])
     config_lines = config_app.get('lines', [])
     config_figure = config_app.get('figure', {})
