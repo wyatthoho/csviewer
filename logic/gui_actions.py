@@ -1,15 +1,16 @@
+import json
 import os
 import sys
-import json
 import tkinter as tk
 from tkinter import filedialog
 from collections.abc import Sequence
+from typing import TypedDict
 
 import logic.plotter as plotter
+
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from logic import CsvInfo
-from logic.plotter import AppConfig
 from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
 from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview, CsvConfig
 from view.DataPoolFrame import DataPoolNotebook
@@ -19,6 +20,14 @@ from view.FigureVisualFrame import FigureVisualFrame, FigureConfig
 
 FILETYPES_CSV = [('csv files', '*.csv')]
 FILETYPES_CONFIG = [('JSON File', '*.json')]
+
+
+class AppConfig(TypedDict):
+    csvs: CsvConfig
+    lines: list[LineConfig]
+    figure: FigureConfig
+    axis_x: AxisConfig
+    axis_y: AxisConfig
 
 
 def button_choose_action(treeview_csvinfo: CsvInfoTreeview) -> None:
@@ -97,15 +106,14 @@ def button_plot_action(
         frame_axisvisual_x: AxisVisualFrame,
         frame_axisvisual_y: AxisVisualFrame
 ) -> None:
-    config_app = collect_app_config(
-        frame_csvinfo,
-        frame_datavisual,
-        frame_figurevisual,
-        frame_axisvisual_x,
-        frame_axisvisual_y
-    )
     datapool = frame_csvinfo.widgets['treeview_csvinfo'].get_datapool()
-    plotter.generate_graph(datapool, config_app)
+    config_figure = frame_figurevisual.collect_figure_config()
+    config_axis_x = frame_axisvisual_x.collect_axis_config()
+    config_axis_y = frame_axisvisual_y.collect_axis_config()
+    config_lines = frame_datavisual.collect_line_configs()
+    plotter.generate_graph(
+        datapool, config_figure, config_axis_x, config_axis_y, config_lines
+    )
 
 
 def button_copy_action() -> None:

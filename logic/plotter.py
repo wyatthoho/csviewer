@@ -1,25 +1,16 @@
 from io import BytesIO
-from typing import Callable, Tuple, TypedDict
+from typing import Callable, Tuple
 
 import matplotlib.pyplot as plt
 import win32clipboard
 
 from logic import DataPool
 from view.AxisVisualFrame import AxisConfig
-from view.CsvInfoFrame import CsvConfig
 from view.DataVisualFrame import LineConfig
 from view.FigureVisualFrame import FigureConfig
 
 
-class AppConfig(TypedDict):
-    csvs: CsvConfig
-    lines: list[LineConfig]
-    figure: FigureConfig
-    axis_x: AxisConfig
-    axis_y: AxisConfig
-
-
-def create_figure(
+def initialize_figure(
         config_figure: FigureConfig
 ) -> Tuple[plt.Figure, plt.Axes]:
     width = config_figure.get('width')
@@ -66,10 +57,7 @@ def draw_lines_from_datapool(
 
 def apply_figure_config(config_figure: FigureConfig, ax: plt.Axes) -> None:
     ax.set_title(config_figure.get('title', ''))
-    ax.grid(
-        visible=config_figure.get('grid_visible', ''),
-        axis='both'
-    )
+    ax.grid(visible=config_figure.get('grid_visible', ''), axis='both')
     if config_figure.get('legend_visible'):
         ax.legend()
 
@@ -89,16 +77,18 @@ def apply_axis_config(
     ax.set_ylim(ylim)
 
 
-def generate_graph(datapool: DataPool, config: AppConfig) -> None:
-    fig, ax = create_figure(config['figure'])
-    plot_function = determine_plot_type(
-        config['axis_x'],
-        config['axis_y'],
-        ax
-    )
-    draw_lines_from_datapool(config['lines'], datapool, plot_function)
-    apply_figure_config(config['figure'], ax)
-    apply_axis_config(config['axis_x'], config['axis_y'], ax)
+def generate_graph(
+        datapool: DataPool,
+        config_figure: FigureConfig,
+        config_axis_x: AxisConfig,
+        config_axis_y: AxisConfig,
+        config_lines: list[LineConfig]
+) -> None:
+    fig, ax = initialize_figure(config_figure)
+    plot_function = determine_plot_type(config_axis_x, config_axis_y, ax)
+    draw_lines_from_datapool(config_lines, datapool, plot_function)
+    apply_figure_config(config_figure, ax)
+    apply_axis_config(config_axis_x, config_axis_y, ax)
     plt.show()
 
 
