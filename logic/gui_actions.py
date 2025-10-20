@@ -129,11 +129,11 @@ def read_config_file() -> AppConfig:
         filetypes=FILETYPES_CONFIG,
         defaultextension=FILETYPES_CONFIG
     )
-    try:
-        config_app: AppConfig = json.load(file)
-        file.close()
-    except AttributeError:
+    if not file:
         config_app = {}
+    else:
+        config_app = json.load(file)
+        file.close()
     return config_app
 
 
