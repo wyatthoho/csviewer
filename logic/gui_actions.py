@@ -41,10 +41,16 @@ def button_import_action(
         notebook_datapool: DataPoolNotebook,
         notebook_datavisual: DataVisualNotebook,
 ) -> None:
-    datapool = treeview_csvinfo.get_datapool()
-    notebook_datapool.present_datapool(datapool)
-    notebook_datavisual.cleanup_notebook()
-    notebook_datavisual.update_tabs(datapool)
+    try:
+        datapool = treeview_csvinfo.get_datapool()
+        notebook_datapool.present_datapool(datapool)
+        notebook_datavisual.cleanup_notebook()
+        notebook_datavisual.update_tabs(datapool)
+    except ValueError as e:
+        tk.messagebox.showerror(
+            title='Import Error',
+            message=str(e)
+        )
 
 
 def button_clear_action(
@@ -106,14 +112,20 @@ def button_plot_action(
         frame_axisvisual_x: AxisVisualFrame,
         frame_axisvisual_y: AxisVisualFrame
 ) -> None:
-    datapool = frame_csvinfo.widgets['treeview_csvinfo'].get_datapool()
-    config_figure = frame_figurevisual.collect_figure_config()
-    config_axis_x = frame_axisvisual_x.collect_axis_config()
-    config_axis_y = frame_axisvisual_y.collect_axis_config()
-    config_lines = frame_datavisual.collect_line_configs()
-    plotter.generate_graph(
-        datapool, config_figure, config_axis_x, config_axis_y, config_lines
-    )
+    try:
+        datapool = frame_csvinfo.widgets['treeview_csvinfo'].get_datapool()
+        config_figure = frame_figurevisual.collect_figure_config()
+        config_axis_x = frame_axisvisual_x.collect_axis_config()
+        config_axis_y = frame_axisvisual_y.collect_axis_config()
+        config_lines = frame_datavisual.collect_line_configs()
+        plotter.generate_graph(
+            datapool, config_figure, config_axis_x, config_axis_y, config_lines
+        )
+    except ValueError as e:
+        tk.messagebox.showerror(
+            title='Plot Error',
+            message=str(e)
+        )
 
 
 def button_copy_action() -> None:

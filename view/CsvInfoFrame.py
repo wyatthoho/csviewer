@@ -38,6 +38,8 @@ class CsvInfoTreeview(Treeview):
             csv_idx, csv_path = row[1:]
             dataframe = get_dataframe_from_csv(csv_path)
             datapool[str(csv_idx)] = dataframe
+        if not datapool:
+            raise ValueError('No CSV files selected.')
         return datapool
 
     def present_csvinfo(self, csvinfo: CsvInfo):
