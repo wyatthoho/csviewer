@@ -1,0 +1,46 @@
+{
+    "csvs": [
+        "./data/header/elcentro_EW.csv",
+        "./data/header/elcentro_NS.csv",
+        "./data/header/elcentro_UP.csv"
+    ],
+    "lines": [
+        {
+            "csvidx": "1",
+            "fieldx": "time(sec)",
+            "fieldy": "acceleration(g)",
+            "label": "EW"
+        },
+        {
+            "csvidx": "2",
+            "fieldx": "Time(sec)",
+            "fieldy": "Acceleration(g)",
+            "label": "NS"
+        },
+        {
+            "csvidx": "3",
+            "fieldx": "TIME(SEC)",
+            "fieldy": "ACCELERATION(G)",
+            "label": "UP"
+        }
+    ],
+    "figure": {
+        "title": "El Centro Seismic History",
+        "width": 4.8,
+        "height": 3.2,
+        "grid_visible": true,
+        "legend_visible": true
+    },
+    "axis_x": {
+        "label": "Time, sec",
+        "scale": "linear",
+        "min": null,
+        "max": null
+    },
+    "axis_y": {
+        "label": "Acceleration, g",
+        "scale": "linear",
+        "min": -0.4,
+        "max": 0.4
+    }
+}

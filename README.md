@@ -41,6 +41,6 @@ deactivate
 ## Running the Project
 
 To run the project, execute the following:
-```bush
+```bash
 .\run_in_venv.ps1
 ```
