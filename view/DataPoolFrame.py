@@ -31,6 +31,7 @@ class DataPoolNotebook(Notebook):
             rowspan=rowspan, colspan=colspan
         )
         self.font = font
+        self.datapool: DataPool = {}
         self.create_new_tab('1', None)
 
     def create_new_tab(
@@ -51,9 +52,11 @@ class DataPoolNotebook(Notebook):
             treeview.insert_dataframe(dataframe)
             treeview.adjust_column_width()
         tab.widgets['treeview_datapool'] = treeview
+        self.datapool[tabname] = dataframe
         return tab
 
     def present_datapool(self, datapool: DataPool):
+        self.datapool: DataPool = {}
         self.remove_all_tabs()
         for csv_idx, dataframe in datapool.items():
             self.create_new_tab(csv_idx, dataframe)
@@ -70,7 +73,16 @@ class DataPoolNotebook(Notebook):
             for col in df.columns:
                 df[col] = pd.to_numeric(df[col])
             datapool[tabname] = df
+        self.datapool = datapool
         return datapool
+    
+    def check_empty_datapool(self) -> bool:
+        empty = all(
+            df is None or df.empty
+            for df in self.datapool.values()
+        )
+        if empty:
+            raise ValueError('DataPool containing empty DataFrames.')
 
 class FrameWidgets(TypedDict):
     notebook_datapool: DataPoolNotebook

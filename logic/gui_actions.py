@@ -64,17 +64,25 @@ def button_clear_action(
 
 
 def spinbox_num_action(
-        treeview_csvinfo: CsvInfoTreeview,
         spinbox_num: Spinbox,
-        notebook_datavisual: DataVisualNotebook
+        notebook_datavisual: DataVisualNotebook,
+        notebook_datapool: DataPoolNotebook
 ) -> None:
     tgt_num = int(spinbox_num.get())
     exist_num = int(notebook_datavisual.index('end'))
+    try :
+        notebook_datapool.check_empty_datapool()
+    except ValueError as e:
+        tk.messagebox.showerror(
+            title='Spinbox Error',
+            message=str(e)
+        )
+        spinbox_num.set(exist_num)
+        return
     if tgt_num > exist_num:
         tabname_new = str(exist_num + 1)
-        datapool = treeview_csvinfo.get_datapool()
         tab = notebook_datavisual.create_new_tab(tabname_new)
-        tab.update_comboboxes(datapool)
+        tab.update_comboboxes(notebook_datapool.datapool)
     elif tgt_num < exist_num:
         notebook_datavisual.remove_tab_by_name(str(exist_num))
 

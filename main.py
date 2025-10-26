@@ -168,11 +168,11 @@ class App:
         )
 
     def spinbox_num_action(self):
-        treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
         spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
         notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
+        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
         actions.spinbox_num_action(
-            treeview_csvinfo, spinbox_num, notebook_datavisual
+            spinbox_num, notebook_datavisual, notebook_datapool
         )
 
     def checkbutton_range_x_action(self):
