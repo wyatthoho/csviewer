@@ -106,14 +106,14 @@ def collect_app_config(
 
 
 def button_plot_action(
-        frame_csvinfo: CsvInfoFrame,
+        notebook_datapool: DataPoolNotebook,
         frame_datavisual: DataVisualFrame,
         frame_figurevisual: FigureVisualFrame,
         frame_axisvisual_x: AxisVisualFrame,
         frame_axisvisual_y: AxisVisualFrame
 ) -> None:
     try:
-        datapool = frame_csvinfo.widgets['treeview_csvinfo'].get_datapool()
+        datapool = notebook_datapool.get_datapool()
         config_figure = frame_figurevisual.collect_figure_config()
         config_axis_x = frame_axisvisual_x.collect_axis_config()
         config_axis_y = frame_axisvisual_y.collect_axis_config()

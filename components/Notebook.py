@@ -39,6 +39,10 @@ class Notebook(ttk.Notebook):
                 return self.nametowidget(tab_idx)
         return None
 
+    def query_tabnames(self) -> list[str]:
+        tabnames = [self.tab(tab_idx, 'text') for tab_idx in self.tabs()]
+        return tabnames
+
     def remove_all_tabs(self):
         while self.index('end') > 0:
             self.forget(0)

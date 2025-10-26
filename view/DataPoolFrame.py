@@ -57,7 +57,20 @@ class DataPoolNotebook(Notebook):
         self.remove_all_tabs()
         for csv_idx, dataframe in datapool.items():
             self.create_new_tab(csv_idx, dataframe)
-
+    
+    def get_datapool(self) -> DataPool:
+        datapool: DataPool = {}
+        for tabname in self.query_tabnames():
+            tab = self.query_tab_by_name(tabname)
+            treeview: Treeview = tab.widgets['treeview_datapool']
+            df = treeview.get_dataframe()
+            if df.empty:
+                msg = f'CSV ID "{tabname}" contains no data (empty DataFrame).'
+                raise ValueError(msg)
+            for col in df.columns:
+                df[col] = pd.to_numeric(df[col])
+            datapool[tabname] = df
+        return datapool
 
 class FrameWidgets(TypedDict):
     notebook_datapool: DataPoolNotebook

@@ -192,13 +192,13 @@ class App:
         actions.switch_widgets_by_checkbutton(checkbutton, widgets)
 
     def button_plot_action(self):
-        frame_csvinfo = self.frames['csvinfo']
+        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
         frame_datavisual = self.frames['datavisual']
         frame_figurevisual = self.frames['figurevisual']
         frame_axisvisual_x = self.frames['axisvisual_x']
         frame_axisvisual_y = self.frames['axisvisual_y']
         actions.button_plot_action(
-            frame_csvinfo, frame_datavisual, frame_figurevisual,
+            notebook_datapool, frame_datavisual, frame_figurevisual,
             frame_axisvisual_x, frame_axisvisual_y
         )
 
