@@ -9,7 +9,7 @@ from components.Frame import Frame
 from components.LabelFrame import LabelFrame
 from components.Treeview import Treeview
 from logic import CsvInfo, DataPool
-from logic.csv_utils import get_dataframe_from_csv
+from logic.csv_utils import get_csv_dict
 
 TREEVIEW_COLUMNS = ('CSV ID', 'CSV Path')
 TREEVIEW_HEIGHT = 10
@@ -35,7 +35,7 @@ class CsvInfoTreeview(Treeview):
         datapool: DataPool = {}
         for row in self.get_dataframe().itertuples():
             csv_idx, csv_path = row[1:]
-            dataframe = get_dataframe_from_csv(csv_path)
+            dataframe = get_csv_dict(csv_path)
             datapool[str(csv_idx)] = dataframe
         if not datapool:
             raise ValueError('No CSV files selected.')
