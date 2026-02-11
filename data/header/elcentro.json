@@ -34,13 +34,13 @@
     "axis_x": {
         "label": "Time, sec",
         "scale": "linear",
-        "min": null,
-        "max": null
+        "_min": null,
+        "_max": null
     },
     "axis_y": {
         "label": "Acceleration, g",
         "scale": "linear",
-        "min": -0.4,
-        "max": 0.4
+        "_min": -0.4,
+        "_max": 0.4
     }
 }

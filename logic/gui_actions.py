@@ -224,8 +224,8 @@ def config_axisvisual_frame(
 ) -> None:
     label = config_axis.get('label')
     scale = config_axis.get('scale')
-    _min = config_axis.get('min', None)
-    _max = config_axis.get('max', None)
+    _min = config_axis.get('_min', None)
+    _max = config_axis.get('_max', None)
     range_enabled = _min is not None or _max is not None
 
     widgets = frame.widgets
