@@ -5,7 +5,6 @@ from typing import TypedDict
 from components.Button import Button
 from components.LabelFrame import LabelFrame
 
-
 BUTTON_TEXT_PLOT = 'Plot'
 BUTTON_TEXT_COPY = 'Copy'
 

@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import Callable, Tuple
+from collections.abc import Callable
 
 import matplotlib.pyplot as plt
 import win32clipboard
@@ -12,7 +12,7 @@ from view.FigureVisualFrame import FigureConfig
 
 def initialize_figure(
         config_figure: FigureConfig
-) -> Tuple[plt.Figure, plt.Axes]:
+) -> tuple[plt.Figure, plt.Axes]:
     width = config_figure.get('width')
     height = config_figure.get('height')
     figsize = (width, height)

@@ -10,7 +10,6 @@ from components.Notebook import Notebook
 from components.Spinbox import Spinbox
 from logic import DataPool
 
-
 FROM = 1
 TO = 20
 SPINBOX_LABEL = 'Numbers of datasets'

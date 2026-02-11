@@ -1,21 +1,19 @@
 import tkinter as tk
 from tkinter import ttk
-
 from collections.abc import Callable
-from typing import Union
-
+from typing import TypeAlias
 
 PADS = {'padx': 4, 'pady': 4}
 IPADS = {'ipadx': 1, 'ipady': 1}
 STICKY = tk.W
 
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
+Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
 
 
 class Checkbutton(tk.Checkbutton):
     def __init__(
             self,
-            master: master,
+            master: Master,
             row: int, col: int, colspan: int,
             text: str, font: tk.font,
             command: Callable, variable: tk.IntVar,

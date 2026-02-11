@@ -12,7 +12,6 @@ from view.FigureVisualFrame import FigureVisualFrame
 from view.Menu import Menu, MenuCallbacks
 from view.PlotActionsFrame import PlotActionsFrame
 
-
 NAME = 'CSViewer'
 FAVICON = 'icon\\favicon.ico'
 STATE = 'zoomed'

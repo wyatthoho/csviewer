@@ -1,5 +1,6 @@
 import tkinter as tk
-from typing import Callable, TypedDict
+from typing import TypedDict
+from collections.abc import Callable
 
 
 class MenuCallbacks(TypedDict):

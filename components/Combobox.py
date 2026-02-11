@@ -1,19 +1,18 @@
 import tkinter as tk
 from tkinter import ttk
-from typing import Union
-
+from typing import TypeAlias
 
 PADS = {'padx': 4, 'pady': 4}
 IPADS = {'ipadx': 1, 'ipady': 1}
 WIDTH = 12
 STICKY = tk.NSEW
 
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
+Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
 
 
 class Combobox(ttk.Combobox):
     def __init__(
-            self, master: master,
+            self, master: Master,
             row: int, col: int,
             values: list[str] = [], width: int = WIDTH,
             font: tk.font = 'TkDefaultFont'

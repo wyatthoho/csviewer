@@ -1,15 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
-from typing import Union
+from typing import TypeAlias
 
-
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
 STICKY = tk.NSEW
+
+Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
 
 
 class Notebook(ttk.Notebook):
     def __init__(
-        self, master: master,
+        self, master: Master,
         row: int, col: int,
         rowspan: int = 1, colspan: int = 1,
     ):

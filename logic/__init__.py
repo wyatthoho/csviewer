@@ -1,6 +1,6 @@
-from typing import Dict
+from collections.abc import Mapping
 
 import pandas as pd
 
-CsvInfo = Dict[str, str]
-DataPool = Dict[str, pd.DataFrame]
+CsvInfo = Mapping[str, str]
+DataPool = Mapping[str, pd.DataFrame]

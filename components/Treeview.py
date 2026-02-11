@@ -1,19 +1,18 @@
 import tkinter as tk
 from tkinter import ttk
-from typing import Sequence, Union
+from collections.abc import Sequence
+from typing import TypeAlias
 
 import pandas as pd
 
-
 COLUMN_WIDTH_RATIO = 9
 
-
-type master = Union[tk.Tk, tk.Frame, tk.LabelFrame, ttk.Frame]
+Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
 
 
 class Treeview(ttk.Treeview):
     def __init__(
-            self, master: master, columns: Sequence[str], height: int
+            self, master: Master, columns: Sequence[str], height: int
     ):
         scrollbar_x = tk.Scrollbar(master=master, orient=tk.HORIZONTAL)
         scrollbar_y = tk.Scrollbar(master=master, orient=tk.VERTICAL)

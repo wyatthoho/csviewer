@@ -7,7 +7,6 @@ from collections.abc import Sequence
 from typing import TypedDict
 
 import logic.plotter as plotter
-
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from logic import CsvInfo
@@ -70,7 +69,7 @@ def spinbox_num_action(
 ) -> None:
     tgt_num = int(spinbox_num.get())
     exist_num = int(notebook_datavisual.index('end'))
-    try :
+    try:
         notebook_datapool.check_empty_datapool()
     except ValueError as e:
         tk.messagebox.showerror(

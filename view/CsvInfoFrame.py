@@ -2,15 +2,14 @@ import tkinter as tk
 from tkinter import font
 from typing import TypedDict
 
+import pandas as pd
+
 from components.Button import Button
 from components.Frame import Frame
 from components.LabelFrame import LabelFrame
 from components.Treeview import Treeview
 from logic import CsvInfo, DataPool
 from logic.csv_utils import get_dataframe_from_csv
-
-import pandas as pd
-
 
 TREEVIEW_COLUMNS = ('CSV ID', 'CSV Path')
 TREEVIEW_HEIGHT = 10

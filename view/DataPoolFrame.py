@@ -2,14 +2,13 @@ import tkinter as tk
 from tkinter import ttk, font
 from typing import TypedDict
 
+import pandas as pd
+
 from components.Button import Button
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
 from components.Treeview import Treeview
 from logic import DataPool
-
-import pandas as pd
-
 
 TREEVIEW_COLUMNS_INI = ('', )
 TREEVIEW_HEIGHT = 80
