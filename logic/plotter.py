@@ -4,7 +4,7 @@ from collections.abc import Callable
 import matplotlib.pyplot as plt
 import win32clipboard
 
-from logic import DataPool
+from components.Treeview import TreeviewData
 from view.AxisVisualFrame import AxisConfig
 from view.DataVisualFrame import LineConfig
 from view.FigureVisualFrame import FigureConfig
@@ -41,7 +41,7 @@ def determine_plot_type(
 
 def draw_lines_from_datapool(
         config_lines: list[LineConfig],
-        datapool: DataPool,
+        datapool: dict[str, TreeviewData],
         plot_function: Callable
 ) -> None:
     for line_cfg in config_lines:
@@ -49,9 +49,9 @@ def draw_lines_from_datapool(
         fieldx = line_cfg['fieldx']
         fieldy = line_cfg['fieldy']
         label = line_cfg['label']
-        df = datapool[csvidx]
-        values_x = df[fieldx]
-        values_y = df[fieldy]
+        csv_data = datapool[csvidx]
+        values_x = [float(val) for val in csv_data[fieldx]]
+        values_y = [float(val) for val in csv_data[fieldy]]
         plot_function(values_x, values_y, label=label)
 
 
@@ -78,7 +78,7 @@ def apply_axis_config(
 
 
 def generate_graph(
-        datapool: DataPool,
+        datapool: dict[str, TreeviewData],
         config_figure: FigureConfig,
         config_axis_x: AxisConfig,
         config_axis_y: AxisConfig,
@@ -93,16 +93,6 @@ def generate_graph(
 
 
 def copy_to_clipboard():
-    '''
-    Honestly, I don't know how it works. Here is the reference I found.
-    https://stackoverflow.com/questions/7050448/write-image-to-windows-clipboard-in-python-with-pil-and-win32clipboard
-
-    This method can copy the figure image and paste to MS office but not Paint.
-    '''
-    # fignums = plt.get_fignums()  # if no fig -> []
-    # if not fignums:
-    #     raise FigureNumsError
-
     fig = plt.gcf()
     buffer = BytesIO()
     fig.savefig(buffer, format='png')
