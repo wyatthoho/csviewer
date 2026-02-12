@@ -31,9 +31,7 @@ class DataPoolNotebook(Notebook):
         self.font = font
         self.create_new_tab('1', None)
 
-    def create_new_tab(
-            self, tabname: str, treeview_data: Table
-    ) -> ttk.Frame:
+    def create_new_tab(self, tabname: str, treeview_data: Table) -> ttk.Frame:
         tab = super().create_new_tab(tabname)
         tab.widgets = TabWidgets()
         if treeview_data is None:
@@ -58,7 +56,7 @@ class DataPoolNotebook(Notebook):
             self.create_new_tab(csv_idx, csv_data)
 
     def get_datapool(self) -> Tables:
-        datapool: Tables = {}
+        datapool = {}
         for tabname in self.query_tabnames():
             tab = self.query_tab_by_name(tabname)
             treeview: Treeview = tab.widgets['treeview_datapool']

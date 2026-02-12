@@ -8,6 +8,7 @@ from components.Label import Label
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
 from components.Spinbox import Spinbox
+from logic import Table
 
 FROM = 1
 TO = 20
@@ -76,7 +77,7 @@ class DataVisualTab(ttk.Frame):
         self.widgets['combobox_csvidx'].configure(values=csv_indices)
         self.widgets['combobox_csvidx'].current(0)
 
-    def reset_field_x_and_y(self, csv_fields: dict[str, list[str]]):
+    def reset_field_x_and_y(self, csv_fields: Table):
         idx = self.widgets['combobox_csvidx'].get()
         fields = list(csv_fields[idx])
         self.widgets['combobox_fieldx'].configure(values=fields)
@@ -87,13 +88,13 @@ class DataVisualTab(ttk.Frame):
         else:
             self.widgets['combobox_fieldy'].current(0)
 
-    def bind_csv_idx_combobox(self, csv_fields: dict[str, list[str]]):
+    def bind_csv_idx_combobox(self, csv_fields: Table):
         self.widgets['combobox_csvidx'].bind(
             '<<ComboboxSelected>>',
             lambda event: self.reset_field_x_and_y(csv_fields)
         )
 
-    def update_comboboxes(self, csv_fields: dict[str, list[str]]):
+    def update_comboboxes(self, csv_fields: Table):
         self.reset_csv_idx(list(csv_fields.keys()))
         self.reset_field_x_and_y(csv_fields)
         self.bind_csv_idx_combobox(csv_fields)
@@ -120,7 +121,7 @@ class DataVisualNotebook(Notebook):
         self.remove_all_tabs()
         self.create_new_tab('1')
 
-    def update_tabs(self, csv_fields: dict[str, list[str]]):
+    def update_tabs(self, csv_fields: Table):
         for tab_idx in self.tabs():
             tab: DataVisualTab = self.nametowidget(tab_idx)
             tab.update_comboboxes(csv_fields)
