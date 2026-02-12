@@ -5,7 +5,8 @@ from typing import TypedDict
 from components.Button import Button
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
-from components.Treeview import Treeview, TreeviewData
+from components.Treeview import Treeview
+from logic import Table, Tables
 from logic.csv_utils import get_csv_data
 
 TREEVIEW_COLUMNS_INI = ('', )
@@ -31,7 +32,7 @@ class DataPoolNotebook(Notebook):
         self.create_new_tab('1', None)
 
     def create_new_tab(
-            self, tabname: str, treeview_data: TreeviewData
+            self, tabname: str, treeview_data: Table
     ) -> ttk.Frame:
         tab = super().create_new_tab(tabname)
         tab.widgets = TabWidgets()
@@ -50,14 +51,14 @@ class DataPoolNotebook(Notebook):
         tab.widgets['treeview_datapool'] = treeview
         return tab
 
-    def present_datapool(self, csv_info: TreeviewData):
+    def present_datapool(self, csv_info: Table):
         self.remove_all_tabs()
         for csv_idx, csv_path in zip(*csv_info.values()):
             csv_data = get_csv_data(csv_path)
             self.create_new_tab(csv_idx, csv_data)
 
-    def get_datapool(self) -> dict[str, TreeviewData]:
-        datapool: dict[str, TreeviewData] = {}
+    def get_datapool(self) -> Tables:
+        datapool: Tables = {}
         for tabname in self.query_tabnames():
             tab = self.query_tab_by_name(tabname)
             treeview: Treeview = tab.widgets['treeview_datapool']
@@ -67,8 +68,8 @@ class DataPoolNotebook(Notebook):
                 raise ValueError(msg)
             datapool[tabname] = csv_data
         return datapool
-    
-    def get_csv_fields(self) -> TreeviewData:
+
+    def get_csv_fields(self) -> Table:
         csv_fields = {}
         for tabname in self.query_tabnames():
             tab = self.query_tab_by_name(tabname)

@@ -1,7 +1,9 @@
 import csv
 
+from logic import Table
 
-def get_csv_data(csv_path: str) -> dict[str, list[str]]:
+
+def get_csv_data(csv_path: str) -> Table:
     with open(csv_path, 'r') as f:
         has_header = csv.Sniffer().has_header(f.read())
         f.seek(0)

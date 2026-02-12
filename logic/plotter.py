@@ -4,7 +4,7 @@ from collections.abc import Callable
 import matplotlib.pyplot as plt
 import win32clipboard
 
-from components.Treeview import TreeviewData
+from logic import Tables
 from view.AxisVisualFrame import AxisConfig
 from view.DataVisualFrame import LineConfig
 from view.FigureVisualFrame import FigureConfig
@@ -41,7 +41,7 @@ def determine_plot_type(
 
 def draw_lines_from_datapool(
         config_lines: list[LineConfig],
-        datapool: dict[str, TreeviewData],
+        datapool: Tables,
         plot_function: Callable
 ) -> None:
     for line_cfg in config_lines:
@@ -78,7 +78,7 @@ def apply_axis_config(
 
 
 def generate_graph(
-        datapool: dict[str, TreeviewData],
+        datapool: Tables,
         config_figure: FigureConfig,
         config_axis_x: AxisConfig,
         config_axis_y: AxisConfig,
