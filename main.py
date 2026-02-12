@@ -3,7 +3,6 @@ from tkinter import font
 from typing import TypedDict
 
 import logic.gui_actions as actions
-from logic import CsvInfo
 from view.AxisVisualFrame import AxisVisualFrame
 from view.CsvInfoFrame import CsvInfoFrame
 from view.DataPoolFrame import DataPoolFrame
@@ -35,7 +34,6 @@ class App:
         self.root = self.initialize_main_window()
         self.frames = AppFrames()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
-        self.csvinfo: CsvInfo = {}
         self.initialize_menubar()
         self.initialize_csv_info_frame()
         self.initialize_data_pool_frame()
@@ -148,7 +146,6 @@ class App:
     def button_choose_action(self):
         treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
         actions.button_choose_action(treeview_csvinfo)
-        self.csvinfo = treeview_csvinfo.get_csvinfo()
 
     def button_import_action(self):
         treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']

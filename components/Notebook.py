@@ -27,20 +27,20 @@ class Notebook(ttk.Notebook):
 
     def remove_tab_by_name(self, tabname: str) -> None:
         for tab_idx in self.tabs():
-            text = self.tab(tab_idx, 'text')
+            text = str(self.tab(tab_idx, 'text'))
             if text == tabname:
                 self.forget(tab_idx)
                 return
 
     def query_tab_by_name(self, tabname: str) -> ttk.Frame:
         for tab_idx in self.tabs():
-            text = self.tab(tab_idx, 'text')
+            text = str(self.tab(tab_idx, 'text'))
             if text == tabname:
                 return self.nametowidget(tab_idx)
         return None
 
     def query_tabnames(self) -> list[str]:
-        tabnames = [self.tab(tab_idx, 'text') for tab_idx in self.tabs()]
+        tabnames = [str(self.tab(tab_idx, 'text')) for tab_idx in self.tabs()]
         return tabnames
 
     def remove_all_tabs(self):

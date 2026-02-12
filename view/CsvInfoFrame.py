@@ -1,15 +1,12 @@
 import tkinter as tk
 from tkinter import font
+from collections.abc import Sequence
 from typing import TypedDict
-
-import pandas as pd
 
 from components.Button import Button
 from components.Frame import Frame
 from components.LabelFrame import LabelFrame
 from components.Treeview import Treeview
-from logic import CsvInfo, DataPool
-from logic.csv_utils import get_csv_dict
 
 TREEVIEW_COLUMNS = ('CSV ID', 'CSV Path')
 TREEVIEW_HEIGHT = 10
@@ -24,31 +21,12 @@ class CsvInfoTreeview(Treeview):
             master=master, columns=columns, height=height
         )
 
-    def get_csvinfo(self) -> CsvInfo:
-        csvinfo: CsvInfo = {}
-        for row in self.get_dataframe().itertuples():
-            csv_idx, csv_path = row[1:]
-            csvinfo[str(csv_idx)] = csv_path
-        return csvinfo
-
-    def get_datapool(self) -> DataPool:
-        datapool: DataPool = {}
-        for row in self.get_dataframe().itertuples():
-            csv_idx, csv_path = row[1:]
-            dataframe = get_csv_dict(csv_path)
-            datapool[str(csv_idx)] = dataframe
-        if not datapool:
-            raise ValueError('No CSV files selected.')
-        return datapool
-
-    def present_csvinfo(self, csvinfo: CsvInfo):
+    def present_csv_path_list(self, paths: Sequence):
         self.clear_content()
-        self.insert_dataframe(
-            pd.DataFrame({
-                TREEVIEW_COLUMNS[0]: csvinfo.keys(),
-                TREEVIEW_COLUMNS[1]: csvinfo.values()
-            })
-        )
+        self.insert_treeview_data({
+            TREEVIEW_COLUMNS[0]: [str(idx + 1) for idx, _ in enumerate(paths)],
+            TREEVIEW_COLUMNS[1]: paths
+        })
         self.adjust_column_width()
 
 
@@ -99,6 +77,6 @@ class CsvInfoFrame(LabelFrame):
         self.widgets['button_choose'] = button
 
     def collect_csv_config(self) -> CsvConfig:
-        csvinfo = self.widgets['treeview_csvinfo'].get_csvinfo()
-        config: CsvConfig = list(csvinfo.values())
+        treeview_data = self.widgets['treeview_csvinfo'].get_treeview_data()
+        config: CsvConfig = treeview_data[TREEVIEW_COLUMNS[1]]
         return config
