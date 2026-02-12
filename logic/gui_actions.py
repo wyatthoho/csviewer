@@ -7,6 +7,7 @@ from collections.abc import Sequence
 from typing import TypedDict
 
 import logic.plotter as plotter
+from logic import Table
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
 from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
@@ -71,8 +72,8 @@ def spinbox_num_action(
     tgt_num = int(spinbox_num.get())
     exist_num = int(notebook_datavisual.index('end'))
     if tgt_num > exist_num:
-        tabname_new = str(exist_num + 1)
-        tab = notebook_datavisual.create_new_tab(tabname_new)
+        tabname = str(exist_num + 1)
+        tab = notebook_datavisual.create_new_tab(tabname)
         tab.update_comboboxes(csv_fields)
     elif tgt_num < exist_num:
         notebook_datavisual.remove_tab_by_name(str(exist_num))
@@ -173,6 +174,7 @@ def config_spinbox_num(
 
 def config_datavisual_notebook(
         config_lines: list[LineConfig],
+        csv_fields: Table,
         notebook_datavisual: DataVisualNotebook
 ) -> None:
     notebook_datavisual.remove_all_tabs()
@@ -184,6 +186,8 @@ def config_datavisual_notebook(
 
         tabname = str(idx + 1)
         tab = notebook_datavisual.create_new_tab(tabname)
+
+        tab.update_comboboxes(csv_fields)
         tab.widgets['combobox_csvidx'].set(csvidx)
         tab.widgets['combobox_fieldx'].set(fieldx)
         tab.widgets['combobox_fieldy'].set(fieldy)
@@ -250,8 +254,10 @@ def menu_open_action(
     config_axis_y = config_app.get('axis_y', {})
     config_csvinfo(config_csvs, treeview_csvinfo)
     config_datapool_notebook(treeview_csvinfo, notebook_datapool)
+
+    csv_fields = notebook_datapool.get_csv_fields()
     config_spinbox_num(config_lines, spinbox_num)
-    config_datavisual_notebook(config_lines, notebook_datavisual)
+    config_datavisual_notebook(config_lines, csv_fields, notebook_datavisual)
     config_figurevisual_frame(config_figure, frame_figurevisual)
     config_axisvisual_frame(config_axis_x, frame_axisvisual_x)
     config_axisvisual_frame(config_axis_y, frame_axisvisual_y)
