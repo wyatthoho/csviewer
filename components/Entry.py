@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
-from typing import TypeAlias
+
+from components import Master
 
 PADS = {'padx': 4, 'pady': 4}
 IPADS = {'ipadx': 1, 'ipady': 1}
@@ -8,14 +8,12 @@ ENTRY_WIDTH = 21
 STICKY = tk.NSEW
 JUSTIFY = tk.LEFT
 
-Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
-
 
 class Entry(tk.Entry):
     def __init__(
-            self, master: Master, 
-            row: int, col: int, 
-            font: tk.font, width: int = None, 
+            self, master: Master,
+            row: int, col: int,
+            font: tk.font, width: int = None,
             textvariable: tk.StringVar = None
     ):
         super().__init__(

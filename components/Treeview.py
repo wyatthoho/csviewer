@@ -1,13 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 from collections.abc import Sequence
-from typing import TypeAlias
 
+from components import Master
 from logic import Table
 
 COLUMN_WIDTH_RATIO = 9
-
-Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
 
 
 class Treeview(ttk.Treeview):
