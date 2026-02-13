@@ -1,6 +1,4 @@
-from collections.abc import Mapping
+from typing import TypeAlias
 
-import pandas as pd
-
-CsvInfo = Mapping[str, str]
-DataPool = Mapping[str, pd.DataFrame]
+Table: TypeAlias = dict[str, list[str]]
+Tables: TypeAlias = dict[str, Table]

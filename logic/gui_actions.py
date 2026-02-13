@@ -7,15 +7,14 @@ from collections.abc import Sequence
 from typing import TypedDict
 
 import logic.plotter as plotter
+from logic import Table
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
-from logic import CsvInfo
 from view.AxisVisualFrame import AxisVisualFrame, AxisConfig
 from view.CsvInfoFrame import CsvInfoFrame, CsvInfoTreeview, CsvConfig
 from view.DataPoolFrame import DataPoolNotebook
 from view.DataVisualFrame import DataVisualFrame, DataVisualNotebook, LineConfig
 from view.FigureVisualFrame import FigureVisualFrame, FigureConfig
-
 
 FILETYPES_CSV = [('csv files', '*.csv')]
 FILETYPES_CONFIG = [('JSON File', '*.json')]
@@ -31,8 +30,7 @@ class AppConfig(TypedDict):
 
 def button_choose_action(treeview_csvinfo: CsvInfoTreeview) -> None:
     paths = filedialog.askopenfilenames(filetypes=FILETYPES_CSV)
-    csvinfo: CsvInfo = {str(idx + 1): path for idx, path in enumerate(paths)}
-    treeview_csvinfo.present_csvinfo(csvinfo)
+    treeview_csvinfo.present_csv_path_list(paths)
 
 
 def button_import_action(
@@ -41,10 +39,12 @@ def button_import_action(
         notebook_datavisual: DataVisualNotebook,
 ) -> None:
     try:
-        datapool = treeview_csvinfo.get_datapool()
-        notebook_datapool.present_datapool(datapool)
+        csv_info = treeview_csvinfo.get_treeview_data()
+        notebook_datapool.present_datapool(csv_info)
+
+        csv_fields = notebook_datapool.get_csv_fields()
         notebook_datavisual.cleanup_notebook()
-        notebook_datavisual.update_tabs(datapool)
+        notebook_datavisual.update_tabs(csv_fields)
     except ValueError as e:
         tk.messagebox.showerror(
             title='Import Error',
@@ -57,7 +57,8 @@ def button_clear_action(
         notebook_datavisual: DataVisualNotebook,
         spinbox_num: Spinbox,
 ) -> None:
-    notebook_datapool.present_datapool({'1': None})
+    notebook_datapool.remove_all_tabs()
+    notebook_datapool.create_new_tab('1', None)
     notebook_datavisual.cleanup_notebook()
     spinbox_num.set(1)
 
@@ -67,21 +68,13 @@ def spinbox_num_action(
         notebook_datavisual: DataVisualNotebook,
         notebook_datapool: DataPoolNotebook
 ) -> None:
+    csv_fields = notebook_datapool.get_csv_fields()
     tgt_num = int(spinbox_num.get())
     exist_num = int(notebook_datavisual.index('end'))
-    try:
-        notebook_datapool.check_empty_datapool()
-    except ValueError as e:
-        tk.messagebox.showerror(
-            title='Spinbox Error',
-            message=str(e)
-        )
-        spinbox_num.set(exist_num)
-        return
     if tgt_num > exist_num:
-        tabname_new = str(exist_num + 1)
-        tab = notebook_datavisual.create_new_tab(tabname_new)
-        tab.update_comboboxes(notebook_datapool.datapool)
+        tabname = str(exist_num + 1)
+        tab = notebook_datavisual.create_new_tab(tabname)
+        tab.update_comboboxes(csv_fields)
     elif tgt_num < exist_num:
         notebook_datavisual.remove_tab_by_name(str(exist_num))
 
@@ -160,16 +153,15 @@ def config_csvinfo(
         config_csvs: CsvConfig,
         treeview_csvinfo: CsvInfoTreeview
 ) -> None:
-    csvinfo = {str(idx + 1): path for idx, path in enumerate(config_csvs)}
-    treeview_csvinfo.present_csvinfo(csvinfo)
+    treeview_csvinfo.present_csv_path_list(config_csvs)
 
 
 def config_datapool_notebook(
         treeview_csvinfo: CsvInfoTreeview,
         notebook_datapool: DataPoolNotebook
 ) -> None:
-    datapool = treeview_csvinfo.get_datapool()
-    notebook_datapool.present_datapool(datapool)
+    csv_info = treeview_csvinfo.get_treeview_data()
+    notebook_datapool.present_datapool(csv_info)
 
 
 def config_spinbox_num(
@@ -182,6 +174,7 @@ def config_spinbox_num(
 
 def config_datavisual_notebook(
         config_lines: list[LineConfig],
+        csv_fields: Table,
         notebook_datavisual: DataVisualNotebook
 ) -> None:
     notebook_datavisual.remove_all_tabs()
@@ -193,6 +186,8 @@ def config_datavisual_notebook(
 
         tabname = str(idx + 1)
         tab = notebook_datavisual.create_new_tab(tabname)
+
+        tab.update_comboboxes(csv_fields)
         tab.widgets['combobox_csvidx'].set(csvidx)
         tab.widgets['combobox_fieldx'].set(fieldx)
         tab.widgets['combobox_fieldy'].set(fieldy)
@@ -259,8 +254,10 @@ def menu_open_action(
     config_axis_y = config_app.get('axis_y', {})
     config_csvinfo(config_csvs, treeview_csvinfo)
     config_datapool_notebook(treeview_csvinfo, notebook_datapool)
+
+    csv_fields = notebook_datapool.get_csv_fields()
     config_spinbox_num(config_lines, spinbox_num)
-    config_datavisual_notebook(config_lines, notebook_datavisual)
+    config_datavisual_notebook(config_lines, csv_fields, notebook_datavisual)
     config_figurevisual_frame(config_figure, frame_figurevisual)
     config_axisvisual_frame(config_axis_x, frame_axisvisual_x)
     config_axisvisual_frame(config_axis_y, frame_axisvisual_y)

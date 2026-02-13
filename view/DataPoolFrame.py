@@ -2,13 +2,12 @@ import tkinter as tk
 from tkinter import ttk, font
 from typing import TypedDict
 
-import pandas as pd
-
 from components.Button import Button
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
 from components.Treeview import Treeview
-from logic import DataPool
+from logic import Table, Tables
+from logic.csv_utils import get_csv_data
 
 TREEVIEW_COLUMNS_INI = ('', )
 TREEVIEW_HEIGHT = 80
@@ -30,58 +29,52 @@ class DataPoolNotebook(Notebook):
             rowspan=rowspan, colspan=colspan
         )
         self.font = font
-        self.datapool: DataPool = {}
         self.create_new_tab('1', None)
 
-    def create_new_tab(
-            self, tabname: str, dataframe: pd.DataFrame
-    ) -> ttk.Frame:
+    def create_new_tab(self, tabname: str, treeview_data: Table) -> ttk.Frame:
         tab = super().create_new_tab(tabname)
         tab.widgets = TabWidgets()
-        if dataframe is None:
+        if treeview_data is None:
             treeview = Treeview(
                 master=tab, columns=TREEVIEW_COLUMNS_INI,
                 height=TREEVIEW_HEIGHT
             )
         else:
             treeview = Treeview(
-                master=tab, columns=list(dataframe.columns),
+                master=tab, columns=list(treeview_data.keys()),
                 height=TREEVIEW_HEIGHT
             )
-            treeview.insert_dataframe(dataframe)
+            treeview.insert_treeview_data(treeview_data)
             treeview.adjust_column_width()
         tab.widgets['treeview_datapool'] = treeview
-        self.datapool[tabname] = dataframe
         return tab
 
-    def present_datapool(self, datapool: DataPool):
-        self.datapool: DataPool = {}
+    def present_datapool(self, csv_info: Table):
         self.remove_all_tabs()
-        for csv_idx, dataframe in datapool.items():
-            self.create_new_tab(csv_idx, dataframe)
-    
-    def get_datapool(self) -> DataPool:
-        datapool: DataPool = {}
+        for csv_idx, csv_path in zip(*csv_info.values()):
+            csv_data = get_csv_data(csv_path)
+            self.create_new_tab(csv_idx, csv_data)
+
+    def get_datapool(self) -> Tables:
+        datapool = {}
         for tabname in self.query_tabnames():
             tab = self.query_tab_by_name(tabname)
             treeview: Treeview = tab.widgets['treeview_datapool']
-            df = treeview.get_dataframe()
-            if df.empty:
+            csv_data = treeview.get_treeview_data()
+            if not csv_data:
                 msg = f'CSV ID "{tabname}" contains no data (empty DataFrame).'
                 raise ValueError(msg)
-            for col in df.columns:
-                df[col] = pd.to_numeric(df[col])
-            datapool[tabname] = df
-        self.datapool = datapool
+            datapool[tabname] = csv_data
         return datapool
-    
-    def check_empty_datapool(self) -> bool:
-        empty = all(
-            df is None or df.empty
-            for df in self.datapool.values()
-        )
-        if empty:
-            raise ValueError('DataPool containing empty DataFrames.')
+
+    def get_csv_fields(self) -> Table:
+        csv_fields = {}
+        for tabname in self.query_tabnames():
+            tab = self.query_tab_by_name(tabname)
+            treeview: Treeview = tab.widgets['treeview_datapool']
+            csv_fields[tabname] = treeview['columns']
+        return csv_fields
+
 
 class FrameWidgets(TypedDict):
     notebook_datapool: DataPoolNotebook

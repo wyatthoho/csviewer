@@ -7,6 +7,11 @@ from components.Entry import Entry
 from components.Label import Label
 from components.LabelFrame import LabelFrame
 
+WIDTH = 4.8
+HEIGHT = 3.0
+GRID_VISIBLE = True
+LEGEND_VISIBLE = True
+
 
 class FigureVisualWidgets(TypedDict):
     title: tk.StringVar
@@ -51,7 +56,7 @@ class FigureVisualFrame(LabelFrame):
         )
         self.widgets['title'] = strvar
 
-        doublevar = tk.DoubleVar(value=4.8)
+        doublevar = tk.DoubleVar(value=WIDTH)
         Label(
             master=self, row=1, col=0, 
             text='Width: ', font=self.font
@@ -62,7 +67,7 @@ class FigureVisualFrame(LabelFrame):
         )
         self.widgets['width'] = doublevar
 
-        doublevar = tk.DoubleVar(value=3.0)
+        doublevar = tk.DoubleVar(value=HEIGHT)
         Label(
             master=self, row=2, col=0, 
             text='Height: ', font=self.font
@@ -73,7 +78,7 @@ class FigureVisualFrame(LabelFrame):
         )
         self.widgets['height'] = doublevar
 
-        intvar = tk.IntVar(value=True)
+        intvar = tk.IntVar(value=GRID_VISIBLE)
         checkbutton = Checkbutton(
             master=self, row=3, col=0, 
             colspan=2, text='Show grid', font=self.font, 
@@ -81,7 +86,7 @@ class FigureVisualFrame(LabelFrame):
         )
         self.widgets['grid_visible'] = checkbutton
 
-        intvar = tk.IntVar(value=True)
+        intvar = tk.IntVar(value=LEGEND_VISIBLE)
         checkbutton = Checkbutton(
             master=self, row=4, col=0, 
             colspan=2, text='Show legend', font=self.font, 

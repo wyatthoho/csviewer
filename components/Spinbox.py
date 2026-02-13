@@ -1,13 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
 from collections.abc import Callable
-from typing import TypeAlias
+
+from components import Master
 
 PADS = {'padx': 4, 'pady': 4}
 IPADS = {'ipadx': 1, 'ipady': 1}
 STATE = 'readonly'
-
-Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
 
 
 class Spinbox(tk.Spinbox):
@@ -24,6 +22,6 @@ class Spinbox(tk.Spinbox):
         self.grid(row=row, column=col, **PADS, **IPADS)
         self.config(state=STATE, textvariable=intvar, command=command)
         self.intvar = intvar
-    
+
     def set(self, value: int) -> None:
         self.intvar.set(value)

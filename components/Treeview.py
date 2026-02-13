@@ -1,13 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 from collections.abc import Sequence
-from typing import TypeAlias
 
-import pandas as pd
+from components import Master
+from logic import Table
 
 COLUMN_WIDTH_RATIO = 9
-
-Master: TypeAlias = tk.Tk | tk.Frame | tk.LabelFrame | ttk.Frame
 
 
 class Treeview(ttk.Treeview):
@@ -36,22 +34,19 @@ class Treeview(ttk.Treeview):
         for item in self.get_children():
             self.delete(item)
 
-    def insert_dataframe(self, df: pd.DataFrame):
-        for idx, row in df.iterrows():
-            self.insert(
-                parent='',
-                index=tk.END,
-                values=list(row.values),
-            )
+    def insert_treeview_data(self, data: Table):
+        columns = list(data.values())
+        for row in zip(*columns):
+            self.insert(parent='', index=tk.END, values=row)
 
-    def get_dataframe(self) -> pd.DataFrame:
+    def get_treeview_data(self) -> Table:
         columns = self['columns']
         data = {column: [] for column in columns}
         for line in self.get_children():
             values = self.item(line)['values']
             for column, value in zip(columns, values):
                 data[column].append(value)
-        return pd.DataFrame(data)
+        return data
 
     def adjust_column_width(self):
         lengths = {
