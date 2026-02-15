@@ -33,15 +33,15 @@ class PlotActionsFrame(LabelFrame):
 
     def initialize_components(self):
         button = Button(
-            master=self, row=0, col=0, 
-            text=BUTTON_TEXT_PLOT, font=self.font, 
+            master=self, row=0, col=0,
+            text=BUTTON_TEXT_PLOT, font=self.font,
             command=lambda *args: None
         )
         self.widgets['button_plot'] = button
 
         button = Button(
-            master=self, row=0, col=1, 
-            text=BUTTON_TEXT_COPY, font=self.font, 
+            master=self, row=0, col=1,
+            text=BUTTON_TEXT_COPY, font=self.font,
             command=lambda *args: None
         )
         self.widgets['button_copy'] = button

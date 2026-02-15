@@ -3,11 +3,11 @@ from tkinter import font
 from typing import TypedDict
 
 import logic.gui_actions as actions
-from view.AxisVisualFrame import AxisVisualFrame
-from view.CsvInfoFrame import CsvInfoFrame
-from view.DataPoolFrame import DataPoolFrame
-from view.DataVisualFrame import DataVisualFrame
-from view.FigureVisualFrame import FigureVisualFrame
+from view.AxisCtrlFrame import AxisCtrlFrame
+from view.CsvDataFrame import CsvDataFrame
+from view.CsvPathsFrame import CsvPathsFrame
+from view.DatasetsCtrlFrame import DatasetsCtrlFrame
+from view.FigureCtrlFrame import FigureCtrlFrame
 from view.Menu import Menu, MenuCallbacks
 from view.PlotActionsFrame import PlotActionsFrame
 
@@ -20,13 +20,13 @@ FONT_SIZE = 10
 
 
 class AppFrames(TypedDict):
-    csvinfo: CsvInfoFrame
-    datapool: DataPoolFrame
-    datavisual: DataVisualFrame
-    figurevisual: FigureVisualFrame
-    axisvisual_x: AxisVisualFrame
-    axisvisual_y: AxisVisualFrame
-    plotactions: PlotActionsFrame
+    csv_paths: CsvPathsFrame
+    csv_data: CsvDataFrame
+    dataset_ctrl: DatasetsCtrlFrame
+    figure_ctrl: FigureCtrlFrame
+    axis_ctrl_x: AxisCtrlFrame
+    axis_ctrl_y: AxisCtrlFrame
+    plot_actions: PlotActionsFrame
 
 
 class App:
@@ -35,12 +35,12 @@ class App:
         self.frames = AppFrames()
         self.font = font.Font(family=FONT_FAMILY, size=FONT_SIZE)
         self.initialize_menubar()
-        self.initialize_csv_info_frame()
-        self.initialize_data_pool_frame()
-        self.initialize_data_visual_frame()
-        self.initialize_figure_visual_frame()
-        self.initialize_axis_visual_frame_x()
-        self.initialize_axis_visual_frame_y()
+        self.initialize_csv_paths_frame()
+        self.initialize_csv_data_frame()
+        self.initialize_dataset_ctrl_frame()
+        self.initialize_figure_ctrl_frame()
+        self.initialize_axis_ctrl_frame_x()
+        self.initialize_axis_ctrl_frame_y()
         self.initialize_plot_actions_frame()
         self.root.mainloop()
 
@@ -73,20 +73,20 @@ class App:
         self.menu = Menu(self.root, menucallbacks)
 
     # GUI frames setup
-    def initialize_csv_info_frame(self):
-        frame = self.frames['csvinfo'] = CsvInfoFrame(
+    def initialize_csv_paths_frame(self):
+        frame = self.frames['csv_paths'] = CsvPathsFrame(
             master=self.root, row=0, col=0,
-            text='CSV Information', font=self.font,
+            text='CSV Paths', font=self.font,
             colspan=3
         )
         frame.widgets['button_choose'].configure(
             command=self.button_choose_action
         )
 
-    def initialize_data_pool_frame(self):
-        frame = self.frames['datapool'] = DataPoolFrame(
+    def initialize_csv_data_frame(self):
+        frame = self.frames['csv_data'] = CsvDataFrame(
             master=self.root, row=1, col=0,
-            text='Review CSV data', font=self.font,
+            text='CSV Data', font=self.font,
             rowspan=3
         )
         frame.widgets['button_import'].configure(
@@ -96,41 +96,41 @@ class App:
             command=self.button_clear_action
         )
 
-    def initialize_data_visual_frame(self):
-        frame = self.frames['datavisual'] = DataVisualFrame(
+    def initialize_dataset_ctrl_frame(self):
+        frame = self.frames['dataset_ctrl'] = DatasetsCtrlFrame(
             master=self.root, row=1, col=1,
-            text='Data Visualization', font=self.font,
+            text='Dataset Controls', font=self.font,
         )
         frame.widgets['spinbox_num'].configure(
             command=self.spinbox_num_action
         )
 
-    def initialize_figure_visual_frame(self):
-        self.frames['figurevisual'] = FigureVisualFrame(
+    def initialize_figure_ctrl_frame(self):
+        self.frames['figure_ctrl'] = FigureCtrlFrame(
             master=self.root, row=2, col=1,
-            text='Figure Visualization', font=self.font
+            text='Figure Controls', font=self.font
         )
 
-    def initialize_axis_visual_frame_x(self):
-        frame = self.frames['axisvisual_x'] = AxisVisualFrame(
+    def initialize_axis_ctrl_frame_x(self):
+        frame = self.frames['axis_ctrl_x'] = AxisCtrlFrame(
             master=self.root, row=1, col=2,
-            text='X-Axis Visualization', font=self.font
+            text='X-Axis Controls', font=self.font
         )
         frame.widgets['checkbutton_range'].configure(
             command=self.checkbutton_range_x_action
         )
 
-    def initialize_axis_visual_frame_y(self):
-        frame = self.frames['axisvisual_y'] = AxisVisualFrame(
+    def initialize_axis_ctrl_frame_y(self):
+        frame = self.frames['axis_ctrl_y'] = AxisCtrlFrame(
             master=self.root, row=2, col=2,
-            text='Y-Axis Visualization', font=self.font
+            text='Y-Axis Controls', font=self.font
         )
         frame.widgets['checkbutton_range'].configure(
             command=self.checkbutton_range_y_action
         )
 
     def initialize_plot_actions_frame(self):
-        frame = self.frames['plotactions'] = PlotActionsFrame(
+        frame = self.frames['plot_actions'] = PlotActionsFrame(
             master=self.root, row=3, col=1,
             text='Plot Actions', font=self.font,
             colspan=2
@@ -144,58 +144,58 @@ class App:
 
     # GUI actions
     def button_choose_action(self):
-        treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
-        actions.button_choose_action(treeview_csvinfo)
+        treeview_csv_paths = self.frames['csv_paths'].widgets['treeview_csv_paths']
+        actions.button_choose_action(treeview_csv_paths)
 
     def button_import_action(self):
-        treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
-        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
-        notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
+        treeview_csv_paths = self.frames['csv_paths'].widgets['treeview_csv_paths']
+        notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
+        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
         actions.button_import_action(
-            treeview_csvinfo, notebook_datapool, notebook_datavisual
+            treeview_csv_paths, notebook_csv_data, notebook_datasets_ctrl
         )
 
     def button_clear_action(self):
-        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
-        notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
-        spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
+        notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
+        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
+        spinbox_num = self.frames['dataset_ctrl'].widgets['spinbox_num']
         actions.button_clear_action(
-            notebook_datapool, notebook_datavisual, spinbox_num
+            notebook_csv_data, notebook_datasets_ctrl, spinbox_num
         )
 
     def spinbox_num_action(self):
-        spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
-        notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
-        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
+        spinbox_num = self.frames['dataset_ctrl'].widgets['spinbox_num']
+        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
+        notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
         actions.spinbox_num_action(
-            spinbox_num, notebook_datavisual, notebook_datapool
+            spinbox_num, notebook_datasets_ctrl, notebook_csv_data
         )
 
     def checkbutton_range_x_action(self):
-        checkbutton = self.frames['axisvisual_x'].widgets['checkbutton_range']
+        checkbutton = self.frames['axis_ctrl_x'].widgets['checkbutton_range']
         widgets = [
-            self.frames['axisvisual_x'].widgets['entry_min'],
-            self.frames['axisvisual_x'].widgets['entry_max']
+            self.frames['axis_ctrl_x'].widgets['entry_min'],
+            self.frames['axis_ctrl_x'].widgets['entry_max']
         ]
         actions.switch_widgets_by_checkbutton(checkbutton, widgets)
 
     def checkbutton_range_y_action(self):
-        checkbutton = self.frames['axisvisual_y'].widgets['checkbutton_range']
+        checkbutton = self.frames['axis_ctrl_y'].widgets['checkbutton_range']
         widgets = [
-            self.frames['axisvisual_y'].widgets['entry_min'],
-            self.frames['axisvisual_y'].widgets['entry_max']
+            self.frames['axis_ctrl_y'].widgets['entry_min'],
+            self.frames['axis_ctrl_y'].widgets['entry_max']
         ]
         actions.switch_widgets_by_checkbutton(checkbutton, widgets)
 
     def button_plot_action(self):
-        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
-        frame_datavisual = self.frames['datavisual']
-        frame_figurevisual = self.frames['figurevisual']
-        frame_axisvisual_x = self.frames['axisvisual_x']
-        frame_axisvisual_y = self.frames['axisvisual_y']
+        notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
+        frame_dataset_ctrl = self.frames['dataset_ctrl']
+        frame_figure_ctrl = self.frames['figure_ctrl']
+        frame_axis_ctrl_x = self.frames['axis_ctrl_x']
+        frame_axis_ctrl_y = self.frames['axis_ctrl_y']
         actions.button_plot_action(
-            notebook_datapool, frame_datavisual, frame_figurevisual,
-            frame_axisvisual_x, frame_axisvisual_y
+            notebook_csv_data, frame_dataset_ctrl, frame_figure_ctrl,
+            frame_axis_ctrl_x, frame_axis_ctrl_y
         )
 
     def button_copy_action(self):
@@ -206,28 +206,28 @@ class App:
         actions.menu_new_action()
 
     def menu_open_action(self):
-        treeview_csvinfo = self.frames['csvinfo'].widgets['treeview_csvinfo']
-        notebook_datapool = self.frames['datapool'].widgets['notebook_datapool']
-        notebook_datavisual = self.frames['datavisual'].widgets['notebook_datavisual']
-        spinbox_num = self.frames['datavisual'].widgets['spinbox_num']
-        frame_figurevisual = self.frames['figurevisual']
-        frame_axisvisual_x = self.frames['axisvisual_x']
-        frame_axisvisual_y = self.frames['axisvisual_y']
+        treeview_csv_paths = self.frames['csv_paths'].widgets['treeview_csv_paths']
+        notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
+        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
+        spinbox_num = self.frames['dataset_ctrl'].widgets['spinbox_num']
+        frame_figure_ctrl = self.frames['figure_ctrl']
+        frame_axis_ctrl_x = self.frames['axis_ctrl_x']
+        frame_axis_ctrl_y = self.frames['axis_ctrl_y']
         actions.menu_open_action(
-            treeview_csvinfo, notebook_datapool,
-            notebook_datavisual, spinbox_num, frame_figurevisual,
-            frame_axisvisual_x, frame_axisvisual_y
+            treeview_csv_paths, notebook_csv_data,
+            notebook_datasets_ctrl, spinbox_num, frame_figure_ctrl,
+            frame_axis_ctrl_x, frame_axis_ctrl_y
         )
 
     def menu_save_as_action(self):
-        frame_csvinfo = self.frames['csvinfo']
-        frame_datavisual = self.frames['datavisual']
-        frame_figurevisual = self.frames['figurevisual']
-        frame_axisvisual_x = self.frames['axisvisual_x']
-        frame_axisvisual_y = self.frames['axisvisual_y']
+        frame_csv_paths = self.frames['csv_paths']
+        frame_dataset_ctrl = self.frames['dataset_ctrl']
+        frame_figure_ctrl = self.frames['figure_ctrl']
+        frame_axis_ctrl_x = self.frames['axis_ctrl_x']
+        frame_axis_ctrl_y = self.frames['axis_ctrl_y']
         actions.menu_save_as_action(
-            frame_csvinfo, frame_datavisual, frame_figurevisual,
-            frame_axisvisual_x, frame_axisvisual_y
+            frame_csv_paths, frame_dataset_ctrl, frame_figure_ctrl,
+            frame_axis_ctrl_x, frame_axis_ctrl_y
         )
 
     def menu_close_action(self):

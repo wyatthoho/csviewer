@@ -13,7 +13,7 @@ GRID_VISIBLE = True
 LEGEND_VISIBLE = True
 
 
-class FigureVisualWidgets(TypedDict):
+class FigureCtrlWidgets(TypedDict):
     title: tk.StringVar
     width: tk.DoubleVar
     height: tk.DoubleVar
@@ -21,7 +21,7 @@ class FigureVisualWidgets(TypedDict):
     legend_visible: Checkbutton
 
 
-class FigureConfig(TypedDict):
+class FigureCtrlConfig(TypedDict):
     title: str
     width: float
     height: float
@@ -29,7 +29,7 @@ class FigureConfig(TypedDict):
     legend_visible: bool
 
 
-class FigureVisualFrame(LabelFrame):
+class FigureCtrlFrame(LabelFrame):
     def __init__(
         self, master: tk.Tk, row: int, col: int,
         text: str, font: font.Font,
@@ -41,61 +41,61 @@ class FigureVisualFrame(LabelFrame):
             rowspan=rowspan, colspan=colspan
         )
         self.font = font
-        self.widgets = FigureVisualWidgets()
+        self.widgets = FigureCtrlWidgets()
         self.initialize_components()
 
     def initialize_components(self):
         strvar = tk.StringVar()
         Label(
-            master=self, row=0, col=0, 
+            master=self, row=0, col=0,
             text='Title: ', font=self.font
         )
         Entry(
-            master=self, row=0, col=1, 
+            master=self, row=0, col=1,
             font=self.font, textvariable=strvar
         )
         self.widgets['title'] = strvar
 
         doublevar = tk.DoubleVar(value=WIDTH)
         Label(
-            master=self, row=1, col=0, 
+            master=self, row=1, col=0,
             text='Width: ', font=self.font
         )
         Entry(
-            master=self, row=1, col=1, 
+            master=self, row=1, col=1,
             font=self.font, textvariable=doublevar
         )
         self.widgets['width'] = doublevar
 
         doublevar = tk.DoubleVar(value=HEIGHT)
         Label(
-            master=self, row=2, col=0, 
+            master=self, row=2, col=0,
             text='Height: ', font=self.font
         )
         Entry(
-            master=self, row=2, col=1, 
+            master=self, row=2, col=1,
             font=self.font, textvariable=doublevar
         )
         self.widgets['height'] = doublevar
 
         intvar = tk.IntVar(value=GRID_VISIBLE)
         checkbutton = Checkbutton(
-            master=self, row=3, col=0, 
-            colspan=2, text='Show grid', font=self.font, 
+            master=self, row=3, col=0,
+            colspan=2, text='Show grid', font=self.font,
             command=None, variable=intvar
         )
         self.widgets['grid_visible'] = checkbutton
 
         intvar = tk.IntVar(value=LEGEND_VISIBLE)
         checkbutton = Checkbutton(
-            master=self, row=4, col=0, 
-            colspan=2, text='Show legend', font=self.font, 
+            master=self, row=4, col=0,
+            colspan=2, text='Show legend', font=self.font,
             command=None, variable=intvar
         )
         self.widgets['legend_visible'] = checkbutton
 
-    def collect_figure_config(self) -> FigureConfig:
-        config: FigureConfig = {
+    def collect_figure_ctrl_config(self) -> FigureCtrlConfig:
+        config: FigureCtrlConfig = {
             'title': self.widgets['title'].get(),
             'width': self.widgets['width'].get(),
             'height': self.widgets['height'].get(),

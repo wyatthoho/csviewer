@@ -12,7 +12,7 @@ from logic import Table
 
 FROM = 1
 TO = 20
-SPINBOX_LABEL = 'Numbers of datasets'
+SPINBOX_LABEL = 'Number of datasets'
 SPINBOX_WIDTH = 3
 LABEL_CSV_IDX = 'CSV ID: '
 LABEL_FIELD_X = 'Field X: '
@@ -27,7 +27,7 @@ class TabWidgets(TypedDict):
     stringvar_label: tk.StringVar
 
 
-class DataVisualTab(ttk.Frame):
+class DatasetCtrlTab(ttk.Frame):
     def __init__(self, master, font):
         super().__init__(master=master)
         self.font = font
@@ -100,7 +100,7 @@ class DataVisualTab(ttk.Frame):
         self.bind_csv_idx_combobox(csv_fields)
 
 
-class DataVisualNotebook(Notebook):
+class DatasetsCtrlNotebook(Notebook):
     def __init__(
             self, master: tk.Tk, row: int, col: int,
             rowspan: int, colspan: int, font: font.Font
@@ -112,8 +112,8 @@ class DataVisualNotebook(Notebook):
         self.font = font
         self.create_new_tab('1')
 
-    def create_new_tab(self, tabname: str) -> DataVisualTab:
-        tab = DataVisualTab(self, self.font)
+    def create_new_tab(self, tabname: str) -> DatasetCtrlTab:
+        tab = DatasetCtrlTab(self, self.font)
         self.add(tab, text=tabname)
         return tab
 
@@ -123,23 +123,23 @@ class DataVisualNotebook(Notebook):
 
     def update_tabs(self, csv_fields: Table):
         for tab_idx in self.tabs():
-            tab: DataVisualTab = self.nametowidget(tab_idx)
+            tab: DatasetCtrlTab = self.nametowidget(tab_idx)
             tab.update_comboboxes(csv_fields)
 
 
 class FrameWidgets(TypedDict):
     spinbox_num: Spinbox
-    notebook_datavisual: DataVisualNotebook
+    notebook_datasets_ctrl: DatasetsCtrlNotebook
 
 
-class LineConfig(TypedDict):
+class DatasetCtrlConfig(TypedDict):
     csvidx: str
     fieldx: str
     fieldy: str
     label: str
 
 
-class DataVisualFrame(LabelFrame):
+class DatasetsCtrlFrame(LabelFrame):
     def __init__(
         self, master: tk.Tk, row: int, col: int,
         text: str, font: font.Font,
@@ -170,18 +170,18 @@ class DataVisualFrame(LabelFrame):
         )
         self.widgets['spinbox_num'] = spinbox
 
-        notebook = DataVisualNotebook(
+        notebook = DatasetsCtrlNotebook(
             master=self, row=1, col=0,
             rowspan=1, colspan=2,
             font=self.font
         )
-        self.widgets['notebook_datavisual'] = notebook
+        self.widgets['notebook_datasets_ctrl'] = notebook
 
-    def collect_line_configs(self) -> list[LineConfig]:
+    def collect_datasets_ctrl_configs(self) -> list[DatasetCtrlConfig]:
         configs = []
-        for tab_id in self.widgets['notebook_datavisual'].tabs():
-            tab: DataVisualTab \
-                = self.widgets['notebook_datavisual'].nametowidget(tab_id)
+        for tab_id in self.widgets['notebook_datasets_ctrl'].tabs():
+            tab: DatasetCtrlTab \
+                = self.widgets['notebook_datasets_ctrl'].nametowidget(tab_id)
             csvidx = tab.widgets['combobox_csvidx'].get()
             fieldx = tab.widgets['combobox_fieldx'].get()
             fieldy = tab.widgets['combobox_fieldy'].get()

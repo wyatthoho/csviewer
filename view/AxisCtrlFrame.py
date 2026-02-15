@@ -20,14 +20,14 @@ class FrameWidgets(TypedDict):
     entry_max: Entry
 
 
-class AxisConfig(TypedDict):
+class AxisCtrlConfig(TypedDict):
     label: str
     scale: str
     _min: float | None
     _max: float | None
 
 
-class AxisVisualFrame(LabelFrame):
+class AxisCtrlFrame(LabelFrame):
     def __init__(
         self, master: tk.Tk, row: int, col: int,
         text: str, font: font.Font,
@@ -101,7 +101,7 @@ class AxisVisualFrame(LabelFrame):
         self.widgets['doublevar_max'] = doublevar
         self.widgets['entry_max'] = entry
 
-    def collect_axis_config(self) -> AxisConfig:
+    def collect_axis_ctrl_config(self) -> AxisCtrlConfig:
         label = self.widgets['stringvar_label'].get()
         scale = self.widgets['combobox_scale'].get()
         if self.widgets['checkbutton_range'].getint():
@@ -111,7 +111,7 @@ class AxisVisualFrame(LabelFrame):
             _min = None
             _max = None
 
-        config: AxisConfig = {
+        config: AxisCtrlConfig = {
             'label': label,
             'scale': scale,
             '_min': _min,

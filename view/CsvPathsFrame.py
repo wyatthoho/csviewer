@@ -8,17 +8,17 @@ from components.Frame import Frame
 from components.LabelFrame import LabelFrame
 from components.Treeview import Treeview
 
-FIELD_1 = 'CSV ID'
-FIELD_2 = 'CSV Path'
+FIELD_1 = 'Index'
+FIELD_2 = 'Path'
 TREEVIEW_HEIGHT = 10
 BUTTON_TEXT = 'Choose'
 
 
-class CsvInfoTreeview(Treeview):
+class CsvPathsTreeview(Treeview):
     def __init__(self, master: Frame, columns: Sequence[str], height: int):
         super().__init__(master=master, columns=columns, height=height)
 
-    def present_csv_path_list(self, paths: Sequence[str]):
+    def present_csv_paths(self, paths: Sequence[str]):
         self.clear_content()
         self.insert_treeview_data({
             FIELD_1: [str(idx) for idx, _ in enumerate(paths, start=1)],
@@ -28,14 +28,14 @@ class CsvInfoTreeview(Treeview):
 
 
 class FrameWidgets(TypedDict):
-    treeview_csvinfo: CsvInfoTreeview
+    treeview_csv_paths: CsvPathsTreeview
     button_choose: Button
 
 
-CsvConfig = list[str]
+CsvPathsConfig = list[str]
 
 
-class CsvInfoFrame(LabelFrame):
+class CsvPathsFrame(LabelFrame):
     def __init__(
         self, master: tk.Tk, row: int, col: int,
         text: str, font: font.Font,
@@ -54,12 +54,12 @@ class CsvInfoFrame(LabelFrame):
 
     def initialize_components(self):
         frame = Frame(master=self, row=0, col=0, sticky=True)
-        treeview = CsvInfoTreeview(
+        treeview = CsvPathsTreeview(
             master=frame,
             columns=[FIELD_1, FIELD_2],
             height=TREEVIEW_HEIGHT
         )
-        self.widgets['treeview_csvinfo'] = treeview
+        self.widgets['treeview_csv_paths'] = treeview
 
         frame = Frame(master=self, row=0, col=1, sticky=False)
         button = Button(
@@ -69,5 +69,5 @@ class CsvInfoFrame(LabelFrame):
         )
         self.widgets['button_choose'] = button
 
-    def collect_csv_config(self) -> CsvConfig:
-        return self.widgets['treeview_csvinfo'].get_treeview_data()[FIELD_2]
+    def collect_csv_paths_config(self) -> CsvPathsConfig:
+        return self.widgets['treeview_csv_paths'].get_treeview_data()[FIELD_2]

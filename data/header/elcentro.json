@@ -1,10 +1,10 @@
 {
-    "csvs": [
+    "csv_paths": [
         "./data/header/elcentro_EW.csv",
         "./data/header/elcentro_NS.csv",
         "./data/header/elcentro_UP.csv"
     ],
-    "lines": [
+    "datasets_ctrl": [
         {
             "csvidx": "1",
             "fieldx": "time(sec)",
@@ -24,20 +24,20 @@
             "label": "UP"
         }
     ],
-    "figure": {
+    "figure_ctrl": {
         "title": "El Centro Seismic History",
         "width": 4.8,
         "height": 3.2,
         "grid_visible": true,
         "legend_visible": true
     },
-    "axis_x": {
+    "axis_ctrl_x": {
         "label": "Time, sec",
         "scale": "linear",
         "_min": null,
         "_max": null
     },
-    "axis_y": {
+    "axis_ctrl_y": {
         "label": "Acceleration, g",
         "scale": "linear",
         "_min": -0.4,
