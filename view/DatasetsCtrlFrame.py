@@ -8,7 +8,7 @@ from components.Label import Label
 from components.LabelFrame import LabelFrame
 from components.Notebook import Notebook
 from components.Spinbox import Spinbox
-from logic import Table
+from components.TableView import TableFields
 
 FROM = 1
 TO = 20
@@ -77,7 +77,7 @@ class DatasetCtrlTab(ttk.Frame):
         self.widgets['combobox_csvidx'].configure(values=csv_indices)
         self.widgets['combobox_csvidx'].current(0)
 
-    def reset_field_x_and_y(self, csv_fields: Table):
+    def reset_field_x_and_y(self, csv_fields: TableFields):
         idx = self.widgets['combobox_csvidx'].get()
         fields = list(csv_fields[idx])
         self.widgets['combobox_fieldx'].configure(values=fields)
@@ -88,13 +88,13 @@ class DatasetCtrlTab(ttk.Frame):
         else:
             self.widgets['combobox_fieldy'].current(0)
 
-    def bind_csv_idx_combobox(self, csv_fields: Table):
+    def bind_csv_idx_combobox(self, csv_fields: TableFields):
         self.widgets['combobox_csvidx'].bind(
             '<<ComboboxSelected>>',
             lambda event: self.reset_field_x_and_y(csv_fields)
         )
 
-    def update_comboboxes(self, csv_fields: Table):
+    def update_comboboxes(self, csv_fields: TableFields):
         self.reset_csv_idx(list(csv_fields.keys()))
         self.reset_field_x_and_y(csv_fields)
         self.bind_csv_idx_combobox(csv_fields)
@@ -121,7 +121,7 @@ class DatasetsCtrlNotebook(Notebook):
         self.remove_all_tabs()
         self.create_new_tab('1')
 
-    def update_tabs(self, csv_fields: Table):
+    def update_tabs(self, csv_fields: TableFields):
         for tab_idx in self.tabs():
             tab: DatasetCtrlTab = self.nametowidget(tab_idx)
             tab.update_comboboxes(csv_fields)

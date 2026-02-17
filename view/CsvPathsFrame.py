@@ -6,7 +6,7 @@ from typing import TypedDict
 from components.Button import Button
 from components.Frame import Frame
 from components.LabelFrame import LabelFrame
-from components.Treeview import Treeview
+from components.TableView import TableView, TableFields
 
 FIELD_1 = 'Index'
 FIELD_2 = 'Path'
@@ -14,13 +14,13 @@ TREEVIEW_HEIGHT = 10
 BUTTON_TEXT = 'Choose'
 
 
-class CsvPathsTreeview(Treeview):
-    def __init__(self, master: Frame, columns: Sequence[str], height: int):
-        super().__init__(master=master, columns=columns, height=height)
+class CsvPathsTableView(TableView):
+    def __init__(self, master: Frame, table_fields: TableFields, height: int):
+        super().__init__(master=master, table_fields=table_fields, height=height)
 
     def present_csv_paths(self, paths: Sequence[str]):
         self.clear_content()
-        self.insert_treeview_data({
+        self.insert_table_data({
             FIELD_1: [str(idx) for idx, _ in enumerate(paths, start=1)],
             FIELD_2: paths
         })
@@ -28,7 +28,7 @@ class CsvPathsTreeview(Treeview):
 
 
 class FrameWidgets(TypedDict):
-    treeview_csv_paths: CsvPathsTreeview
+    tableview_csv_paths: CsvPathsTableView
     button_choose: Button
 
 
@@ -54,12 +54,12 @@ class CsvPathsFrame(LabelFrame):
 
     def initialize_components(self):
         frame = Frame(master=self, row=0, col=0, sticky=True)
-        treeview = CsvPathsTreeview(
+        treeview = CsvPathsTableView(
             master=frame,
-            columns=[FIELD_1, FIELD_2],
+            table_fields=[FIELD_1, FIELD_2],
             height=TREEVIEW_HEIGHT
         )
-        self.widgets['treeview_csv_paths'] = treeview
+        self.widgets['tableview_csv_paths'] = treeview
 
         frame = Frame(master=self, row=0, col=1, sticky=False)
         button = Button(
@@ -70,4 +70,4 @@ class CsvPathsFrame(LabelFrame):
         self.widgets['button_choose'] = button
 
     def collect_csv_paths_config(self) -> CsvPathsConfig:
-        return self.widgets['treeview_csv_paths'].get_treeview_data()[FIELD_2]
+        return self.widgets['tableview_csv_paths'].get_table_data()[FIELD_2]

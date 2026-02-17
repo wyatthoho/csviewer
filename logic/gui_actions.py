@@ -7,12 +7,12 @@ from collections.abc import Sequence
 from typing import TypedDict
 
 import logic.plotter as plotter
-from logic import Table
 from components.Checkbutton import Checkbutton
 from components.Spinbox import Spinbox
+from components.TableView import TableFields
 from view.AxisCtrlFrame import AxisCtrlFrame, AxisCtrlConfig
 from view.CsvDataFrame import CsvDataNotebook
-from view.CsvPathsFrame import CsvPathsFrame, CsvPathsTreeview, CsvPathsConfig
+from view.CsvPathsFrame import CsvPathsFrame, CsvPathsTableView, CsvPathsConfig
 from view.DatasetsCtrlFrame import DatasetsCtrlFrame, DatasetsCtrlNotebook, DatasetCtrlConfig
 from view.FigureCtrlFrame import FigureCtrlFrame, FigureCtrlConfig
 
@@ -28,23 +28,23 @@ class AppConfig(TypedDict):
     axis_ctrl_y: AxisCtrlConfig
 
 
-def button_choose_action(treeview_csv_paths: CsvPathsTreeview) -> None:
-    paths = filedialog.askopenfilenames(filetypes=FILETYPES_CSV)
-    treeview_csv_paths.present_csv_paths(paths)
+def button_choose_action(tableview_csv_paths: CsvPathsTableView) -> None:
+    csv_paths = filedialog.askopenfilenames(filetypes=FILETYPES_CSV)
+    tableview_csv_paths.present_csv_paths(csv_paths)
 
 
 def button_import_action(
-        treeview_csv_paths: CsvPathsTreeview,
+        tableview_csv_paths: CsvPathsTableView,
         notebook_csv_data: CsvDataNotebook,
         notebook_datasets_ctrl: DatasetsCtrlNotebook,
 ) -> None:
     try:
-        csv_paths = treeview_csv_paths.get_treeview_data()
+        csv_paths = tableview_csv_paths.get_table_data()
         notebook_csv_data.present_csv_data(csv_paths)
 
-        csv_fields = notebook_csv_data.get_csv_fields()
+        csv_fields_map = notebook_csv_data.get_csv_fields_map()
         notebook_datasets_ctrl.cleanup_notebook()
-        notebook_datasets_ctrl.update_tabs(csv_fields)
+        notebook_datasets_ctrl.update_tabs(csv_fields_map)
     except ValueError as e:
         tk.messagebox.showerror(
             title='Import Error',
@@ -68,13 +68,13 @@ def spinbox_num_action(
         notebook_datasets_ctrl: DatasetsCtrlNotebook,
         notebook_csv_data: CsvDataNotebook
 ) -> None:
-    csv_fields = notebook_csv_data.get_csv_fields()
+    csv_fields_map = notebook_csv_data.get_csv_fields_map()
     tgt_num = int(spinbox_num.get())
     exist_num = int(notebook_datasets_ctrl.index('end'))
     if tgt_num > exist_num:
         tabname = str(exist_num + 1)
         tab = notebook_datasets_ctrl.create_new_tab(tabname)
-        tab.update_comboboxes(csv_fields)
+        tab.update_comboboxes(csv_fields_map)
     elif tgt_num < exist_num:
         notebook_datasets_ctrl.remove_tab_by_name(str(exist_num))
 
@@ -113,13 +113,13 @@ def button_plot_action(
         frame_axis_ctrl_y: AxisCtrlFrame
 ) -> None:
     try:
-        csv_tables = notebook_csv_data.get_csv_tables()
+        csv_data_map = notebook_csv_data.get_csv_data_map()
         config_figure_ctrl = frame_figure_ctrl.collect_figure_ctrl_config()
         config_axis_ctrl_x = frame_axis_ctrl_x.collect_axis_ctrl_config()
         config_axis_ctrl_y = frame_axis_ctrl_y.collect_axis_ctrl_config()
         config_datasets_ctrl = frame_datasets_ctrl.collect_datasets_ctrl_configs()
         plotter.generate_graph(
-            csv_tables, config_figure_ctrl, config_axis_ctrl_x, config_axis_ctrl_y, config_datasets_ctrl
+            csv_data_map, config_figure_ctrl, config_axis_ctrl_x, config_axis_ctrl_y, config_datasets_ctrl
         )
     except ValueError as e:
         tk.messagebox.showerror(
@@ -151,16 +151,16 @@ def read_config_file() -> AppConfig:
 
 def config_treeview_csv_paths(
         config_csv_paths: CsvPathsConfig,
-        treeview_csv_paths: CsvPathsTreeview
+        tableview_csv_paths: CsvPathsTableView
 ) -> None:
-    treeview_csv_paths.present_csv_paths(config_csv_paths)
+    tableview_csv_paths.present_csv_paths(config_csv_paths)
 
 
 def config_notebook_csv_data(
-        treeview_csv_paths: CsvPathsTreeview,
+        tableview_csv_paths: CsvPathsTableView,
         notebook_csv_data: CsvDataNotebook
 ) -> None:
-    csv_paths = treeview_csv_paths.get_treeview_data()
+    csv_paths = tableview_csv_paths.get_table_data()
     notebook_csv_data.present_csv_data(csv_paths)
 
 
@@ -174,7 +174,7 @@ def config_spinbox_num(
 
 def config_notebook_datasets_ctrl(
         config_datasets_ctrl: list[DatasetCtrlConfig],
-        csv_fields: Table,
+        csv_fields_map: TableFields,
         notebook_datasets_ctrl: DatasetsCtrlNotebook
 ) -> None:
     notebook_datasets_ctrl.remove_all_tabs()
@@ -187,7 +187,7 @@ def config_notebook_datasets_ctrl(
         tabname = str(idx + 1)
         tab = notebook_datasets_ctrl.create_new_tab(tabname)
 
-        tab.update_comboboxes(csv_fields)
+        tab.update_comboboxes(csv_fields_map)
         tab.widgets['combobox_csvidx'].set(csvidx)
         tab.widgets['combobox_fieldx'].set(fieldx)
         tab.widgets['combobox_fieldy'].set(fieldy)
@@ -236,7 +236,7 @@ def config_frame_axis_ctrl(
 
 
 def menu_open_action(
-        treeview_csv_paths: CsvPathsTreeview,
+        tableview_csv_paths: CsvPathsTableView,
         notebook_csv_data: CsvDataNotebook,
         notebook_datasets_ctrl: DatasetsCtrlNotebook,
         spinbox_num: Spinbox,
@@ -252,12 +252,13 @@ def menu_open_action(
     config_figure_ctrl = config_app.get('figure_ctrl', {})
     config_axis_ctrl_x = config_app.get('axis_ctrl_x', {})
     config_axis_ctrl_y = config_app.get('axis_ctrl_y', {})
-    config_treeview_csv_paths(config_csv_paths, treeview_csv_paths)
-    config_notebook_csv_data(treeview_csv_paths, notebook_csv_data)
+    config_treeview_csv_paths(config_csv_paths, tableview_csv_paths)
+    config_notebook_csv_data(tableview_csv_paths, notebook_csv_data)
 
-    csv_fields = notebook_csv_data.get_csv_fields()
+    csv_fields_map = notebook_csv_data.get_csv_fields_map()
     config_spinbox_num(config_datasets_ctrl, spinbox_num)
-    config_notebook_datasets_ctrl(config_datasets_ctrl, csv_fields, notebook_datasets_ctrl)
+    config_notebook_datasets_ctrl(
+        config_datasets_ctrl, csv_fields_map, notebook_datasets_ctrl)
     config_frame_figure_ctrl(config_figure_ctrl, frame_figure_ctrl)
     config_frame_axis_ctrl(config_axis_ctrl_x, frame_axis_ctrl_x)
     config_frame_axis_ctrl(config_axis_ctrl_y, frame_axis_ctrl_y)

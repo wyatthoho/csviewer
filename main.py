@@ -22,7 +22,7 @@ FONT_SIZE = 10
 class AppFrames(TypedDict):
     csv_paths: CsvPathsFrame
     csv_data: CsvDataFrame
-    dataset_ctrl: DatasetsCtrlFrame
+    datasets_ctrl: DatasetsCtrlFrame
     figure_ctrl: FigureCtrlFrame
     axis_ctrl_x: AxisCtrlFrame
     axis_ctrl_y: AxisCtrlFrame
@@ -37,7 +37,7 @@ class App:
         self.initialize_menubar()
         self.initialize_csv_paths_frame()
         self.initialize_csv_data_frame()
-        self.initialize_dataset_ctrl_frame()
+        self.initialize_datasets_ctrl_frame()
         self.initialize_figure_ctrl_frame()
         self.initialize_axis_ctrl_frame_x()
         self.initialize_axis_ctrl_frame_y()
@@ -96,8 +96,8 @@ class App:
             command=self.button_clear_action
         )
 
-    def initialize_dataset_ctrl_frame(self):
-        frame = self.frames['dataset_ctrl'] = DatasetsCtrlFrame(
+    def initialize_datasets_ctrl_frame(self):
+        frame = self.frames['datasets_ctrl'] = DatasetsCtrlFrame(
             master=self.root, row=1, col=1,
             text='Dataset Controls', font=self.font,
         )
@@ -144,28 +144,28 @@ class App:
 
     # GUI actions
     def button_choose_action(self):
-        treeview_csv_paths = self.frames['csv_paths'].widgets['treeview_csv_paths']
-        actions.button_choose_action(treeview_csv_paths)
+        tableview_csv_paths = self.frames['csv_paths'].widgets['tableview_csv_paths']
+        actions.button_choose_action(tableview_csv_paths)
 
     def button_import_action(self):
-        treeview_csv_paths = self.frames['csv_paths'].widgets['treeview_csv_paths']
+        tableview_csv_paths = self.frames['csv_paths'].widgets['tableview_csv_paths']
         notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
-        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
+        notebook_datasets_ctrl = self.frames['datasets_ctrl'].widgets['notebook_datasets_ctrl']
         actions.button_import_action(
-            treeview_csv_paths, notebook_csv_data, notebook_datasets_ctrl
+            tableview_csv_paths, notebook_csv_data, notebook_datasets_ctrl
         )
 
     def button_clear_action(self):
         notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
-        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
-        spinbox_num = self.frames['dataset_ctrl'].widgets['spinbox_num']
+        notebook_datasets_ctrl = self.frames['datasets_ctrl'].widgets['notebook_datasets_ctrl']
+        spinbox_num = self.frames['datasets_ctrl'].widgets['spinbox_num']
         actions.button_clear_action(
             notebook_csv_data, notebook_datasets_ctrl, spinbox_num
         )
 
     def spinbox_num_action(self):
-        spinbox_num = self.frames['dataset_ctrl'].widgets['spinbox_num']
-        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
+        spinbox_num = self.frames['datasets_ctrl'].widgets['spinbox_num']
+        notebook_datasets_ctrl = self.frames['datasets_ctrl'].widgets['notebook_datasets_ctrl']
         notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
         actions.spinbox_num_action(
             spinbox_num, notebook_datasets_ctrl, notebook_csv_data
@@ -189,7 +189,7 @@ class App:
 
     def button_plot_action(self):
         notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
-        frame_dataset_ctrl = self.frames['dataset_ctrl']
+        frame_dataset_ctrl = self.frames['datasets_ctrl']
         frame_figure_ctrl = self.frames['figure_ctrl']
         frame_axis_ctrl_x = self.frames['axis_ctrl_x']
         frame_axis_ctrl_y = self.frames['axis_ctrl_y']
@@ -206,22 +206,22 @@ class App:
         actions.menu_new_action()
 
     def menu_open_action(self):
-        treeview_csv_paths = self.frames['csv_paths'].widgets['treeview_csv_paths']
+        tableview_csv_paths = self.frames['csv_paths'].widgets['tableview_csv_paths']
         notebook_csv_data = self.frames['csv_data'].widgets['notebook_csv_data']
-        notebook_datasets_ctrl = self.frames['dataset_ctrl'].widgets['notebook_datasets_ctrl']
-        spinbox_num = self.frames['dataset_ctrl'].widgets['spinbox_num']
+        notebook_datasets_ctrl = self.frames['datasets_ctrl'].widgets['notebook_datasets_ctrl']
+        spinbox_num = self.frames['datasets_ctrl'].widgets['spinbox_num']
         frame_figure_ctrl = self.frames['figure_ctrl']
         frame_axis_ctrl_x = self.frames['axis_ctrl_x']
         frame_axis_ctrl_y = self.frames['axis_ctrl_y']
         actions.menu_open_action(
-            treeview_csv_paths, notebook_csv_data,
+            tableview_csv_paths, notebook_csv_data,
             notebook_datasets_ctrl, spinbox_num, frame_figure_ctrl,
             frame_axis_ctrl_x, frame_axis_ctrl_y
         )
 
     def menu_save_as_action(self):
         frame_csv_paths = self.frames['csv_paths']
-        frame_dataset_ctrl = self.frames['dataset_ctrl']
+        frame_dataset_ctrl = self.frames['datasets_ctrl']
         frame_figure_ctrl = self.frames['figure_ctrl']
         frame_axis_ctrl_x = self.frames['axis_ctrl_x']
         frame_axis_ctrl_y = self.frames['axis_ctrl_y']
