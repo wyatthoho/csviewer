@@ -95,10 +95,21 @@ class FigureCtrlFrame(LabelFrame):
         self.widgets['legend_visible'] = checkbutton
 
     def collect_figure_ctrl_config(self) -> FigureCtrlConfig:
+
+        try:
+            width = self.widgets['width'].get()
+        except tk.TclError:
+            width = None
+
+        try:
+            height = self.widgets['height'].get()
+        except tk.TclError:
+            height = None
+
         config: FigureCtrlConfig = {
             'title': self.widgets['title'].get(),
-            'width': self.widgets['width'].get(),
-            'height': self.widgets['height'].get(),
+            'width': width,
+            'height': height,
             'grid_visible': bool(self.widgets['grid_visible'].getint()),
             'legend_visible': bool(self.widgets['legend_visible'].getint())
         }
