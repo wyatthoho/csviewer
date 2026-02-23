@@ -25,14 +25,23 @@ def plot_csv_data_map(
         fieldx = cfg.get('fieldx')
         fieldy = cfg.get('fieldy')
         label = cfg.get('label')
+        linestyle = cfg.get('linestyle')
+        linewidth = cfg.get('linewidth')
 
         csv_data = csv_data_map[csvidx]
         values_x = [float(val) for val in csv_data[fieldx]]
         values_y = [float(val) for val in csv_data[fieldy]]
 
         params = {}
+
         if label:
             params['label'] = label
+
+        if linestyle:
+            params['linestyle'] = linestyle
+
+        if linewidth:
+            params['linewidth'] = linewidth
 
         ax.plot(values_x, values_y, **params)
 

@@ -18,12 +18,18 @@ LABEL_CSV_IDX = 'CSV ID: '
 LABEL_FIELD_X = 'Field X: '
 LABEL_FIELD_Y = 'Field Y: '
 LABEL_LABEL = 'Label: '
+LABEL_LINESTYLE = 'Line Style: '
+LABEL_LINEWIDTH = 'Line Width: '
+LINESTYLES = ['solid', 'dotted', 'dashed', 'dashdot', '']
+LINEWIDTH = 1.5
 
 
 class TabWidgets(TypedDict):
+    doublevar_linewidth: tk.DoubleVar
     combobox_csvidx: Combobox
     combobox_fieldx: Combobox
     combobox_fieldy: Combobox
+    combobox_linestyle: Combobox
     stringvar_label: tk.StringVar
 
 
@@ -72,6 +78,27 @@ class DatasetCtrlTab(ttk.Frame):
             font=self.font, textvariable=strvar
         )
         self.widgets['stringvar_label'] = strvar
+
+        Label(
+            master=self, row=4, col=0,
+            text=LABEL_LINESTYLE, font=self.font
+        )
+        combobox = Combobox(
+            master=self, row=4, col=1,
+            values=LINESTYLES, font=self.font
+        )
+        self.widgets['combobox_linestyle'] = combobox
+
+        doublevar = tk.DoubleVar(value=LINEWIDTH)
+        Label(
+            master=self, row=5, col=0,
+            text=LABEL_LINEWIDTH, font=self.font
+        )
+        Entry(
+            master=self, row=5, col=1,
+            font=self.font, textvariable=doublevar
+        )
+        self.widgets['doublevar_linewidth'] = doublevar
 
     def reset_csv_idx(self, csv_indices: list[str]):
         self.widgets['combobox_csvidx'].configure(values=csv_indices)
@@ -137,6 +164,8 @@ class DatasetCtrlConfig(TypedDict):
     fieldx: str
     fieldy: str
     label: str
+    linestyle: str
+    linewidth: float
 
 
 class DatasetsCtrlFrame(LabelFrame):
@@ -182,14 +211,12 @@ class DatasetsCtrlFrame(LabelFrame):
         for tab_id in self.widgets['notebook_datasets_ctrl'].tabs():
             tab: DatasetCtrlTab \
                 = self.widgets['notebook_datasets_ctrl'].nametowidget(tab_id)
-            csvidx = tab.widgets['combobox_csvidx'].get()
-            fieldx = tab.widgets['combobox_fieldx'].get()
-            fieldy = tab.widgets['combobox_fieldy'].get()
-            label = tab.widgets['stringvar_label'].get()
             configs.append({
-                'csvidx': csvidx,
-                'fieldx': fieldx,
-                'fieldy': fieldy,
-                'label': label
+                'csvidx': tab.widgets['combobox_csvidx'].get(),
+                'fieldx': tab.widgets['combobox_fieldx'].get(),
+                'fieldy': tab.widgets['combobox_fieldy'].get(),
+                'label': tab.widgets['stringvar_label'].get(),
+                'linestyle': tab.widgets['combobox_linestyle'].get(),
+                'linewidth': tab.widgets['doublevar_linewidth'].get(),
             })
         return configs

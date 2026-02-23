@@ -178,11 +178,13 @@ def config_notebook_datasets_ctrl(
         notebook_datasets_ctrl: DatasetsCtrlNotebook
 ) -> None:
     notebook_datasets_ctrl.remove_all_tabs()
-    for idx, config_line in enumerate(config_datasets_ctrl):
-        csvidx = config_line['csvidx']
-        fieldx = config_line['fieldx']
-        fieldy = config_line['fieldy']
-        label = config_line['label']
+    for idx, cfg in enumerate(config_datasets_ctrl):
+        csvidx = cfg.get('csvidx')
+        fieldx = cfg.get('fieldx')
+        fieldy = cfg.get('fieldy')
+        label = cfg.get('label')
+        linestyle = cfg.get('linestyle')
+        linewidth = cfg.get('linewidth')
 
         tabname = str(idx + 1)
         tab = notebook_datasets_ctrl.create_new_tab(tabname)
@@ -192,6 +194,8 @@ def config_notebook_datasets_ctrl(
         tab.widgets['combobox_fieldx'].set(fieldx)
         tab.widgets['combobox_fieldy'].set(fieldy)
         tab.widgets['stringvar_label'].set(label)
+        tab.widgets['combobox_linestyle'].set(linestyle)
+        tab.widgets['doublevar_linewidth'].set(linewidth)
 
 
 def config_frame_figure_ctrl(

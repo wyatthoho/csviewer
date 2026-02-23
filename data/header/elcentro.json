@@ -9,19 +9,25 @@
             "csvidx": "1",
             "fieldx": "time(sec)",
             "fieldy": "acceleration(g)",
-            "label": "EW"
+            "label": "EW",
+            "linestyle": "solid",
+            "linewidth": 1.5
         },
         {
             "csvidx": "2",
             "fieldx": "Time(sec)",
             "fieldy": "Acceleration(g)",
-            "label": "NS"
+            "label": "NS",
+            "linestyle": "solid",
+            "linewidth": 1.5
         },
         {
             "csvidx": "3",
             "fieldx": "TIME(SEC)",
             "fieldy": "ACCELERATION(G)",
-            "label": "UP"
+            "label": "UP",
+            "linestyle": "solid",
+            "linewidth": 1.5
         }
     ],
     "figure_ctrl": {
